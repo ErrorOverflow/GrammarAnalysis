@@ -163,6 +163,17 @@ int Identifier(char *str, int len) {
     return 1;
 }
 
+int readsym(char *str){
+    char* p=str;
+    int l=0;
+    while(Plus(*str) || Multi(*str) || Num(*str) || Letter(*str)){
+        *p++;
+        l++;
+    }
+    return l;
+}
+
+
 int ConstDefine(char *str, int len) {
     char *p = str;
     int l = len;
@@ -173,7 +184,7 @@ int ConstDefine(char *str, int len) {
             l--;
             return 0;
         }
-        if(Identifier(p,l)){
+        if(Identifier(p,readsym(p))){
 
             if(Integer(p,l)){
 
