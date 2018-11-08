@@ -14,6 +14,46 @@ char *point = NULL;
 
 using namespace std;
 
+int Plus(char str);
+
+int Multi(char str);
+
+int RelationalOperator(char *str);
+
+int Letter(char str);
+
+int NotZeroNum(char str);
+
+int Num(char str);
+
+int Character(char *str);
+
+int String(char *str);
+
+int NoSignNum(char *str);
+
+int Integer(char *str);
+
+int Identifier(char *str);
+
+int ConstDefine(char *str);
+
+int ConstDeclare(char *str);
+
+int DeclareHead(char *str);
+
+int TypeIdentifier(char *str);
+
+int VarDefine(char *str);
+
+int VarDeclare(char *str);
+
+int Expression(char *str);
+
+int Term(char *str);
+
+int Factor(char *str);
+
 int Plus(char str) {
     if (str == '+') {
         cout << "<plus>";
@@ -135,12 +175,12 @@ int NoSignNum(char *str) {
 
 int Integer(char *str) {
     char *p = str;
-    int process_len=0;
+    int process_len = 0;
     if (*p == '+' || *p == '-') {
         *p++;
     }
-    if ((process_len=NoSignNum(p))) {
-        *p+=process_len;
+    if ((process_len = NoSignNum(p))) {
+        *p += process_len;
         return (int) ((p - str) / sizeof(char));
     }
     return 0;
@@ -148,32 +188,19 @@ int Integer(char *str) {
 
 int Identifier(char *str) {
     char *p = str;
-    int process_len;
     if (Letter(*p)) {
         *p++;
     } else {
         return 0;
     }
-    int i = 0;
     while (1) {
         if (Letter(*p) || Num(*p)) {
             *p++;
         } else {
-            return 0;
+            return (int) ((p - str) / sizeof(char));
         }
     }
 }
-
-int readsym(char *str) {
-    char *p = str;
-    int l = 0;
-    while (Plus(*str) || Multi(*str) || Num(*str) || Letter(*str)) {
-        *p++;
-        l++;
-    }
-    return l;
-}
-
 
 int ConstDefine(char *str) {
     char *p = str;
@@ -183,21 +210,17 @@ int ConstDefine(char *str) {
         if (*p++ != ' ') {
             return 0;
         }
-        process_len = readsym(p);
-        if (Identifier(p, process_len)) {
+        if (Identifier(p)) {
             *p += process_len;
             if (*p++ == '=') {
-                process_len = readsym(p);
-                if (Integer(p, process_len)) {
+                if ((process_len = Integer(p))) {
                     *p += process_len;
                     while (*p == ',') {
                         *p++;
-                        process_len = readsym(p);
-                        if (Identifier(p, process_len)) {
+                        if ((process_len = Identifier(p))) {
                             *p += process_len;
                             if (*p++ == '=') {
-                                process_len = readsym(p);
-                                if (Integer(p, process_len)) {
+                                if ((process_len = Integer(p))) {
                                     *p += process_len;
                                     return (int) ((p - str) / sizeof(char));
                                 }
@@ -213,29 +236,24 @@ int ConstDefine(char *str) {
         if (*p++ != ' ') {
             return 0;
         }
-        process_len = readsym(p);
-        if (Identifier(p, process_len)) {
+        if (Identifier(p)) {
             *p += process_len;
             if (*p++ == '=') {
-                process_len = readsym(p);
-                if (Character(p, process_len)) {
+                if ((process_len = Integer(p))) {
                     *p += process_len;
                     while (*p == ',') {
                         *p++;
-                        process_len = readsym(p);
-                        if (Identifier(p, process_len)) {
+                        if ((process_len = Identifier(p))) {
                             *p += process_len;
                             if (*p++ == '=') {
-                                process_len = readsym(p);
-                                if (Integer(p, process_len)) {
+                                if ((process_len = Integer(p))) {
                                     *p += process_len;
                                     return (int) ((p - str) / sizeof(char));
                                 }
                             }
                         }
                     }
-                    return (int) ((p - str) / \
-                    sizeof(char));
+                    return (int) ((p - str) / sizeof(char));;
                 }
             }
         }
@@ -269,11 +287,93 @@ int DeclareHead(char *str) {
     char *p = str;
     int process_len = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
-
+        *p += 3;
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
-
+        *p += 4;
+    }
+    if (*p++ == ' ') {
+        process_len = Identifier(p);
+        *p += process_len;
+        return (int) ((p - str) / sizeof(char));
     }
     return 0;
+}
+
+int TypeIdentifier(char *str) {
+    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't') {
+        return 3;
+    } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r') {
+        return 4;
+    }
+    return 0;
+}
+
+int VarDefine(char *str) {
+    char *p = str;
+    int process_len = 0;
+    int isVarDefine = 0;
+    while ((process_len = TypeIdentifier(p))) {
+        *p += process_len;
+        if (*p++ == ' ') {
+            if ((process_len = Identifier(p))) {
+                *p += process_len;
+                if (*p == '[') {
+                    *p++;
+                    if ((process_len = NoSignNum(p))) {
+                        *p += process_len;
+                        if (*p == ']') {
+                            isVarDefine = 1;
+                        }
+                    }
+                } else {
+                    isVarDefine = 1;
+                }
+            }
+        }
+        if (isVarDefine) {
+            if (*p == ',') {
+                *p++;
+            } else {
+                break;
+            }
+        } else {
+            return 0;
+        }
+    }
+    return (int) ((p - str) / sizeof(char));
+}
+
+int VarDeclare(char *str) {
+    char *p = str;
+    int process_len = 0;
+    int isVarDeclare = 0;
+    while ((process_len = VarDefine(p))) {
+        *p += process_len;
+        if (*p != ',') {
+            isVarDeclare = 1;
+            break;
+        } else {
+            *p++;
+        }
+    }
+    if (isVarDeclare) {
+        return (int) ((p - str) / sizeof(char));
+    } else {
+        return 0;
+    }
+}
+
+int Expression(char *str) {
+
+}
+
+int Term(char *str) {
+
+}
+
+int Factor(char *str) {
+    char *p = str;
+    int process_len = 0;
 }
 
 int main() {
@@ -282,6 +382,6 @@ int main() {
     strncpy(buf, str.c_str(), str.length());
     point = buf;
     cout << "233" << endl;
-    cout << String(buf, str.length() - 1) << endl;
+    cout << String(buf) << endl;
     return 0;
 }
