@@ -9,7 +9,8 @@
 #include <malloc.h>
 
 #define STRMAX 255
-#define NUMMAX 9
+
+char *point = NULL;
 
 using namespace std;
 
@@ -88,9 +89,16 @@ int Num(char str) {
     return 0;
 }
 
-int Character(char str) {
-    if (Plus(str) || Multi(str) || Num(str) || Letter(str)) {
-        return 1;
+int Character(char *str, int len) {
+    char *p = str;
+    int l = len;
+    if (*p++ == '\'') {
+        if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
+            *p++;
+            if (*p == '\'') {
+                return 1;
+            }
+        }
     }
     return 0;
 }
@@ -146,7 +154,7 @@ int Integer(char *str, int len) {
 int Identifier(char *str, int len) {
     char *p = str;
     int l = len;
-    if (Character(*p)) {
+    if (Letter(*p)) {
         *p++;
         len - 1;
     } else {
@@ -154,7 +162,7 @@ int Identifier(char *str, int len) {
     }
     int i = 0;
     while (i++ < l) {
-        if (Character(*p) || Num(*p)) {
+        if (Letter(*p) || Num(*p)) {
             *p++;
         } else {
             return 0;
@@ -163,10 +171,10 @@ int Identifier(char *str, int len) {
     return 1;
 }
 
-int readsym(char *str){
-    char* p=str;
-    int l=0;
-    while(Plus(*str) || Multi(*str) || Num(*str) || Letter(*str)){
+int readsym(char *str) {
+    char *p = str;
+    int l = 0;
+    while (Plus(*str) || Multi(*str) || Num(*str) || Letter(*str)) {
         *p++;
         l++;
     }
@@ -174,32 +182,96 @@ int readsym(char *str){
 }
 
 
-int ConstDefine(char *str, int len) {
+int ConstDefine(char *str) {
     char *p = str;
-    int l = len;
+    int process_len = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         *p += 3;
-        l -= 3;
         if (*p++ != ' ') {
-            l--;
             return 0;
         }
-        if(Identifier(p,readsym(p))){
-
-            if(Integer(p,l)){
-
+        process_len = readsym(p);
+        if (Identifier(p, process_len)) {
+            *p += process_len;
+            if (*p++ == '=') {
+                process_len = readsym(p);
+                if (Integer(p, process_len)) {
+                    *p += process_len;
+                    while (*p == ',') {
+                        *p++;
+                        process_len = readsym(p);
+                        if (Identifier(p, process_len)) {
+                            *p += process_len;
+                            if (*p++ == '=') {
+                                process_len = readsym(p);
+                                if (Integer(p, process_len)) {
+                                    *p += process_len;
+                                    return (int) ((p - str) / sizeof(char));
+                                }
+                            }
+                        }
+                    }
+                    return (int) ((p - str) / sizeof(char));;
+                }
             }
         }
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
         *p += 4;
-        l -= 4;
+        if (*p++ != ' ') {
+            return 0;
+        }
+        process_len = readsym(p);
+        if (Identifier(p, process_len)) {
+            *p += process_len;
+            if (*p++ == '=') {
+                process_len = readsym(p);
+                if (Character(p, process_len)) {
+                    *p += process_len;
+                    while (*p == ',') {
+                        *p++;
+                        process_len = readsym(p);
+                        if (Identifier(p, process_len)) {
+                            *p += process_len;
+                            if (*p++ == '=') {
+                                process_len = readsym(p);
+                                if (Integer(p, process_len)) {
+                                    *p += process_len;
+                                    return (int) ((p - str) / sizeof(char));
+                                }
+                            }
+                        }
+                    }
+                    return (int) ((p - str) / sizeof(char));
+                }
+            }
+        }
     }
+    return 0;
+}
+
+int ConstDeclaim(char *str) {
+    char *p = str;
+    int process_len = 0;
+    if (*p == 'c' && *(p + 1) == 'o' && *(p + 2) == 'n' && *(p + 3) == 's' && *(p + 4) == 't') {
+        *p += 5;
+        if(*p++ == ' '){
+            process_len = ConstDefine(p);
+            *p += process_len;
+            if(*p == ';'){
+                while(){
+
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 int main() {
     char buf[STRMAX];
     string str("aasdaqdwdwdABC");
     strncpy(buf, str.c_str(), str.length());
+    point = buf;
     cout << "233" << endl;
     cout << String(buf, str.length() - 1) << endl;
     return 0;
