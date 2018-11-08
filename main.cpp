@@ -50,17 +50,17 @@ int RelationalOperator(char *str) {
     } else if (*str == '>') {
         if (*(str + 1) == '=') {
             cout << "<relational operator>";
-            return 4;
+            return 2;
         } else {
             cout << "<relational operator>";
-            return 3;
+            return 1;
         }
     } else if (*str == '!' && *(str + 1) == '=') {
         cout << "<relational operator>";
-        return 5;
+        return 2;
     } else if (*str == '=' && *(str + 1) == '=') {
         cout << "<relational operator>";
-        return 5;
+        return 2;
     }
     return 0;
 }
@@ -89,86 +89,79 @@ int Num(char str) {
     return 0;
 }
 
-int Character(char *str, int len) {
+int Character(char *str) {
     char *p = str;
-    int l = len;
     if (*p++ == '\'') {
         if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
             *p++;
             if (*p == '\'') {
-                return 1;
+                return 3;
             }
         }
     }
     return 0;
 }
 
-int String(char *str, int len) {
-    int i = 0;
+int String(char *str) {
     char *p = str;
-    while (i++ < len) {
+    while (1) {
         if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
             *p++;
             continue;
         } else {
             cout << *p << endl;
-            return 0;
+            return (int) ((p - str) / sizeof(char));
         }
     }
-    return 1;
 }
 
-int NoSignNum(char *str, int len) {
+int NoSignNum(char *str) {
     char *p = str;
     if (NotZeroNum(*p)) {
         *p++;
-        int i = 0;
-        while (i++ < len - 1) {
+        while (1) {
             if (Num(*p)) {
                 *p++;
                 continue;
             } else {
-                return 0;
+                return (int) ((p - str) / sizeof(char));
             }
         }
-        return 1;
-    } else if (*p == '0' && len == 1) {
+    } else if (*p == '0') {
         return 1;
     }
     return 0;
 }
 
-int Integer(char *str, int len) {
+int Integer(char *str) {
     char *p = str;
-    int l = len;
+    int process_len=0;
     if (*p == '+' || *p == '-') {
         *p++;
-        l--;
     }
-    if (NoSignNum(p, l)) {
-        return 1;
+    if ((process_len=NoSignNum(p))) {
+        *p+=process_len;
+        return (int) ((p - str) / sizeof(char));
     }
     return 0;
 }
 
-int Identifier(char *str, int len) {
+int Identifier(char *str) {
     char *p = str;
-    int l = len;
+    int process_len;
     if (Letter(*p)) {
         *p++;
-        len - 1;
     } else {
         return 0;
     }
     int i = 0;
-    while (i++ < l) {
+    while (1) {
         if (Letter(*p) || Num(*p)) {
             *p++;
         } else {
             return 0;
         }
     }
-    return 1;
 }
 
 int readsym(char *str) {
@@ -241,7 +234,8 @@ int ConstDefine(char *str) {
                             }
                         }
                     }
-                    return (int) ((p - str) / sizeof(char));
+                    return (int) ((p - str) / \
+                    sizeof(char));
                 }
             }
         }
@@ -249,27 +243,42 @@ int ConstDefine(char *str) {
     return 0;
 }
 
-int ConstDeclaim(char *str) {
+int ConstDeclare(char *str) {
     char *p = str;
     int process_len = 0;
     if (*p == 'c' && *(p + 1) == 'o' && *(p + 2) == 'n' && *(p + 3) == 's' && *(p + 4) == 't') {
         *p += 5;
-        if(*p++ == ' '){
+        if (*p++ == ' ') {
             process_len = ConstDefine(p);
             *p += process_len;
-            if(*p == ';'){
-                while(){
-
+            if (*p == ';') {
+                process_len = ConstDeclare(p);//递归
+                if (process_len != 0) {
+                    *p += process_len;
+                    return (int) ((p - str) / sizeof(char));
+                } else {
+                    return 0;
                 }
             }
         }
+    }
+    return 0;
+}
+
+int DeclareHead(char *str) {
+    char *p = str;
+    int process_len = 0;
+    if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
+
+    } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
+
     }
     return 0;
 }
 
 int main() {
     char buf[STRMAX];
-    string str("aasdaqdwdwdABC");
+    string str("ABC");
     strncpy(buf, str.c_str(), str.length());
     point = buf;
     cout << "233" << endl;
