@@ -167,9 +167,21 @@ int ConstDefine(char *str, int len) {
     char *p = str;
     int l = len;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
+        *p += 3;
+        l -= 3;
+        if (*p++ != ' ') {
+            l--;
+            return 0;
+        }
+        if(Identifier(p,l)){
 
+            if(Integer(p,l)){
+
+            }
+        }
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
-
+        *p += 4;
+        l -= 4;
     }
 }
 
