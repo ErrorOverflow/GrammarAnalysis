@@ -3,8 +3,13 @@
 //
 
 #include <iostream>
+#include <string>
+#include <cstring>
+#include <cstdlib>
+#include <malloc.h>
 
 #define STRMAX 255
+#define NUMMAX 9
 
 using namespace std;
 
@@ -61,49 +66,118 @@ int RelationalOperator(char *str) {
 
 int Letter(char str) {
     if ((str >= 'a' && str <= 'z') || (str >= 'A' && str <= 'Z') || str == '_') {
-        cout<< "<letter>";
+        cout << "<letter>";
         return 1;
     }
     return 0;
 }
 
-int NotZeroNum(char str){
-    if(str>='1' && str<='9'){
-        cout<< "<not_zero_num>";
+int NotZeroNum(char str) {
+    if (str >= '1' && str <= '9') {
+        cout << "<not_zero_num>";
         return 1;
     }
     return 0;
 }
 
-int Num(char str){
-    if(str=='0' || NotZeroNum(str)){
+int Num(char str) {
+    if (str == '0' || NotZeroNum(str)) {
         cout << "<num>";
         return 1;
     }
     return 0;
 }
 
-int Character(char str){
-    if(Plus(str) || Multi(str) || Num(str) || Letter(str)){
+int Character(char str) {
+    if (Plus(str) || Multi(str) || Num(str) || Letter(str)) {
         return 1;
     }
     return 0;
 }
 
-int String(char *str){
-    int i=0;
+int String(char *str, int len) {
+    int i = 0;
     char *p = str;
-    while(*p != '\0' || i++>STRMAX){
-        if(*p==32 || *p==33 || (*p>=35 && *p<=126)){
+    while (i++ < len) {
+        if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
+            *p++;
             continue;
-        }
-        else{
+        } else {
+            cout << *p << endl;
             return 0;
         }
     }
     return 1;
 }
 
+int NoSignNum(char *str, int len) {
+    char *p = str;
+    if (NotZeroNum(*p)) {
+        *p++;
+        int i = 0;
+        while (i++ < len - 1) {
+            if (Num(*p)) {
+                *p++;
+                continue;
+            } else {
+                return 0;
+            }
+        }
+        return 1;
+    } else if (*p == '0' && len == 1) {
+        return 1;
+    }
+    return 0;
+}
+
+int Integer(char *str, int len) {
+    char *p = str;
+    int l = len;
+    if (*p == '+' || *p == '-') {
+        *p++;
+        l--;
+    }
+    if (NoSignNum(p, l)) {
+        return 1;
+    }
+    return 0;
+}
+
+int Identifier(char *str, int len) {
+    char *p = str;
+    int l = len;
+    if (Character(*p)) {
+        *p++;
+        len - 1;
+    } else {
+        return 0;
+    }
+    int i = 0;
+    while (i++ < l) {
+        if (Character(*p) || Num(*p)) {
+            *p++;
+        } else {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int ConstDefine(char *str, int len) {
+    char *p = str;
+    int l = len;
+    if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
+
+    } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
+
+    }
+}
+
 int main() {
+    char buf[STRMAX];
+    string str("aasdaqdwdwdABC");
+    strncpy(buf, str.c_str(), str.length());
+    cout << "233" << endl;
+    cout << String(buf, str.length() - 1) << endl;
     return 0;
 }
