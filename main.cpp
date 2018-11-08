@@ -48,11 +48,49 @@ int VarDefine(char *str);
 
 int VarDeclare(char *str);
 
+int ReturnFuncDefine(char *str);
+
+int NoReturnFuncDefine(char *str);
+
+int CompoundSentence(char *str);
+
+int ParameterList(char *str);
+
+int MainFunc(char *str);
+
 int Expression(char *str);
 
 int Term(char *str);
 
 int Factor(char *str);
+
+int Sentence(char *str);
+
+int AssignSentence(char *str);
+
+int ConditionSentence(char *str);
+
+int Condition(char *str);
+
+int LoopSentence(char *str);
+
+int Step(char *str);
+
+int ReturnFuncCall(char *str);
+
+int NoReturnFuncCall(char *str);
+
+int ValueParameterList(char *str);
+
+int SentenceColumn(char *str);
+
+int ReadSentence(char *str);
+
+int WriteSentence(char *str);
+
+int ReturnSentence(char *str);
+
+int JumpSpace(char *str);
 
 int Plus(char str) {
     if (str == '+') {
@@ -232,17 +270,17 @@ int ConstDefine(char *str) {
             }
         }
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
-        *p += 4;
+        p += 4;
         if (*p++ != ' ') {
             return 0;
         }
         if (Identifier(p)) {
-            *p += process_len;
+            p += process_len;
             if (*p++ == '=') {
                 if ((process_len = Integer(p))) {
-                    *p += process_len;
+                    p += process_len;
                     while (*p == ',') {
-                        *p++;
+                        p++;
                         if ((process_len = Identifier(p))) {
                             *p += process_len;
                             if (*p++ == '=') {
@@ -266,7 +304,8 @@ int ConstDeclare(char *str) {
     int process_len = 0;
     if (*p == 'c' && *(p + 1) == 'o' && *(p + 2) == 'n' && *(p + 3) == 's' && *(p + 4) == 't') {
         *p += 5;
-        if (*p++ == ' ') {
+        if (*p == ' ') {
+            p++;
             process_len = ConstDefine(p);
             *p += process_len;
             if (*p == ';') {
@@ -291,7 +330,8 @@ int DeclareHead(char *str) {
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
         *p += 4;
     }
-    if (*p++ == ' ') {
+    if (*p == ' ') {
+        p++;
         process_len = Identifier(p);
         *p += process_len;
         return (int) ((p - str) / sizeof(char));
@@ -318,7 +358,7 @@ int VarDefine(char *str) {
             if ((process_len = Identifier(p))) {
                 *p += process_len;
                 if (*p == '[') {
-                    *p++;
+                    p++;
                     if ((process_len = NoSignNum(p))) {
                         *p += process_len;
                         if (*p == ']') {
@@ -332,7 +372,7 @@ int VarDefine(char *str) {
         }
         if (isVarDefine) {
             if (*p == ',') {
-                *p++;
+                p++;
             } else {
                 break;
             }
@@ -353,7 +393,7 @@ int VarDeclare(char *str) {
             isVarDeclare = 1;
             break;
         } else {
-            *p++;
+            p++;
         }
     }
     if (isVarDeclare) {
@@ -363,12 +403,119 @@ int VarDeclare(char *str) {
     }
 }
 
-int Expression(char *str) {
+int ReturnFuncDefine(char *str) {
+    char *p = str;
+    int process_len = 0;
+    if ((process_len = DeclareHead(p))) {
+        *p += process_len;
+        *p += JumpSpace(p);
+        if (*p == '(') {
+            p++;
+            *p += JumpSpace(p);
+            if ((process_len = ParameterList(p))) {
+                p += process_len;
+                p += JumpSpace(p);
+                if (*p == ')') {
+                    p++;
+                    p += JumpSpace(p);
+                    if (*p == '{') {
+                        p++;
+                        p += JumpSpace(p);
+                        if ((process_len = CompoundSentence(p))) {
+                            p += process_len;
+                            p += JumpSpace(p);
+                            if (*p == '}') {
+                                p++;
+                                p += JumpSpace(p);
+                                return (int) ((p - str) / sizeof(char));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
 
+int NoReturnFuncDefine(char *str) {
+    char *p = str;
+    int process_len = 0;
+    if (*str == 'v' && *(p + 1) == 'o' && *(p + 2) == 'i' && *(p + 3) == 'd') {
+        p += 3;
+        if (*p == ' ') {
+            p++;
+            p += JumpSpace(p);
+            if ((process_len = Identifier(p))) {
+                p += process_len;
+                p += JumpSpace(p);
+                if (*p == '(') {
+                    p++;
+                    *p += JumpSpace(p);
+                    if ((process_len = ParameterList(p))) {
+                        p += process_len;
+                        p += JumpSpace(p);
+                        if (*p == ')') {
+                            p++;
+                            p += JumpSpace(p);
+                            if (*p == '{') {
+                                p++;
+                                p += JumpSpace(p);
+                                if ((process_len = CompoundSentence(p))) {
+                                    p += process_len;
+                                    p += JumpSpace(p);
+                                    if (*p == '}') {
+                                        p++;
+                                        p += JumpSpace(p);
+                                        return (int) ((p - str) / sizeof(char));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+int CompoundSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+    if ((process_len = ConstDeclare(p))) {
+        p += process_len;
+        p += JumpSpace(p);
+    }
+    if ((process_len = VarDeclare(p))) {
+        p += process_len;
+        p += JumpSpace(p);
+    }
+    if ((process_len = SentenceColumn(p))) {
+        p += process_len;
+        p += JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }
+    return 0;
+}
+
+int ParameterList(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int MainFunc(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int Expression(char *str) {
+    char *p = str;
+    int process_len = 0;
 }
 
 int Term(char *str) {
-
+    char *p = str;
+    int process_len = 0;
 }
 
 int Factor(char *str) {
@@ -376,12 +523,86 @@ int Factor(char *str) {
     int process_len = 0;
 }
 
+int Sentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int AssignSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int ConditionSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int Condition(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int LoopSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int Step(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int ReturnFuncCall(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int NoReturnFuncCall(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int ValueParameterList(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int SentenceColumn(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int ReadSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int WriteSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int ReturnSentence(char *str) {
+    char *p = str;
+    int process_len = 0;
+}
+
+int JumpSpace(char *str) {
+    char *p = str;
+    while (*p == ' ') {
+        p++;
+    }
+    return (int) ((p - str) / sizeof(char));
+}
+
+
 int main() {
     char buf[STRMAX];
-    string str("ABC");
+    string str(" ");
     strncpy(buf, str.c_str(), str.length());
     point = buf;
     cout << "233" << endl;
-    cout << String(buf) << endl;
+    cout << JumpSpace(buf) << endl;
     return 0;
 }
