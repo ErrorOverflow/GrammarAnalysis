@@ -585,36 +585,235 @@ int Expression(char *str) {
 int Term(char *str) {
     char *p = str;
     int process_len = 0;
+    while((process_len=Factor(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        if((process_len = Multi(*p))){
+            p+=process_len;
+            p+=JumpSpace(p);
+        }else{
+            return (int) ((p - str) / sizeof(char));
+        }
+    }
+    return 0;
 }
 
 int Factor(char *str) {
     char *p = str;
     int process_len = 0;
+    if((process_len=Identifier(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        if(*p == '['){
+            p++;
+            p+=JumpSpace(p);
+            if((process_len = Expression(p))){
+                p+=process_len;
+                p+=JumpSpace(p);
+                if(*p == ']'){
+                    p++;
+                    p+=JumpSpace(p);
+                    return (int) ((p - str) / sizeof(char));
+                }
+            }
+        }else{
+            return (int) ((p - str) / sizeof(char));
+        }
+    }else if((process_len=Integer(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if((process_len=Character(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if((process_len = ReturnFuncCall(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if(*p == '('){
+        p++;
+        p+=JumpSpace(p);
+        if((process_len=Expression(p))){
+            p+=process_len;
+            p+=JumpSpace(p);
+            if(*p == ')'){
+                p++;
+                p+=JumpSpace(p);
+                return (int) ((p - str) / sizeof(char));
+            }
+        }
+    }
+    return 0;
 }
 
 int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
+    if((process_len = ConditionSentence(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if((process_len = LoopSentence(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if((process_len = ReturnFuncCall(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if((process_len = NoReturnFuncCall(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }else if((process_len = AssignSentence(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }
+    else if((process_len = ReadSentence(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }
+    else if((process_len = WriteSentence(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }
+    else if((process_len = ReturnSentence(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    }
+    return 0;
 }
 
 int AssignSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    if((process_len = Identifier(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        if(*p == '='){
+            p++;
+            p+=JumpSpace(p);
+            if((process_len =Expression(p))){
+                p+=process_len;
+                p+=JumpSpace(p);
+                return (int) ((p - str) / sizeof(char));
+            }
+        }else if(*p=='['){
+            p++;
+            p+=JumpSpace(p);
+            if((process_len = Expression(p))){
+                p+=process_len;
+                p+=JumpSpace(p);
+                if(*p == ']'){
+                    p++;
+                    p+=JumpSpace(p);
+                    if(*p=='='){
+                        p++;
+                        p+=JumpSpace(p);
+                        if((process_len = Expression(p))){
+                            p+=process_len;
+                            p+=JumpSpace(p);
+                            return (int) ((p - str) / sizeof(char));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 int ConditionSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    if(*p == 'i' && *(p+1) == 'f'){
+        p+=2;
+        p+=JumpSpace(p);
+        if(*p == '('){
+            p++;
+            p+=JumpSpace(p);
+            if((process_len = Condition(p))){
+                p+=process_len;
+                p+=JumpSpace(p);
+                if(*p == ')'){
+                    p++;
+                    p+=JumpSpace(p);
+                    if((process_len = Sentence(p))){
+                        p+=process_len;
+                        p+=JumpSpace(p);
+                        if(*p == 'e' && *(p+1) == 'l' && *(p+2) == 's' && *(p+3)=='e'){
+                            p+=4;
+                            p+=JumpSpace(p);
+                            if((process_len = Sentence(p))){
+                                p+=process_len;
+                                p+=JumpSpace(p);
+                                return (int) ((p - str) / sizeof(char));
+                            }
+                        }else{
+                            return (int) ((p - str) / sizeof(char));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 int Condition(char *str) {
     char *p = str;
     int process_len = 0;
+    if((process_len=Expression(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        if((process_len=RelationalOperator(p))){
+            p+=process_len;
+            p+=JumpSpace(p);
+            if((process_len=Expression(p))){
+                p+=process_len;
+                p+=JumpSpace(p);
+                return (int) ((p - str) / sizeof(char));
+            }
+        }else{
+            return (int) ((p - str) / sizeof(char));
+        }
+    }
+    return 0;
 }
 
 int LoopSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    if(*p=='d' && *(p+1) == '0'){
+        p+=2;
+        p+=JumpSpace(p);
+        if((process_len = Sentence(p))){
+            p+=process_len;
+            p+=JumpSpace(p);
+            if(*p == 'w' && *(p+1) == 'h' && *(p+2)=='i' && *(p+3)=='l' && *(p+4)=='e'){
+                p+=5;
+                p+=JumpSpace(p);
+                if(*p=='('){
+                    p++;
+                    p+=JumpSpace(p);
+                    if((process_len = Condition(p))){
+                        p+=process_len;
+                        p+=JumpSpace(p);
+                        if(*p == ')'){
+                           p++;
+                           p+=JumpSpace(p);
+                           return (int) ((p - str) / sizeof(char));
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 int Step(char *str) {
