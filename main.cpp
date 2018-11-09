@@ -479,6 +479,7 @@ int NoReturnFuncDefine(char *str) {
     }
 }
 
+
 int CompoundSentence(char *str) {
     char *p = str;
     int process_len = 0;
@@ -501,16 +502,84 @@ int CompoundSentence(char *str) {
 int ParameterList(char *str) {
     char *p = str;
     int process_len = 0;
+    int isRight = 0;
+    if(*p == ')'){
+        isRight=1;
+    }
+    while((process_len=TypeIdentifier(p))){
+        p+=process_len;
+        if(*p==' '){
+            p++;
+            p+=JumpSpace(p);
+            if((process_len=Identifier(p))){
+                p+=process_len;
+                p+=JumpSpace(p);
+                if(*p != ','){
+                    isRight = 1;
+                    break;
+                }
+            }
+        }
+    }
+    if(isRight)
+        return (int) ((p - str) / sizeof(char));
+    else
+        return 0;
 }
 
 int MainFunc(char *str) {
     char *p = str;
     int process_len = 0;
+    if (*str == 'v' && *(p + 1) == 'o' && *(p + 2) == 'i' && *(p + 3) == 'd') {
+        p += 4;
+        if (*p == ' ') {
+            p++;
+            p += JumpSpace(p);
+            if (*str == 'm' && *(p + 1) == 'a' && *(p + 2) == 'i' && *(p + 3) == 'n') {
+                p+=4;
+                p+=JumpSpace(p);
+                if(*p=='('){
+                    p++;
+                    p+=JumpSpace(p);
+                    if(*p == ')'){
+                        p++;
+                        p+=JumpSpace(p);
+                        if(*p =='{'){
+                            p+=JumpSpace(p);
+                            if((process_len=CompoundSentence(p))){
+                                p+=process_len;
+                                p+=JumpSpace(p);
+                                if(*p=='}'){
+                                    return (int) ((p - str) / sizeof(char));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
 }
 
 int Expression(char *str) {
     char *p = str;
     int process_len = 0;
+    if(*p == '+' || *p =='-'){
+        p++;
+    }
+    p+=JumpSpace(p);
+    while((process_len=Term(p))){
+        p+=process_len;
+        p+=JumpSpace(p);
+        if((process_len = Plus(*p))){
+            p+=process_len;
+            p+=JumpSpace(p);
+        }else{
+            return (int) ((p - str) / sizeof(char));
+        }
+    }
+    return 0;
 }
 
 int Term(char *str) {
