@@ -898,7 +898,7 @@ int ReturnFuncCall(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = ParameterList(p))) {
+            if ((process_len = ValueParameterList(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -921,7 +921,7 @@ int NoReturnFuncCall(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = ParameterList(p))) {
+            if ((process_len = ValueParameterList(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -1108,6 +1108,7 @@ int ReadFromFile(char *path) {
     }
     str[i] = '\0';
     cout << str << endl;
+    cout << Program(str) << endl;
 }
 
 
