@@ -149,7 +149,6 @@ int RelationalOperator(char *str) {
 
 int Letter(char str) {
     if ((str >= 'a' && str <= 'z') || (str >= 'A' && str <= 'Z') || str == '_') {
-        cout << "<letter>";
         return 1;
     }
     return 0;
@@ -186,15 +185,23 @@ int Character(char *str) {
 
 int String(char *str) {
     char *p = str;
-    while (1) {
-        if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
-            *p++;
-            continue;
-        } else {
-            cout << *p << endl;
-            return (int) ((p - str) / sizeof(char));
+    if (*p == '"') {
+        p++;
+        while (1) {
+            if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
+                *p++;
+                continue;
+            } else {
+                if (*p == '"') {
+                    p++;
+                    return (int) ((p - str) / sizeof(char));
+                } else {
+                    return 0;
+                }
+            }
         }
     }
+    return 0;
 }
 
 int NoSignNum(char *str) {
@@ -547,13 +554,15 @@ int MainFunc(char *str) {
                     if (*p == ')') {
                         p++;
                         p += JumpSpace(p);
-                        cout << "main: " <<(int) ((p - str) / sizeof(char)) <<endl;
                         if (*p == '{') {
+                            p++;
                             p += JumpSpace(p);
                             if ((process_len = CompoundSentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == '}') {
+                                    p++;
+                                    p += JumpSpace(p);
                                     return (int) ((p - str) / sizeof(char));
                                 }
                             }
@@ -654,38 +663,32 @@ int Factor(char *str) {
 int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
+    int isRight = 0;
     if ((process_len = ConditionSentence(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = LoopSentence(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = ReturnFuncCall(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = NoReturnFuncCall(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = AssignSentence(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = ReadSentence(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = WriteSentence(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        isRight = 1;
     } else if ((process_len = ReturnSentence(p))) {
+        isRight = 1;
+    }
+    if (isRight) {
         p += process_len;
         p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
+        if (*p == ';') {
+            p++;
+            p += JumpSpace(p);
+            return (int) ((p - str) / sizeof(char));
+        }
     }
     return 0;
 }
@@ -1094,10 +1097,9 @@ int Program(char *str) {
 
 int JumpSpace(char *str) {
     char *p = str;
-    while (*p == ' ' || *p == '\n') {
+    while (*p == ' ' || *p == '\n' || *p == '\t') {
         p++;
     }
-    cout << "JumpSpace: " <<(int) ((p - str) / sizeof(char))<<endl;
     return (int) ((p - str) / sizeof(char));
 }
 
