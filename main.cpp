@@ -1116,6 +1116,6 @@ int main() {
     char buf[STRMAX];
     string str(" ");
     strncpy(buf, str.c_str(), str.length());
-    ReadFromFile("C:\\Users\\WML\\Desktop\\helloworld.txt");
+    ReadFromFile("helloworld.txt");
     return 0;
 }
