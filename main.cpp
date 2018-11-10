@@ -1121,7 +1121,7 @@ int ReadFromFile() {
 
 int main() {
     char buf[STRMAX];
-    string str(" ");
+    string str("  ");
     strncpy(buf, str.c_str(), str.length());
     ReadFromFile();
     return 0;
