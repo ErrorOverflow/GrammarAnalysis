@@ -483,7 +483,6 @@ int NoReturnFuncDefine(char *str) {
     }
 }
 
-
 int CompoundSentence(char *str) {
     char *p = str;
     int process_len = 0;
@@ -539,7 +538,7 @@ int MainFunc(char *str) {
         if (*p == ' ') {
             p++;
             p += JumpSpace(p);
-            if (*str == 'm' && *(p + 1) == 'a' && *(p + 2) == 'i' && *(p + 3) == 'n') {
+            if (*p == 'm' && *(p + 1) == 'a' && *(p + 2) == 'i' && *(p + 3) == 'n') {
                 p += 4;
                 p += JumpSpace(p);
                 if (*p == '(') {
@@ -548,6 +547,7 @@ int MainFunc(char *str) {
                     if (*p == ')') {
                         p++;
                         p += JumpSpace(p);
+                        cout << "main: " <<(int) ((p - str) / sizeof(char)) <<endl;
                         if (*p == '{') {
                             p += JumpSpace(p);
                             if ((process_len = CompoundSentence(p))) {
@@ -1074,40 +1074,45 @@ int Program(char *str) {
         p += process_len;
         p += JumpSpace(p);
     }
-    while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-    }
     if ((process_len = MainFunc(p))) {
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
+    } else {
+        while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
+            p += process_len;
+            p += JumpSpace(p);
+        }
+        if ((process_len = MainFunc(p))) {
+            p += process_len;
+            p += JumpSpace(p);
+            return (int) ((p - str) / sizeof(char));
+        }
     }
     return 0;
 }
 
 int JumpSpace(char *str) {
     char *p = str;
-    while (*p == ' ') {
+    while (*p == ' ' || *p == '\n') {
         p++;
     }
+    cout << "JumpSpace: " <<(int) ((p - str) / sizeof(char))<<endl;
     return (int) ((p - str) / sizeof(char));
 }
 
-int ReadFromFile(char *path) {
-    fstream f;
-    f.open(path, ios::in);//只读
+int ReadFromFile() {
+    FILE *fp = NULL;
+    char str[1000];
+    char mid[255];
     int i = 0;
-    char *str = (char *) malloc(2048 * sizeof(char));
-    if (!f) {
-        cout << "打开文件出错" << endl;
-        return 0;
+    fp = fopen("/home/wml/CLionProjects/GrammarAnalysis/helloworld.txt", "r");
+    while (fgets(mid, 255, fp)) {
+        strcpy(str + i * sizeof(char), mid);
+        i += strlen(mid);
     }
-    while (!f.eof()) {
-        f >> str[i++];
-    }
-    str[i] = '\0';
     cout << str << endl;
+    cout << strlen(str) << endl;
     cout << Program(str) << endl;
 }
 
@@ -1116,6 +1121,6 @@ int main() {
     char buf[STRMAX];
     string str(" ");
     strncpy(buf, str.c_str(), str.length());
-    ReadFromFile("helloworld.txt");
+    ReadFromFile();
     return 0;
 }
