@@ -372,10 +372,10 @@ int VarDefine(char *str) {
     int process_len = 0;
     int isVarDefine = 0;
     while ((process_len = TypeIdentifier(p))) {
-        *p += process_len;
+        p += process_len;
         if (*p++ == ' ') {
             if ((process_len = Identifier(p))) {
-                *p += process_len;
+                p += process_len;
                 if (*p == '[') {
                     p++;
                     if ((process_len = NoSignNum(p))) {
@@ -407,15 +407,16 @@ int VarDeclare(char *str) {
     int process_len = 0;
     int isVarDeclare = 0;
     while ((process_len = VarDefine(p))) {
-        *p += process_len;
-        if (*p != ',') {
-            isVarDeclare = 1;
+        p += process_len;
+        if (*p != ';') {
             break;
         } else {
+            isVarDeclare = 1;
             p++;
         }
     }
     if (isVarDeclare) {
+        p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     } else {
         return 0;
@@ -426,11 +427,11 @@ int ReturnFuncDefine(char *str) {
     char *p = str;
     int process_len = 0;
     if ((process_len = DeclareHead(p))) {
-        *p += process_len;
-        *p += JumpSpace(p);
+        p += process_len;
+        p += JumpSpace(p);
         if (*p == '(') {
             p++;
-            *p += JumpSpace(p);
+            p += JumpSpace(p);
             if ((process_len = ParameterList(p))) {
                 p += process_len;
                 p += JumpSpace(p);
