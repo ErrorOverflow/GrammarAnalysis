@@ -230,18 +230,26 @@ int Integer(char *str) {
 
 int Identifier(char *str) {
     char *p = str;
-    //if((*p == 'i' && *(p+1) == 'n' && *(p+2) == 't') || ){
-
-    //}
+    char word[63];
+    int i = 0;
     if (Letter(*p)) {
         p++;
+        *(word + i) = *p;
+        i++;
     } else {
         return 0;
     }
     while (1) {
         if (Letter(*p) || Num(*p)) {
             p++;
+            *(word + i) = *p;
+            i++;
         } else {
+            word[i] = '\0';
+            if (!strcmp(word, "while") || !strcmp(word, "for") ||
+                    !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf")) {
+                return 0;
+            }
             p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
@@ -688,12 +696,15 @@ int Sentence(char *str) {
         isRight = 1;
     } else if ((process_len = ReturnSentence(p))) {
         isRight = 1;
-    } else if (*p == '(') {
+    } else if (*p == '{') {
         p++;
+        p += JumpSpace(p);
         if ((process_len = SentenceColumn(p))) {
             p += process_len;
             p += JumpSpace(p);
-            if (*p == ')') {
+            if (*p == '}') {
+                p++;
+                process_len=0;
                 isRight = 2;
             }
         }
@@ -706,7 +717,7 @@ int Sentence(char *str) {
             p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
-    }else if(isRight ==2){
+    } else if (isRight == 2) {
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
