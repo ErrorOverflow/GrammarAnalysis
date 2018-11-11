@@ -276,7 +276,7 @@ int ConstDefine(char *str) {
                     p += process_len;
                     while (*p == ',') {
                         p++;
-                        p+=JumpSpace(p);
+                        p += JumpSpace(p);
                         if ((process_len = Identifier(p))) {
                             p += process_len;
                             if (*p++ == '=') {
@@ -756,6 +756,7 @@ int AssignSentence(char *str) {
             if ((process_len = Expression(p))) {
                 p += process_len;
                 p += JumpSpace(p);
+                cout << "<赋值语句>";
                 return (int) ((p - str) / sizeof(char));
             }
         } else if (*p == '[') {
@@ -773,6 +774,7 @@ int AssignSentence(char *str) {
                         if ((process_len = Expression(p))) {
                             p += process_len;
                             p += JumpSpace(p);
+                            cout << "<赋值语句>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -807,9 +809,11 @@ int ConditionSentence(char *str) {
                             if ((process_len = Sentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
+                                cout << "<条件语句>";
                                 return (int) ((p - str) / sizeof(char));
                             }
                         } else {
+                            cout << "<条件语句>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -862,6 +866,7 @@ int LoopSentence(char *str) {
                         if (*p == ')') {
                             p++;
                             p += JumpSpace(p);
+                            cout << "<do...while循环语句>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -907,6 +912,7 @@ int LoopSentence(char *str) {
                                                     if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
+                                                        cout << "<for循环语句>";
                                                         return (int) ((p - str) / sizeof(char));
                                                     }
                                                 }
@@ -1036,6 +1042,7 @@ int ReadSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    cout << "<读语句>";
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -1068,12 +1075,14 @@ int WriteSentence(char *str) {
                         if (*p == ')') {
                             p++;
                             p += JumpSpace(p);
+                            cout << "<写语句>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
                 } else if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    cout << "<写语句>";
                     return (int) ((p - str) / sizeof(char));
                 }
             } else if ((process_len = Expression(p))) {
@@ -1082,6 +1091,7 @@ int WriteSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    cout << "<写语句>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -1104,10 +1114,12 @@ int ReturnSentence(char *str) {
                 p += JumpSpace(p);
                 if (*p == ')') {
                     p++;
+                    cout << "<返回语句>";
                     return (int) ((p - str) / sizeof(char));;
                 }
             }
         } else {
+            cout << "<返回语句>";
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -1121,16 +1133,20 @@ int Program(char *str) {
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
+        cout << "<常量说明>" << endl;
     }
     if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
+        cout << "<变量说明>" << endl;
     }
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
+        cout << "<函数定义>" << endl;
         p += process_len;
         p += JumpSpace(p);
     }
     if ((process_len = MainFunc(p))) {
+        cout << "<主函数>" << endl;
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -1156,9 +1172,12 @@ int ReadFromFile() {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
     }
-    cout << str << endl;
-    cout << strlen(str) << endl;
-    cout << Program(str) << endl;
+    cout << "输入代码总长度: " << strlen(str) << endl;
+    int isFinish = Program(str);
+    if (isFinish)
+        cout << "文法正确" << endl;
+    else
+        cout << "文法错误" << endl;
 }
 
 
