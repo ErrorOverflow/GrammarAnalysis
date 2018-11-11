@@ -164,7 +164,8 @@ int Num(char str) {
 
 int Character(char *str) {
     char *p = str;
-    if (*p++ == '\'') {
+    if (*p == '\'') {
+        p++;
         if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
             p++;
             if (*p == '\'') {
@@ -551,6 +552,9 @@ int ParameterList(char *str) {
                     isRight = 1;
                     p += JumpSpace(p);
                     break;
+                } else {
+                    p++;
+                    p += JumpSpace(p);
                 }
             }
         }
@@ -1070,7 +1074,11 @@ int WriteSentence(char *str) {
             } else if ((process_len = Expression(p))) {
                 p += process_len;
                 p += JumpSpace(p);
-                return (int) ((p - str) / sizeof(char));
+                if (*p == ')') {
+                    p++;
+                    p += JumpSpace(p);
+                    return (int) ((p - str) / sizeof(char));
+                }
             }
         }
     }
