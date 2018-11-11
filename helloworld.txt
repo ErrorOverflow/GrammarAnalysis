@@ -1,3 +1,5 @@
+const int MAX=255;
+int Variable;
 int func(){
     return(0);
 }

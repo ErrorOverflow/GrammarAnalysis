@@ -262,16 +262,21 @@ int ConstDefine(char *str) {
     int process_len = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
-        if (*p++ != ' ') {
+        if (*p != ' ') {
             return 0;
         }
-        if (Identifier(p)) {
+        p++;
+        if ((process_len = Identifier(p))) {
             p += process_len;
-            if (*p++ == '=') {
+            p += JumpSpace(p);
+            if (*p == '=') {
+                p++;
+                p += JumpSpace(p);
                 if ((process_len = Integer(p))) {
                     p += process_len;
                     while (*p == ',') {
                         p++;
+                        p+=JumpSpace(p);
                         if ((process_len = Identifier(p))) {
                             p += process_len;
                             if (*p++ == '=') {
@@ -1112,11 +1117,12 @@ int ReturnSentence(char *str) {
 int Program(char *str) {
     char *p = str;
     int process_len = 0;
+    p += JumpSpace(p);
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
     }
-    if ((process_len = ConstDeclare(p))) {
+    if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
     }
