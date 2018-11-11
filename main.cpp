@@ -230,6 +230,9 @@ int Integer(char *str) {
 
 int Identifier(char *str) {
     char *p = str;
+    //if((*p == 'i' && *(p+1) == 'n' && *(p+2) == 't') || ){
+
+    //}
     if (Letter(*p)) {
         p++;
     } else {
@@ -670,23 +673,32 @@ int Sentence(char *str) {
     int process_len = 0;
     int isRight = 0;
     if ((process_len = ConditionSentence(p))) {
-        isRight = 1;
+        isRight = 2;
     } else if ((process_len = LoopSentence(p))) {
+        isRight = 2;
+    } else if ((process_len = ReadSentence(p))) {
+        isRight = 1;
+    } else if ((process_len = WriteSentence(p))) {
+        isRight = 1;
+    } else if ((process_len = AssignSentence(p))) {
         isRight = 1;
     } else if ((process_len = ReturnFuncCall(p))) {
         isRight = 1;
     } else if ((process_len = NoReturnFuncCall(p))) {
         isRight = 1;
-    } else if ((process_len = AssignSentence(p))) {
-        isRight = 1;
-    } else if ((process_len = ReadSentence(p))) {
-        isRight = 1;
-    } else if ((process_len = WriteSentence(p))) {
-        isRight = 1;
     } else if ((process_len = ReturnSentence(p))) {
         isRight = 1;
+    } else if (*p == '(') {
+        p++;
+        if ((process_len = SentenceColumn(p))) {
+            p += process_len;
+            p += JumpSpace(p);
+            if (*p == ')') {
+                isRight = 2;
+            }
+        }
     }
-    if (isRight) {
+    if (isRight == 1) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == ';') {
@@ -694,6 +706,10 @@ int Sentence(char *str) {
             p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
+    }else if(isRight ==2){
+        p += process_len;
+        p += JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
     }
     return 0;
 }
