@@ -123,25 +123,19 @@ int Multi(char str) {
 int RelationalOperator(char *str) {
     if (*str == '<') {
         if (*(str + 1) == '=') {
-            cout << "<relational operator>";
             return 2;
         } else {
-            cout << "<relational operator>";
             return 1;
         }
     } else if (*str == '>') {
         if (*(str + 1) == '=') {
-            cout << "<relational operator>";
             return 2;
         } else {
-            cout << "<relational operator>";
             return 1;
         }
     } else if (*str == '!' && *(str + 1) == '=') {
-        cout << "<relational operator>";
         return 2;
     } else if (*str == '=' && *(str + 1) == '=') {
-        cout << "<relational operator>";
         return 2;
     }
     return 0;
@@ -156,7 +150,6 @@ int Letter(char str) {
 
 int NotZeroNum(char str) {
     if (str >= '1' && str <= '9') {
-        cout << "<not_zero_num>";
         return 1;
     }
     return 0;
@@ -164,7 +157,6 @@ int NotZeroNum(char str) {
 
 int Num(char str) {
     if (str == '0' || NotZeroNum(str)) {
-        cout << "<num>";
         return 1;
     }
     return 0;
@@ -857,27 +849,19 @@ int LoopSentence(char *str) {
                                     if ((process_len = Identifier(p))) {
                                         p += process_len;
                                         p += JumpSpace(p);
-                                        if (*p == '=') {
+                                        if (*p == '+' || *p == '-') {
                                             p++;
                                             p += JumpSpace(p);
-                                            if ((process_len = Identifier(p))) {
+                                            if ((process_len = Step(p))) {
                                                 p += process_len;
                                                 p += JumpSpace(p);
-                                                if (*p == '+' || *p == '-') {
+                                                if (*p == ')') {
                                                     p++;
                                                     p += JumpSpace(p);
-                                                    if ((process_len = Step(p))) {
+                                                    if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
-                                                        if (*p == ')') {
-                                                            p++;
-                                                            p += JumpSpace(p);
-                                                            if ((process_len = Sentence(p))) {
-                                                                p += process_len;
-                                                                p += JumpSpace(p);
-                                                                return (int) ((p - str) / sizeof(char));
-                                                            }
-                                                        }
+                                                        return (int) ((p - str) / sizeof(char));
                                                     }
                                                 }
                                             }
