@@ -729,7 +729,7 @@ int Sentence(char *str) {
         }
     } else if (*p == ';') {
         p++;
-        p+=JumpSpace(p);
+        p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
     if (isRight == 1) {
@@ -1170,10 +1170,13 @@ int JumpSpace(char *str) {
 
 int ReadFromFile() {
     FILE *fp = NULL;
+    char path[64];
     char str[1000];
     char mid[255];
     int i = 0;
-    fp = fopen("/home/wml/CLionProjects/GrammarAnalysis/helloworld.txt", "r");
+    cout << "请输入代码文件绝对路径: ";
+    cin >> path;
+    fp = fopen(path, "r");//home/wml/CLionProjects/GrammarAnalysis/helloworld.txt
     while (fgets(mid, 255, fp)) {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
