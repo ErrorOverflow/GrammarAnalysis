@@ -494,7 +494,7 @@ int NoReturnFuncDefine(char *str) {
                 if (*p == '(') {
                     p++;
                     *p += JumpSpace(p);
-                    if ((process_len = ParameterList(p))) {
+                    if ((process_len = ParameterList(p)) || *p == ')') {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
@@ -727,6 +727,10 @@ int Sentence(char *str) {
                 isRight = 2;
             }
         }
+    } else if (*p == ';') {
+        p++;
+        p+=JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
     }
     if (isRight == 1) {
         p += process_len;
@@ -950,12 +954,13 @@ int ReturnFuncCall(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = ValueParameterList(p))) {
+            if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    cout << "<有返回值函数调用>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -973,12 +978,13 @@ int NoReturnFuncCall(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = ValueParameterList(p))) {
+            if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    cout << "<无返回值函数调用>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
