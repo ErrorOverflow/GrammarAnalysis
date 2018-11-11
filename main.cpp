@@ -207,10 +207,10 @@ int String(char *str) {
 int NoSignNum(char *str) {
     char *p = str;
     if (NotZeroNum(*p)) {
-        *p++;
+        p++;
         while (1) {
             if (Num(*p)) {
-                *p++;
+                p++;
                 continue;
             } else {
                 return (int) ((p - str) / sizeof(char));
@@ -229,7 +229,8 @@ int Integer(char *str) {
         *p++;
     }
     if ((process_len = NoSignNum(p))) {
-        *p += process_len;
+        p += process_len;
+        p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
     return 0;
@@ -238,14 +239,15 @@ int Integer(char *str) {
 int Identifier(char *str) {
     char *p = str;
     if (Letter(*p)) {
-        *p++;
+        p++;
     } else {
         return 0;
     }
     while (1) {
         if (Letter(*p) || Num(*p)) {
-            *p++;
+            p++;
         } else {
+            p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -255,27 +257,29 @@ int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
-        *p += 3;
+        p += 3;
         if (*p++ != ' ') {
             return 0;
         }
         if (Identifier(p)) {
-            *p += process_len;
+            p += process_len;
             if (*p++ == '=') {
                 if ((process_len = Integer(p))) {
-                    *p += process_len;
+                    p += process_len;
                     while (*p == ',') {
-                        *p++;
+                        p++;
                         if ((process_len = Identifier(p))) {
-                            *p += process_len;
+                            p += process_len;
                             if (*p++ == '=') {
                                 if ((process_len = Integer(p))) {
-                                    *p += process_len;
+                                    p += process_len;
+                                    p += JumpSpace(p);
                                     return (int) ((p - str) / sizeof(char));
                                 }
                             }
                         }
                     }
+                    p += JumpSpace(p);
                     return (int) ((p - str) / sizeof(char));;
                 }
             }
@@ -293,15 +297,17 @@ int ConstDefine(char *str) {
                     while (*p == ',') {
                         p++;
                         if ((process_len = Identifier(p))) {
-                            *p += process_len;
+                            p += process_len;
                             if (*p++ == '=') {
                                 if ((process_len = Integer(p))) {
-                                    *p += process_len;
+                                    p += process_len;
+                                    p += JumpSpace(p);
                                     return (int) ((p - str) / sizeof(char));
                                 }
                             }
                         }
                     }
+                    p += JumpSpace(p);
                     return (int) ((p - str) / sizeof(char));;
                 }
             }
@@ -314,15 +320,16 @@ int ConstDeclare(char *str) {
     char *p = str;
     int process_len = 0;
     if (*p == 'c' && *(p + 1) == 'o' && *(p + 2) == 'n' && *(p + 3) == 's' && *(p + 4) == 't') {
-        *p += 5;
+        p += 5;
         if (*p == ' ') {
             p++;
             process_len = ConstDefine(p);
-            *p += process_len;
+            p += process_len;
             if (*p == ';') {
                 process_len = ConstDeclare(p);//递归
                 if (process_len != 0) {
-                    *p += process_len;
+                    p += process_len;
+                    p += JumpSpace(p);
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -345,6 +352,7 @@ int DeclareHead(char *str) {
         p++;
         process_len = Identifier(p);
         *p += process_len;
+        p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
     return 0;
@@ -438,6 +446,7 @@ int ReturnFuncDefine(char *str) {
                             if (*p == '}') {
                                 p++;
                                 p += JumpSpace(p);
+                                p += JumpSpace(p);
                                 return (int) ((p - str) / sizeof(char));
                             }
                         }
@@ -526,6 +535,7 @@ int ParameterList(char *str) {
                 p += JumpSpace(p);
                 if (*p != ',') {
                     isRight = 1;
+                    p += JumpSpace(p);
                     break;
                 }
             }
@@ -589,6 +599,7 @@ int Expression(char *str) {
             p += process_len;
             p += JumpSpace(p);
         } else {
+            p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -605,6 +616,7 @@ int Term(char *str) {
             p += process_len;
             p += JumpSpace(p);
         } else {
+            p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
     }
