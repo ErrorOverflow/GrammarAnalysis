@@ -102,7 +102,7 @@ int Plus(char str) {
         return 1;
     } else if (str == '-') {
         cout << "<plus>";
-        return 2;
+        return 1;
     } else {
         return 0;
     }
@@ -110,11 +110,9 @@ int Plus(char str) {
 
 int Multi(char str) {
     if (str == '*') {
-        cout << "<multi>";
         return 1;
     } else if (str == '/') {
-        cout << "<multi>";
-        return 2;
+        return 1;
     } else {
         return 0;
     }
@@ -180,7 +178,7 @@ int String(char *str) {
     char *p = str;
     if (*p == '"') {
         p++;
-        while (1) {
+        while (true) {
             if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
                 p++;
                 continue;
@@ -201,7 +199,7 @@ int NoSignNum(char *str) {
     char *p = str;
     if (NotZeroNum(*p)) {
         p++;
-        while (1) {
+        while (true) {
             if (Num(*p)) {
                 p++;
                 continue;
@@ -240,7 +238,7 @@ int Identifier(char *str) {
     } else {
         return 0;
     }
-    while (1) {
+    while (true) {
         if (Letter(*p) || Num(*p)) {
             *(word + i) = *p;
             i++;
@@ -649,7 +647,11 @@ int Term(char *str) {
 int Factor(char *str) {
     char *p = str;
     int process_len = 0;
-    if ((process_len = Identifier(p))) {
+    if ((process_len = ReturnFuncCall(p))) {
+        p += process_len;
+        p += JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
+    } else if ((process_len = Identifier(p))) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == '[') {
@@ -672,10 +674,6 @@ int Factor(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Character(p))) {
-        p += process_len;
-        p += JumpSpace(p);
-        return (int) ((p - str) / sizeof(char));
-    } else if ((process_len = ReturnFuncCall(p))) {
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -880,7 +878,7 @@ int LoopSentence(char *str) {
     } else if (*p == 'f' && *(p + 1) == 'o' && *(p + 2) == 'r') {
         p += 3;
         p += JumpSpace(p);
-        if ((*p == '(')) {
+        if (*p == '(') {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
@@ -964,6 +962,8 @@ int ReturnFuncCall(char *str) {
                     return (int) ((p - str) / sizeof(char));
                 }
             }
+        } else {
+            return (int) ((p - str) / sizeof(char));
         }
     }
     return 0;
@@ -1062,7 +1062,6 @@ int ReadSentence(char *str) {
 int WriteSentence(char *str) {
     char *p = str;
     int process_len = 0;
-    int isRight = 0;
     if (*p == 'p' && *(p + 1) == 'r' && *(p + 2) == 'i' && *(p + 3) == 'n' && *(p + 4) == 't' && *(p + 5) == 'f') {
         p += 6;
         p += JumpSpace(p);
@@ -1169,7 +1168,7 @@ int JumpSpace(char *str) {
 }
 
 int ReadFromFile() {
-    FILE *fp = NULL;
+    FILE *fp;
     char str[1000];
     char mid[255];
     int i = 0;
@@ -1185,6 +1184,7 @@ int ReadFromFile() {
         cout << "Right" << endl;
     else
         cout << "wrong" << endl;
+    return 0;
 }
 
 

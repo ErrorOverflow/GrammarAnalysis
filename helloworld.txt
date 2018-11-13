@@ -1,6 +1,4 @@
 const int MAX=5;
-const int INMAX = 100000;
-const int ASSIGNB = 11;
 int Variable;
 
 int func(int i,int PAR){
@@ -11,7 +9,7 @@ int func(int i,int PAR){
 		return(func(i*100));
 	else
 		return(func(i*10));
-	return 0;
+	return(0);
 }
 
 void NoReturnFunc(char k){
@@ -25,13 +23,7 @@ void NoReturnFunc(char k){
 }
 
 void main(){
-    int a,z;
-	int b;
-	int c[10],q;
-	int d[10];
-    char e;
-	char f[10],y;
-	int i;
+    int a;
     for(i=0;i<MAX;i+1){
         scanf(e);
 		f[i] = e;
