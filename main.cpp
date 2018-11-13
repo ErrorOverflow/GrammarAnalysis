@@ -637,7 +637,6 @@ int Term(char *str) {
             p += process_len;
             p += JumpSpace(p);
         } else {
-            p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -962,8 +961,6 @@ int ReturnFuncCall(char *str) {
                     return (int) ((p - str) / sizeof(char));
                 }
             }
-        } else {
-            return (int) ((p - str) / sizeof(char));
         }
     }
     return 0;

@@ -31,7 +31,7 @@ void main(){
 	i=0;
 	do{
 		e = f[i];
-		printf(e);
+		printf("233");
 		i = i+1;
 	}while(i<MAX)
 	printf("next period\n");
