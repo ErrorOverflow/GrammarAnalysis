@@ -1,29 +1,59 @@
-const int MAX=255;
+const int MAX=5;
+const int INMAX = 100000;
+const int ASSIGNB = 11;
 int Variable;
-int func(int par){
-    return(0);
+
+int func(int i,int PAR){
+	if(i >= PAR){
+		return(PAR);
+	}
+	if(i<=PAR/100*1)
+		return(func(i*100));
+	else
+		return(func(i*10));
+	return 0;
 }
 
-void noreturnfunc(char k){
-    if(k == 'a'){
+void NoReturnFunc(char k){
+    if(k == 'H')
         printf(k);
-    }
+	else
+		printf("not H");
+	;
+	;
+	;
 }
 
 void main(){
-    int i;
-    func(k);
-    i=0;
-    for(i=0;i<10;i+1)
-        scanf(k);
-    if(i == 1){
-        i =3;
-        ;
-    }
-    else
-        k=10;
-    do{
-        efg=0;
-    }while(k<=99)
-	printf("hello world");
+    int a,z;
+	int b;
+	int c[10],q;
+	int d[10];
+    char e;
+	char f[10],y;
+	int i;
+    for(i=0;i<MAX;i+1){
+        scanf(e);
+		f[i] = e;
+	}
+	i=0;
+	do{
+		e = f[i];
+		printf(e);
+		i = i+1;
+	}while(i<MAX)
+	printf("next period\n");
+	for( i =0; i<MAX;i+1){
+		NoReturnFunc(f[i]);
+	}
+	printf("next period\n");
+	printf(func(100,INTMAX)*'a');
+	printf("next period\n");
+	b=ASSIGNB;
+	c[5] = 7 ;
+	if(b>c[5])
+		printf("b is bigger than c[5]\n");
+	else
+		printf("b is not bigger than c[5]\n");
+	printf((1+2*3)*111);
 }
