@@ -1170,13 +1170,11 @@ int JumpSpace(char *str) {
 
 int ReadFromFile() {
     FILE *fp = NULL;
-    char path[64];
     char str[1000];
     char mid[255];
     int i = 0;
-    cout << "请输入代码文件绝对路径: ";
-    cin >> path;
-    fp = fopen(path, "r");//home/wml/CLionProjects/GrammarAnalysis/helloworld.txt
+    //cout << "请输入代码文件绝对路径: ";
+    fp = fopen("/home/wml/CLionProjects/GrammarAnalysis/helloworld.txt", "r");
     while (fgets(mid, 255, fp)) {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
