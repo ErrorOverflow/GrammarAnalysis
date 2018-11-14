@@ -85,8 +85,6 @@ int Identifier(char *str) {
             p++;
         } else {
             word[i] = '\0';
-            p += JumpSpace(p);
-            word[i] = '\0';
             if (!strcmp(word, "while") || !strcmp(word, "for") || !strcmp(word, "return") || !strcmp(word, "void") ||
                 !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf"))
                 cout << "<REWORD " << word << ">";
@@ -176,6 +174,29 @@ int NoSignNum(char *str) {
     }
     return 0;
 }
+int Character(char *str) {
+    char *p = str;
+    char word[64];
+    int i = 0;
+    if (*p == '\'') {
+        word[i++] = *p;
+        p++;
+        if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
+            word[i++] = *p;
+            p++;
+            if (*p == '\'') {
+                word[i++] = *p;
+                word[i] = '\0';
+                cout << "<CHAR " << word << ">";
+                return 3;
+            } else {
+                cout << "<WRONG " << word << ">";
+            }
+        }
+    }
+    return 0;
+}
+
 
 int Program(char *str, int len) {
     char *p = str;
@@ -216,12 +237,15 @@ int Program(char *str, int len) {
             p += process_len;
         } else if ((process_len = NoSignNum(p))) {
             p += process_len;
-        } else if ((process_len = String(p))) {
+        }else if((process_len = Character(p))){
+            p+=process_len;
+        }
+        else if ((process_len = String(p))) {
             p += process_len;
         } else if ((process_len = Identifier(p))) {
             p += process_len;
         } else {
-            cout << "ERROR:" << *p << " ";
+            cout << "###ERROR:" << *p << " occur in " << p-str <<"###";
             p++;
         }
         p += JumpSpace(p);
@@ -234,9 +258,11 @@ int ReadFromFile() {
     FILE *fp;
     char str[1000];
     char mid[255];
+    char path[64];
     int i = 0;//home/wml/CLionProjects/GrammarAnalysis/helloworld.txt
-    cout << "Input file path: ";
-    fp = fopen("C:\\Users\\WML\\CLionProjects\\GrammarAnalysis\\helloworld.txt", "r");
+    cout << "Input file path: ";//C:\Users\WML\CLionProjects\GrammarAnalysis\helloworld.txt
+    cin >> path;
+    fp = fopen(path, "r");
     while (fgets(mid, 255, fp)) {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
