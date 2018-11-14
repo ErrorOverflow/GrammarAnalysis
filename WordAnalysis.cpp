@@ -14,7 +14,7 @@ using namespace std;
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
-        if (*p == '\t') {
+        if (*p == '\n') {
             cout << endl;
         }
         p++;
@@ -87,7 +87,11 @@ int Identifier(char *str) {
             word[i] = '\0';
             p += JumpSpace(p);
             word[i] = '\0';
-            cout << "<IDEN " << word << ">";
+            if (!strcmp(word, "while") || !strcmp(word, "for") || !strcmp(word, "return") || !strcmp(word, "void") ||
+                !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf"))
+                cout << "<REWORD " << word << ">";
+            else
+                cout << "<IDEN " << word << ">";
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -176,7 +180,7 @@ int NoSignNum(char *str) {
 int Program(char *str, int len) {
     char *p = str;
     int process_len = 0;
-    while (((p - str) / sizeof(char)) <= len) {
+    while (((p - str) / sizeof(char)) < len) {
         if (*p == '(') {
             p++;
             cout << "<LBRACK (>";
