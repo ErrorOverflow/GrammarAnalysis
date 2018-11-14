@@ -14,9 +14,38 @@ using namespace std;
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
+        if (*p == '\t') {
+            cout << endl;
+        }
         p++;
     }
     return (int) ((p - str) / sizeof(char));
+}
+
+int Plus(char str) {
+    if (str == '+') {
+        //cout << "<plus>";
+        cout << "<PLUS +>";
+        return 1;
+    } else if (str == '-') {
+        //cout << "<plus>";
+        cout << "<PLUS ->";
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int Multi(char str) {
+    if (str == '*') {
+        cout << "<MULTI *>";
+        return 1;
+    } else if (str == '/') {
+        cout << "<MULTI />";
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 int Letter(char str) {
@@ -40,42 +69,25 @@ int Num(char str) {
     return 0;
 }
 
-int Comma(char *str) {
-    if (*str == ',') {
-        cout << "COMMA ," << endl;
-        return 1;
-    }
-}
-
-int DoubleQuotationMark(char *str) {
-    if (*str == '"') {
-        cout << "DQM \"" << endl;
-        return 1;
-    }
-    return 0;
-}
-
-
 int Identifier(char *str) {
     char *p = str;
     char word[63];
     int i = 0;
     if (Letter(*p)) {
-        *(word + i) = *p;
-        i++;
+        word[i++] = *p;
         p++;
     } else {
         return 0;
     }
     while (true) {
         if (Letter(*p) || Num(*p)) {
-            *(word + i) = *p;
-            i++;
+            word[i++] = *p;
             p++;
         } else {
             word[i] = '\0';
-            cout << "IDEN " << word << endl;
             p += JumpSpace(p);
+            word[i] = '\0';
+            cout << "<IDEN " << word << ">";
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -85,16 +97,55 @@ int String(char *str) {
     char *p = str;
     char word[64];
     int i = 0;
-    word[i++] = *p;
-    p++;
-    while (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
+    if (*p == '"') {
         word[i++] = *p;
         p++;
-        continue;
+        while (true) {
+            if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
+                word[i++] = *p;
+                p++;
+                continue;
+            } else {
+                if (*p == '"') {
+                    word[i++] = *p;
+                    p++;
+                    word[i] = '\0';
+                    cout << "<STRING " << word << ">";
+                    return (int) ((p - str) / sizeof(char));
+                } else {
+                    return 0;
+                }
+            }
+        }
     }
-    word[i] = '\0';
-    cout << "STRING " << word << endl;
-    return (int) ((p - str) / sizeof(char));
+    return 0;
+}
+
+int RelationalOperator(char *str) {
+    if (*str == '<') {
+        if (*(str + 1) == '=') {
+            cout << "<REALAOP <=>";
+            return 2;
+        } else {
+            cout << "<REALAOP <>";
+            return 1;
+        }
+    } else if (*str == '>') {
+        if (*(str + 1) == '=') {
+            cout << "<REALAOP >=>";
+            return 2;
+        } else {
+            cout << "<REALAOP >>";
+            return 1;
+        }
+    } else if (*str == '!' && *(str + 1) == '=') {
+        cout << "<REALAOP !=>";
+        return 2;
+    } else if (*str == '=' && *(str + 1) == '=') {
+        cout << "<REALAOP ==>";
+        return 2;
+    }
+    return 0;
 }
 
 int NoSignNum(char *str) {
@@ -110,12 +161,13 @@ int NoSignNum(char *str) {
                 p++;
                 continue;
             } else {
-                cout << "NOSIGNNUM " << word << endl;
+                word[i] = '\0';
+                cout << "<NUM " << word << ">";
                 return (int) ((p - str) / sizeof(char));
             }
         }
     } else if (*p == '0') {
-        cout << "NOSIGNNUM 0" << endl;
+        cout << "<NUM 0>";
         return 1;
     }
     return 0;
@@ -125,11 +177,50 @@ int Program(char *str, int len) {
     char *p = str;
     int process_len = 0;
     while (((p - str) / sizeof(char)) <= len) {
-        if ((process_len = NoSignNum(p))) {
+        if (*p == '(') {
+            p++;
+            cout << "<LBRACK (>";
+        } else if (*p == ')') {
+            p++;
+            cout << "<RBRACK )>";
+        } else if (*p == '{') {
+            p++;
+            cout << "<LBRACE {>";
+        } else if (*p == '}') {
+            p++;
+            cout << "<RBRACE }>";
+        } else if (*p == ',') {
+            p++;
+            cout << "<COMMA ,>";
+        } else if (*p == ';') {
+            p++;
+            cout << "<SEMICOLON ;>";
+        } else if (*p == '[') {
+            p++;
+            cout << "<LQBRACK [>";
+        } else if (*p == ']') {
+            p++;
+            cout << "<RQBRACK [>";
+        } else if (*p == '=') {
+            p++;
+            cout << "<EQUAL =>";
+        } else if ((process_len = Plus(*p))) {
+            p += process_len;
+        } else if ((process_len = Multi(*p))) {
+            p += process_len;
+        } else if ((process_len = RelationalOperator(p))) {
+            p += process_len;
+        } else if ((process_len = NoSignNum(p))) {
             p += process_len;
         } else if ((process_len = String(p))) {
             p += process_len;
+        } else if ((process_len = Identifier(p))) {
+            p += process_len;
+        } else {
+            cout << "ERROR:" << *p << " ";
+            p++;
         }
+        p += JumpSpace(p);
     }
     return 0;
 }
@@ -137,23 +228,21 @@ int Program(char *str, int len) {
 
 int ReadFromFile() {
     FILE *fp;
-    char path[64];
     char str[1000];
     char mid[255];
-    int i = 0;
-    cout << "请输入代码文件绝对路径: ";
-    cin >> path;//C:\Users\WML\CLionProjects\GrammarAnalysis\helloworld.txt
-    fp = fopen(path, "r");
+    int i = 0;//home/wml/CLionProjects/GrammarAnalysis/helloworld.txt
+    cout << "Input file path: ";
+    fp = fopen("C:\\Users\\WML\\CLionProjects\\GrammarAnalysis\\helloworld.txt", "r");
     while (fgets(mid, 255, fp)) {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
     }
-    cout << "code total length: " << strlen(str) << endl;
+    //cout << "code total length: " << strlen(str);
     Program(str, strlen(str));
     return 0;
 }
 
-//int main() {
-
-//    return 0;
-//}
+int main() {
+    ReadFromFile();
+    return 0;
+}
