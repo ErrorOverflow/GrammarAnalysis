@@ -185,6 +185,8 @@ int Character(char *str) {
                 word[i] = '\0';
                 cout << "CHAR " << word << endl;
                 return 3;
+            } else {
+                cout << "WRONG " << word << endl;
             }
         }
     }
@@ -1189,6 +1191,15 @@ int Program(char *str) {
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
+        p++;
+    }
+    return (int) ((p - str) / sizeof(char));
+}
+
+
+int ErrorJump(char *str) {
+    char *p = str;
+    while (*p != ';') {
         p++;
     }
     return (int) ((p - str) / sizeof(char));
