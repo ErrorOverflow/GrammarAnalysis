@@ -99,11 +99,11 @@ int ReadFromFile(string path);
 int Plus(char str) {
     if (str == '+') {
         //cout << "<plus>";
-        cout << "PLUS +" << endl;
+        cout << "<PLUS +>";
         return 1;
     } else if (str == '-') {
         //cout << "<plus>";
-        cout << "PLUS -" << endl;
+        cout << "<PLUS ->";
         return 1;
     } else {
         return 0;
@@ -112,10 +112,10 @@ int Plus(char str) {
 
 int Multi(char str) {
     if (str == '*') {
-        cout << "MULTI *" << endl;
+        cout << "<MULTI *>";
         return 1;
     } else if (str == '/') {
-        cout << "MULTI /" << endl;
+        cout << "<MULTI />";
         return 1;
     } else {
         return 0;
@@ -125,25 +125,25 @@ int Multi(char str) {
 int RelationalOperator(char *str) {
     if (*str == '<') {
         if (*(str + 1) == '=') {
-            cout << "REALAOP <=" << endl;
+            cout << "<REALAOP <=>";
             return 2;
         } else {
-            cout << "REALAOP <" << endl;
+            cout << "<REALAOP <>";
             return 1;
         }
     } else if (*str == '>') {
         if (*(str + 1) == '=') {
-            cout << "REALAOP >=" << endl;
+            cout << "<REALAOP >=>";
             return 2;
         } else {
-            cout << "REALAOP >" << endl;
+            cout << "<REALAOP >>";
             return 1;
         }
     } else if (*str == '!' && *(str + 1) == '=') {
-        cout << "REALAOP !=" << endl;
+        cout << "<REALAOP !=>";
         return 2;
     } else if (*str == '=' && *(str + 1) == '=') {
-        cout << "REALAOP ==" << endl;
+        cout << "<REALAOP ==>";
         return 2;
     }
     return 0;
@@ -183,10 +183,10 @@ int Character(char *str) {
             if (*p == '\'') {
                 word[i++] = *p;
                 word[i] = '\0';
-                cout << "CHAR " << word << endl;
+                cout << "<CHAR " << word << ">";
                 return 3;
             } else {
-                cout << "WRONG " << word << endl;
+                cout << "<WRONG " << word << ">";
             }
         }
     }
@@ -210,7 +210,7 @@ int String(char *str) {
                     word[i++] = *p;
                     p++;
                     word[i] = '\0';
-                    cout << "STRING " << word << endl;
+                    cout << "<STRING " << word << ">";
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -281,7 +281,7 @@ int Identifier(char *str) {
             }
             p += JumpSpace(p);
             word[i] = '\0';
-            cout << "IDEN " << word << endl;
+            cout << "<IDEN " << word << ">";
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -411,9 +411,11 @@ int DeclareHead(char *str) {
 }
 
 int TypeIdentifier(char *str) {
-    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't') {
+    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ') {
+        cout << "<TYPEIDEN int>";
         return 3;
-    } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r') {
+    } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ') {
+        cout << "<TYPEIDEN char>";
         return 4;
     }
     return 0;
@@ -515,6 +517,7 @@ int NoReturnFuncDefine(char *str) {
     int process_len = 0;
     if (*str == 'v' && *(p + 1) == 'o' && *(p + 2) == 'i' && *(p + 3) == 'd') {
         p += 4;
+        cout << "<TYPEIDEN void>";
         if (*p == ' ') {
             p++;
             p += JumpSpace(p);
@@ -884,12 +887,14 @@ int LoopSentence(char *str) {
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
+        cout << "<REWORD do>";
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
             if (*p == 'w' && *(p + 1) == 'h' && *(p + 2) == 'i' && *(p + 3) == 'l' && *(p + 4) == 'e') {
                 p += 5;
                 p += JumpSpace(p);
+                cout << "<REWORD while>";
                 if (*p == '(') {
                     p++;
                     p += JumpSpace(p);
@@ -910,6 +915,7 @@ int LoopSentence(char *str) {
         p += 3;
         p += JumpSpace(p);
         if (*p == '(') {
+            cout << "<REWORD for>";
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
@@ -1063,6 +1069,7 @@ int ReadSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            cout << "<REWORD scanf>";
             while ((process_len = Identifier(p))) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -1097,6 +1104,7 @@ int WriteSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            cout << "<REWORD printf>";
             if ((process_len = String(p))) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -1143,6 +1151,7 @@ int ReturnSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            cout << "<REWORD return>";
             if ((process_len = Expression(p))) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -1167,20 +1176,20 @@ int Program(char *str) {
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        //cout << "<ConstDeclare>" << endl;
+        //cout << "<ConstDeclare>";
     }
     if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        //cout << "<VarDeclare>" << endl;
+        //cout << "<VarDeclare>";
     }
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
-        //cout << "<FuncDefine>" << endl;
+        //cout << "<FuncDefine>";
         p += process_len;
         p += JumpSpace(p);
     }
     if ((process_len = MainFunc(p))) {
-        //cout << "<MainFunc>" << endl;
+        //cout << "<MainFunc>";
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -1191,6 +1200,9 @@ int Program(char *str) {
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
+        if (*p == '\t') {
+            cout << endl;
+        }
         p++;
     }
     return (int) ((p - str) / sizeof(char));
@@ -1216,12 +1228,12 @@ int ReadFromFile() {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
     }
-    //cout << "code total length: " << strlen(str) << endl;
+    //cout << "code total length: " << strlen(str);
     int isFinish = Program(str);
     if (isFinish)
-        cout << "Right" << endl;
+        cout << "Right";
     else
-        cout << "wrong" << endl;
+        cout << "wrong";
     return 0;
 }
 
