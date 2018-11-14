@@ -95,6 +95,7 @@ int Program(char *str);
 
 int ReadFromFile(string path);
 
+char *iden_point;
 
 int Plus(char str) {
     if (str == '+') {
@@ -281,7 +282,10 @@ int Identifier(char *str) {
             }
             p += JumpSpace(p);
             word[i] = '\0';
-            cout << "<IDEN " << word << ">";
+            if (str > iden_point) {
+                iden_point = str;
+                cout << "<IDEN " << word << ">";
+            }
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -306,6 +310,7 @@ int ConstDefine(char *str) {
                     p += process_len;
                     while (*p == ',') {
                         p++;
+                        cout << "<COMMA ,>";
                         p += JumpSpace(p);
                         if ((process_len = Identifier(p))) {
                             p += process_len;
@@ -338,6 +343,7 @@ int ConstDefine(char *str) {
                     p += JumpSpace(p);
                     while (*p == ',') {
                         p++;
+                        cout << "<COMMA ,>";
                         p += JumpSpace(p);
                         if ((process_len = Identifier(p))) {
                             p += process_len;
@@ -375,6 +381,7 @@ int ConstDeclare(char *str) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ';') {
+                    cout << "<SEMISY ;>";
                     p++;
                     p += JumpSpace(p);
                     isRight = 1;
@@ -445,6 +452,7 @@ int VarDefine(char *str) {
         }
         if (isVarDefine) {
             if (*p == ',') {
+                cout << "<COMMA ,>";
                 p++;
             } else {
                 break;
@@ -465,6 +473,7 @@ int VarDeclare(char *str) {
         if (*p != ';') {
             break;
         } else {
+            cout << "<SEMISY ;>";
             isVarDeclare = 1;
             p++;
         }
@@ -591,6 +600,7 @@ int ParameterList(char *str) {
                     p += JumpSpace(p);
                     break;
                 } else {
+                    cout << "<COMMA ,>";
                     p++;
                     p += JumpSpace(p);
                 }
@@ -760,6 +770,7 @@ int Sentence(char *str) {
             }
         }
     } else if (*p == ';') {
+        cout << "<SEMISY ;>";
         p++;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -768,6 +779,7 @@ int Sentence(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == ';') {
+            cout << "<SEMISY ;>";
             p++;
             p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
@@ -830,6 +842,7 @@ int ConditionSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            cout << "<REWORD if>";
             if ((process_len = Condition(p))) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -928,12 +941,14 @@ int LoopSentence(char *str) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ';') {
+                            cout << "<SEMISY ;>";
                             p++;
                             p += JumpSpace(p);
                             if ((process_len = Condition(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == ';') {
+                                    cout << "<SEMISY ;>";
                                     p++;
                                     p += JumpSpace(p);
                                     if ((process_len = Identifier(p))) {
@@ -1035,6 +1050,7 @@ int ValueParameterList(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == ',') {
+            cout << "<COMMA ,>";
             p++;
             p += JumpSpace(p);
         } else {
@@ -1075,6 +1091,7 @@ int ReadSentence(char *str) {
                 p += JumpSpace(p);
                 isRight = 1;
                 if (*p == ',') {
+                    cout << "<COMMA ,>";
                     p++;
                 } else {
                     break;
@@ -1109,6 +1126,7 @@ int WriteSentence(char *str) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ',') {
+                    cout << "<COMMA ,>";
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = Expression(p))) {
@@ -1228,8 +1246,10 @@ int ReadFromFile() {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
     }
+    iden_point = str;
     //cout << "code total length: " << strlen(str);
-    int isFinish = Program(str);
+    int
+            isFinish = Program(str);
     if (isFinish)
         cout << "Right";
     else
