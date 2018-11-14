@@ -97,11 +97,41 @@ int String(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
-int Program(char *str) {
+int NoSignNum(char *str) {
+    char *p = str;
+    char word[64];
+    int i = 0;
+    if (NotZeroNum(*p)) {
+        word[i++] = *p;
+        p++;
+        while (true) {
+            if (Num(*p)) {
+                word[i++] = *p;
+                p++;
+                continue;
+            } else {
+                cout << "NOSIGNNUM " << word << endl;
+                return (int) ((p - str) / sizeof(char));
+            }
+        }
+    } else if (*p == '0') {
+        cout << "NOSIGNNUM 0" << endl;
+        return 1;
+    }
+    return 0;
+}
+
+int Program(char *str, int len) {
     char *p = str;
     int process_len = 0;
+    while (((p - str) / sizeof(char)) <= len) {
+        if ((process_len = NoSignNum(p))) {
+            p += process_len;
+        } else if ((process_len = String(p))) {
+            p += process_len;
+        }
+    }
     return 0;
-
 }
 
 
@@ -119,15 +149,11 @@ int ReadFromFile() {
         i += strlen(mid);
     }
     cout << "code total length: " << strlen(str) << endl;
-    int isFinish = Program(str);
-    if (isFinish)
-        cout << "Right" << endl;
-    else
-        cout << "wrong" << endl;
+    Program(str, strlen(str));
     return 0;
 }
 
-int main() {
+//int main() {
 
-    return 0;
-}
+//    return 0;
+//}
