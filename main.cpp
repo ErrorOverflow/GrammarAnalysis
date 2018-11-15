@@ -1289,8 +1289,7 @@ int ReadFromFile() {
     }
     iden_point = str;
     //cout << "code total length: " << strlen(str);
-    int
-            isFinish = Program(str);
+    int isFinish = Program(str);
     if (isFinish)
         cout << "Right";
     else
