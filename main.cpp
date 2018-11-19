@@ -96,7 +96,6 @@ int JumpSpace(char *str);
 int Program(char *str);
 
 char *iden_point;
-char *changeline;
 
 int Plus(char str) {
     if (str == '+') {
@@ -753,6 +752,7 @@ int Sentence(char *str) {
     } else if (*p == ';') {
         p++;
         p += JumpSpace(p);
+        cout<<"<NullSentence>"<<endl;
         return (int) ((p - str) / sizeof(char));
     }
     if (isRight == 1) {
@@ -783,7 +783,7 @@ int AssignSentence(char *str) {
             if ((process_len = Expression(p))) {
                 p += process_len;
                 p += JumpSpace(p);
-                //cout << "<AssignSentence>";
+                cout << "<AssignSentence>";
                 return (int) ((p - str) / sizeof(char));
             }
         } else if (*p == '[') {
@@ -801,7 +801,7 @@ int AssignSentence(char *str) {
                         if ((process_len = Expression(p))) {
                             p += process_len;
                             p += JumpSpace(p);
-                            //cout << "<AssignSentence>";
+                            cout << "<AssignSentence>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -836,11 +836,11 @@ int ConditionSentence(char *str) {
                             if ((process_len = Sentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
-                                cout << "<IF>";
+                                cout << "<IF>"<<endl;
                                 return (int) ((p - str) / sizeof(char));
                             }
                         } else {
-                            cout << "<IF>";
+                            cout << "<IF>"<<endl;
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -893,7 +893,7 @@ int LoopSentence(char *str) {
                         if (*p == ')') {
                             p++;
                             p += JumpSpace(p);
-                            cout << "<DoWhile>";
+                            cout << "<DoWhile>"<<endl;
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -939,7 +939,7 @@ int LoopSentence(char *str) {
                                                     if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
-                                                        cout << "<For>";
+                                                        cout << "<For>"<<endl;
                                                         return (int) ((p - str) / sizeof(char));
                                                     }
                                                 }
@@ -1161,20 +1161,20 @@ int Program(char *str) {
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        cout << "<ConstDeclare>";
+        cout << "<ConstDeclare>"<<endl<<endl;
     }
     if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        cout << "<VarDeclare>";
+        cout << "<VarDeclare>"<<endl<<endl;
     }
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
-        cout << "<FuncDefine>";
+        cout << "<FuncDefine>"<<endl<<endl;
         p += process_len;
         p += JumpSpace(p);
     }
     if ((process_len = MainFunc(p))) {
-        cout << "<MainFunc>";
+        cout << "<MainFunc>"<<endl<<endl;
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -1185,11 +1185,7 @@ int Program(char *str) {
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
-        if (*p == '\n' && p > changeline) {
-            cout << endl;
-        }
         p++;
-        changeline = p;
     }
     return (int) ((p - str) / sizeof(char));
 }
@@ -1206,7 +1202,6 @@ int ReadFromFile() {
         i += strlen(mid);
     }
     iden_point = str;
-    changeline = str;
     int isFinish = Program(str);
     if (isFinish)
         cout << "Right";
