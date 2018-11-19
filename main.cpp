@@ -95,18 +95,13 @@ int JumpSpace(char *str);
 
 int Program(char *str);
 
-int ReadFromFile(string path);
-
 char *iden_point;
+char *changeline;
 
 int Plus(char str) {
     if (str == '+') {
-        //cout << "<plus>";
-        cout << "<PLUS +>";
         return 1;
     } else if (str == '-') {
-        //cout << "<plus>";
-        cout << "<PLUS ->";
         return 1;
     } else {
         return 0;
@@ -115,10 +110,8 @@ int Plus(char str) {
 
 int Multi(char str) {
     if (str == '*') {
-        cout << "<MULTI *>";
         return 1;
     } else if (str == '/') {
-        cout << "<MULTI />";
         return 1;
     } else {
         return 0;
@@ -128,25 +121,19 @@ int Multi(char str) {
 int RelationalOperator(char *str) {
     if (*str == '<') {
         if (*(str + 1) == '=') {
-            cout << "<REALAOP <=>";
             return 2;
         } else {
-            cout << "<REALAOP <>";
             return 1;
         }
     } else if (*str == '>') {
         if (*(str + 1) == '=') {
-            cout << "<REALAOP >=>";
             return 2;
         } else {
-            cout << "<REALAOP >>";
             return 1;
         }
     } else if (*str == '!' && *(str + 1) == '=') {
-        cout << "<REALAOP !=>";
         return 2;
     } else if (*str == '=' && *(str + 1) == '=') {
-        cout << "<REALAOP ==>";
         return 2;
     }
     return 0;
@@ -186,10 +173,8 @@ int Character(char *str) {
             if (*p == '\'') {
                 word[i++] = *p;
                 word[i] = '\0';
-                cout << "<CHAR " << word << ">";
                 return 3;
             } else {
-                cout << "<WRONG " << word << ">";
             }
         }
     }
@@ -213,7 +198,6 @@ int String(char *str) {
                     word[i++] = *p;
                     p++;
                     word[i] = '\0';
-                    cout << "<STRING " << word << ">";
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -238,12 +222,10 @@ int NoSignNum(char *str) {
                 continue;
             } else {
                 word[i] = '\0';
-                cout << "<NUM " << word << ">";
                 return (int) ((p - str) / sizeof(char));
             }
         }
     } else if (*p == '0') {
-        cout << "<NUM 0>";
         return 1;
     }
     return 0;
@@ -293,7 +275,6 @@ int Identifier(char *str) {
             word[i] = '\0';
             if (str > iden_point) {
                 iden_point = str;
-                cout << "<IDEN " << word << ">";
             }
             return (int) ((p - str) / sizeof(char));
         }
@@ -319,7 +300,6 @@ int ConstDefine(char *str) {
                     p += process_len;
                     while (*p == ',') {
                         p++;
-                        cout << "<COMMA ,>";
                         p += JumpSpace(p);
                         if ((process_len = Identifier(p))) {
                             p += process_len;
@@ -352,7 +332,6 @@ int ConstDefine(char *str) {
                     p += JumpSpace(p);
                     while (*p == ',') {
                         p++;
-                        cout << "<COMMA ,>";
                         p += JumpSpace(p);
                         if ((process_len = Identifier(p))) {
                             p += process_len;
@@ -390,7 +369,6 @@ int ConstDeclare(char *str) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ';') {
-                    cout << "<SEMISY ;>";
                     p++;
                     p += JumpSpace(p);
                     isRight = 1;
@@ -428,10 +406,8 @@ int DeclareHead(char *str) {
 
 int TypeIdentifier(char *str) {
     if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ') {
-        cout << "<TYPEIDEN int>";
         return 3;
     } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ') {
-        cout << "<TYPEIDEN char>";
         return 4;
     }
     return 0;
@@ -461,7 +437,6 @@ int VarDefine(char *str) {
         }
         if (isVarDefine) {
             if (*p == ',') {
-                cout << "<COMMA ,>";
                 p++;
             } else {
                 break;
@@ -482,7 +457,6 @@ int VarDeclare(char *str) {
         if (*p != ';') {
             break;
         } else {
-            cout << "<SEMISY ;>";
             isVarDeclare = 1;
             p++;
         }
@@ -502,25 +476,21 @@ int ReturnFuncDefine(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
-            cout << "<LBRACK (>";
             p++;
             p += JumpSpace(p);
             if ((process_len = ParameterList(p)) || *p == ')') {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
                     if (*p == '{') {
-                        cout << "<LBRACE {>";
                         p++;
                         p += JumpSpace(p);
                         if ((process_len = CompoundSentence(p))) {
                             p += process_len;
                             p += JumpSpace(p);
                             if (*p == '}') {
-                                cout << "<RBRACE }>";
                                 p++;
                                 p += JumpSpace(p);
                                 return (int) ((p - str) / sizeof(char));
@@ -539,7 +509,6 @@ int NoReturnFuncDefine(char *str) {
     int process_len = 0;
     if (*str == 'v' && *(p + 1) == 'o' && *(p + 2) == 'i' && *(p + 3) == 'd') {
         p += 4;
-        cout << "<TYPEIDEN void>";
         if (*p == ' ') {
             p++;
             p += JumpSpace(p);
@@ -547,25 +516,21 @@ int NoReturnFuncDefine(char *str) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == '(') {
-                    cout << "<LBRACK (>";
                     p++;
                     *p += JumpSpace(p);
                     if ((process_len = ParameterList(p)) || *p == ')') {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
-                            cout << "<RBRACK )>";
                             p++;
                             p += JumpSpace(p);
                             if (*p == '{') {
-                                cout << "<LBRACE {>";
                                 p++;
                                 p += JumpSpace(p);
                                 if ((process_len = CompoundSentence(p))) {
                                     p += process_len;
                                     p += JumpSpace(p);
                                     if (*p == '}') {
-                                        cout << "<RBRACE }>";
                                         p++;
                                         p += JumpSpace(p);
                                         return (int) ((p - str) / sizeof(char));
@@ -617,7 +582,6 @@ int ParameterList(char *str) {
                     p += JumpSpace(p);
                     break;
                 } else {
-                    cout << "<COMMA ,>";
                     p++;
                     p += JumpSpace(p);
                 }
@@ -642,22 +606,18 @@ int MainFunc(char *str) {
                 p += 4;
                 p += JumpSpace(p);
                 if (*p == '(') {
-                    cout << "<LBRACK (>";
                     p++;
                     p += JumpSpace(p);
                     if (*p == ')') {
-                        cout << "<RBRACK )>";
                         p++;
                         p += JumpSpace(p);
                         if (*p == '{') {
-                            cout << "<LBRACE {>";
                             p++;
                             p += JumpSpace(p);
                             if ((process_len = CompoundSentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == '}') {
-                                    cout << "<RBRACE }>";
                                     p++;
                                     p += JumpSpace(p);
                                     return (int) ((p - str) / sizeof(char));
@@ -743,14 +703,12 @@ int Factor(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     } else if (*p == '(') {
-        cout << "<LBRACK (>";
         p++;
         p += JumpSpace(p);
         if ((process_len = Expression(p))) {
             p += process_len;
             p += JumpSpace(p);
             if (*p == ')') {
-                cout << "<RBRACK )>";
                 p++;
                 p += JumpSpace(p);
                 return (int) ((p - str) / sizeof(char));
@@ -781,21 +739,18 @@ int Sentence(char *str) {
     } else if ((process_len = ReturnSentence(p))) {
         isRight = 1;
     } else if (*p == '{') {
-        cout << "<LBRACE {>";
         p++;
         p += JumpSpace(p);
         if ((process_len = SentenceColumn(p))) {
             p += process_len;
             p += JumpSpace(p);
             if (*p == '}') {
-                cout << "<RBRACE }>";
                 p++;
                 process_len = 0;
                 isRight = 2;
             }
         }
     } else if (*p == ';') {
-        cout << "<SEMISY ;>";
         p++;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -804,7 +759,6 @@ int Sentence(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == ';') {
-            cout << "<SEMISY ;>";
             p++;
             p += JumpSpace(p);
             return (int) ((p - str) / sizeof(char));
@@ -865,15 +819,12 @@ int ConditionSentence(char *str) {
         p += 2;
         p += JumpSpace(p);
         if (*p == '(') {
-            cout << "<LBRACK (>";
             p++;
             p += JumpSpace(p);
-            cout << "<REWORD if>";
             if ((process_len = Condition(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = Sentence(p))) {
@@ -885,11 +836,11 @@ int ConditionSentence(char *str) {
                             if ((process_len = Sentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
-                                //cout << "<IF>";
+                                cout << "<IF>";
                                 return (int) ((p - str) / sizeof(char));
                             }
                         } else {
-                            //cout << "<IF>";
+                            cout << "<IF>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -927,26 +878,22 @@ int LoopSentence(char *str) {
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
-        cout << "<REWORD do>";
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
             if (*p == 'w' && *(p + 1) == 'h' && *(p + 2) == 'i' && *(p + 3) == 'l' && *(p + 4) == 'e') {
                 p += 5;
                 p += JumpSpace(p);
-                cout << "<REWORD while>";
                 if (*p == '(') {
-                    cout << "<LBRACK (>";
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = Condition(p))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
-                            cout << "<RBRACK )>";
                             p++;
                             p += JumpSpace(p);
-                            //cout << "<DoWhile>";
+                            cout << "<DoWhile>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -957,8 +904,6 @@ int LoopSentence(char *str) {
         p += 3;
         p += JumpSpace(p);
         if (*p == '(') {
-            cout << "<REWORD for>";
-            cout << "<LBRACK (>";
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
@@ -971,14 +916,12 @@ int LoopSentence(char *str) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ';') {
-                            cout << "<SEMISY ;>";
                             p++;
                             p += JumpSpace(p);
                             if ((process_len = Condition(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == ';') {
-                                    cout << "<SEMISY ;>";
                                     p++;
                                     p += JumpSpace(p);
                                     if ((process_len = Identifier(p))) {
@@ -991,13 +934,12 @@ int LoopSentence(char *str) {
                                                 p += process_len;
                                                 p += JumpSpace(p);
                                                 if (*p == ')') {
-                                                    cout << "<RBRACK )>";
                                                     p++;
                                                     p += JumpSpace(p);
                                                     if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
-                                                        //cout << "<For>";
+                                                        cout << "<For>";
                                                         return (int) ((p - str) / sizeof(char));
                                                     }
                                                 }
@@ -1033,17 +975,15 @@ int ReturnFuncCall(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
-            cout << "<LBRACK (>";
             p++;
             p += JumpSpace(p);
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
-                    //cout << "<ReturnFuncCall>";
+                    cout << "<ReturnFuncCall>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -1059,17 +999,15 @@ int NoReturnFuncCall(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
-            cout << "<LBRACK (>";
             p++;
             p += JumpSpace(p);
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
-                    //cout << "<NoReturnFuncCall>";
+                    cout << "<NoReturnFuncCall>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -1085,7 +1023,6 @@ int ValueParameterList(char *str) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == ',') {
-            cout << "<COMMA ,>";
             p++;
             p += JumpSpace(p);
         } else {
@@ -1120,14 +1057,11 @@ int ReadSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            cout << "<REWORD scanf>";
-            cout << "<LBRACK (>";
             while ((process_len = Identifier(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 isRight = 1;
                 if (*p == ',') {
-                    cout << "<COMMA ,>";
                     p++;
                 } else {
                     break;
@@ -1135,10 +1069,9 @@ int ReadSentence(char *str) {
             }
             if (isRight) {
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
-                    //cout << "<ReadSentence>";
+                    cout << "<ReadSentence>";
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -1158,41 +1091,35 @@ int WriteSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            cout << "<REWORD printf>";
-            cout << "<LBRACK (>";
             if ((process_len = String(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ',') {
-                    cout << "<COMMA ,>";
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = Expression(p))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
-                            cout << "<RBRACK )>";
                             p++;
                             p += JumpSpace(p);
-                            //cout << "<WriteSentence>";
+                            cout << "<WriteSentence>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
                 } else if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
-                    //cout << "<WriteSentence>";
+                    cout << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
             } else if ((process_len = Expression(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
                     p += JumpSpace(p);
-                    //cout << "<WriteSentence>";
+                    cout << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -1210,20 +1137,17 @@ int ReturnSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            cout << "<REWORD return>";
-            cout << "<LBRACK (>";
             if ((process_len = Expression(p))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
-                    cout << "<RBRACK )>";
                     p++;
-                    //cout << "<ReturnSen>";
+                    cout << "<ReturnSen>";
                     return (int) ((p - str) / sizeof(char));;
                 }
             }
         } else {
-            //cout << "<ReturnSen>";
+            cout << "<ReturnSen>";
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -1237,20 +1161,20 @@ int Program(char *str) {
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        //cout << "<ConstDeclare>";
+        cout << "<ConstDeclare>";
     }
     if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        //cout << "<VarDeclare>";
+        cout << "<VarDeclare>";
     }
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
-        //cout << "<FuncDefine>";
+        cout << "<FuncDefine>";
         p += process_len;
         p += JumpSpace(p);
     }
     if ((process_len = MainFunc(p))) {
-        //cout << "<MainFunc>";
+        cout << "<MainFunc>";
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -1261,19 +1185,11 @@ int Program(char *str) {
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
-        if (*p == '\t') {
+        if (*p == '\n' && p > changeline) {
             cout << endl;
         }
         p++;
-    }
-    return (int) ((p - str) / sizeof(char));
-}
-
-
-int ErrorJump(char *str) {
-    char *p = str;
-    while (*p != ';') {
-        p++;
+        changeline = p;
     }
     return (int) ((p - str) / sizeof(char));
 }
@@ -1290,7 +1206,7 @@ int ReadFromFile() {
         i += strlen(mid);
     }
     iden_point = str;
-    //cout << "code total length: " << strlen(str);
+    changeline = str;
     int isFinish = Program(str);
     if (isFinish)
         cout << "Right";
