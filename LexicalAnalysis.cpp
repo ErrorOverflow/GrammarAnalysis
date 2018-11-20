@@ -5,6 +5,7 @@
 #include "LexicalAnalysis.h"
 #include "lib.h"
 #include "WordAnalysis.h"
+#include "Exception.h"
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -914,5 +915,6 @@ int Program(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
+    Exception(p);
     return 0;
 }

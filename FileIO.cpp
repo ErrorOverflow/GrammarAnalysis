@@ -23,8 +23,8 @@ int ReadFromFile() {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
     }
-    //cout << "code total length: " << strlen(str);
     iden_point = str;
+    line = 1;
     Program(str);
     return 0;
 }

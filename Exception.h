@@ -5,10 +5,10 @@
 #ifndef COMPILER_EXCEPTION_H
 #define COMPILER_EXCEPTION_H
 
+extern char *exp;
 
-class Exception {
+int Exception(char *str);
 
-};
-
+int JumpExp(char *str);
 
 #endif //COMPILER_EXCEPTION_H

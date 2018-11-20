@@ -6,6 +6,8 @@
 #define COMPILER_LIB_H
 
 extern char *iden_point;
+extern int line;
+
 int JumpSpace(char *str);
 
 #endif //COMPILER_LIB_H
