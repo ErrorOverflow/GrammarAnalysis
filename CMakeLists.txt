@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
-project(GrammarAnalysis)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-set(CMAKE_CXX_STANDARD 98)
+cmake_minimum_required(VERSION 3.12)
+project(Compiler)
 
-add_executable(GrammarAnalysis main.cpp)
+set(CMAKE_CXX_STANDARD 14)
+
+add_executable(GrammarAnalysis main.cpp WordAnalysis.cpp WordAnalysis.h FileIO.cpp FileIO.h lib.cpp lib.h LexicalAnalysis.cpp LexicalAnalysis.h Exception.cpp Exception.h)
