@@ -17,8 +17,8 @@ int Exception(char *str) {
         errormsg[i] = *(str + i);
     }
     errormsg[process_len] = '\0';
-    cout << "ERROR: illegal character found: " << errormsg << endl;
-    cout << "this error occurs in line " << line <<endl;
+    cout << endl << "ERROR: illegal character found: " << errormsg << endl;
+    cout << "this error occurs in line " << line << endl;
     return process_len;
 }
 

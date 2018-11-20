@@ -488,7 +488,7 @@ int Sentence(char *str) {
     } else if (*p == ';') {
         p++;
         p += JumpSpace(p);
-        cout << "<NullSentence>" << endl;
+        cout << "<EmptySentence>" << endl;
         return (int) ((p - str) / sizeof(char));
     }
     if (isRight == 1) {
@@ -504,6 +504,8 @@ int Sentence(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
+    if (*p != '}')
+        Exception(p);
     return 0;
 }
 
