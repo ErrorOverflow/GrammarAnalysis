@@ -29,7 +29,7 @@ void main(){
 		f[i] = e;
 	}
 	i=0;
-	do{@
+	do{
 		e = f[i];
 		printf("233");
 		i = i+1;

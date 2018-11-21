@@ -1,6 +1,7 @@
 //
 // Created by WML on 2018/11/20.
 //
+#pragma warning(disable:4996)
 
 #include "LexicalAnalysis.h"
 #include "lib.h"

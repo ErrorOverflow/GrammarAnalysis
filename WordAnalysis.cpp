@@ -1,3 +1,5 @@
+#pragma warning(disable:4996)
+
 #include "WordAnalysis.h"
 #include "lib.h"
 #include <string.h>
