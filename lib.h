@@ -8,10 +8,14 @@
 #include <unordered_map>
 
 using namespace std;
-
+struct Sym{
+    string name;
+    int type;
+    int dimension;
+};
 extern char *iden_point;
 extern int line;
-extern unordered_map<string, int, int> SymTable;
+extern unordered_map<int, int> SymTable;
 
 int JumpSpace(char *str);
 
