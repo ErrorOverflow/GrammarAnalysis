@@ -20,6 +20,7 @@ using namespace std;
 int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0;
+    char iden[64];
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
         if (*p != ' ') {
