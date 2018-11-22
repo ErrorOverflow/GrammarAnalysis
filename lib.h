@@ -15,7 +15,7 @@ struct Sym{
 };
 extern char *iden_point;
 extern int line;
-extern unordered_map<int, int> SymTable;
+extern unordered_map<string, Sym> SymTable;
 
 int JumpSpace(char *str);
 
