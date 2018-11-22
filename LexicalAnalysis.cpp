@@ -152,17 +152,27 @@ int TypeIdentifier(char *str) {
 
 int VarDefine(char *str) {
     char *p = str;
+    char *iden[64];
     int process_len = 0;
     int isVarDefine = 0;
+    int iden_len[64];
+    int iden_num = 0;
     while ((process_len = TypeIdentifier(p))) {
         p += process_len;
-        if (*p++ == ' ') {
+        if (*p == ' ') {
+            p++;
+            p += JumpSpace(p);
+            iden[iden_num] = p;
             if ((process_len = Identifier(p))) {
                 p += process_len;
+                p += JumpSpace(p);
+                iden_len[iden_num++] = process_len;
                 if (*p == '[') {
                     p++;
+                    p += JumpSpace(p);
                     if ((process_len = NoSignNum(p))) {
-                        *p += process_len;
+                        p += process_len;
+                        p += JumpSpace(p);
                         if (*p == ']') {
                             isVarDefine = 1;
                         }
@@ -176,13 +186,15 @@ int VarDefine(char *str) {
             if (*p == ',') {
                 p++;
             } else {
-                break;
+                //for(int i=0;i<iden_num;i++){
+                //    SymInsert(iden[i],)
+                //}
+                return (int) ((p - str) / sizeof(char));
             }
         } else {
             return 0;
         }
     }
-    return (int) ((p - str) / sizeof(char));
 }
 
 int VarDeclare(char *str) {

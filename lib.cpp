@@ -27,9 +27,10 @@ int JumpSpace(char *str) {
 }
 
 void WordExtract(char *str, char *word, int len) {
+    char *p = str;
     try {
         for (int i = 0; i < len; i++) {
-            *(word + i) = *(str + i);
+            *(word + i) = *(p + i);
         }
         *(word + len) = '\0';
     } catch (exception e) {
