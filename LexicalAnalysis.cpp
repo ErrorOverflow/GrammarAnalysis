@@ -103,29 +103,26 @@ int ConstDeclare(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
-    if (*p == 'c' && *(p + 1) == 'o' && *(p + 2) == 'n' && *(p + 3) == 's' && *(p + 4) == 't') {
-        p += 5;
-        if (*p == ' ') {
-            p++;
+    while (*p == 'c' && *(p + 1) == 'o' && *(p + 2) == 'n' && *(p + 3) == 's' && *(p + 4) == 't' && *(p + 5) == ' ') {
+        p += 6;
+        p += JumpSpace(p);
+        if ((process_len = ConstDefine(p))) {
+            p += process_len;
             p += JumpSpace(p);
-            while ((process_len = ConstDefine(p))) {
-                p += process_len;
+            if (*p == ';') {
+                p++;
                 p += JumpSpace(p);
-                if (*p == ';') {
-                    p++;
-                    p += JumpSpace(p);
-                    isRight = 1;
-                    break;
-                } else {
-                    isRight = 0;
-                    break;
-                }
+                isRight = 1;
+                continue;
+            } else {
+                isRight = 0;
+                break;
             }
         }
-        if (isRight) {
-            cout << "<ConstDeclare>";
-            return (int) ((p - str) / sizeof(char));
-        }
+    }
+    if (isRight) {
+        cout << "<ConstDeclare>";
+        return (int) ((p - str) / sizeof(char));
     }
     return 0;
 }
