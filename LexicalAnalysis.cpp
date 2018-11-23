@@ -24,7 +24,6 @@ int ConstDefine(char *str) {
     char *identifier[64];
     int identifier_len[64];
     int identifier_type = 0;
-    int identifier_dim[64];
     int identifier_num = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         identifier_type = 0;
@@ -92,7 +91,7 @@ int ConstDefine(char *str) {
             for (int j = 0; j < identifier_len[i]; j++) {
                 name = name + *(identifier[i] + j);
             }
-            SymInsert(name, identifier_type, 0, 1);
+            SymInsert(name, identifier_type, 0, 0);
         }
         return (int) ((p - str) / sizeof(char));
     }
@@ -241,10 +240,6 @@ int VarDeclare(char *str) {
 int ReturnFuncDefine(char *str) {
     char *p = str;
     int process_len = 0;
-    int func_len[64];
-    int func_type;
-    int para_num = 0;
-    int para[16];
     if ((process_len = DeclareHead(p))) {
         p += process_len;
         p += JumpSpace(p);

@@ -12,13 +12,7 @@ struct Sym {
     string name;
     int type;
     int dimension;
-    int read;
-};
-struct Func{
-    string name;
-    int type;
-    int para_num;
-    int para_type[16];
+    int kind;//0.const 1.var 2.func
 };
 extern char *iden_point;
 extern int line;
