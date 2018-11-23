@@ -12,6 +12,7 @@ struct Sym {
     string name;
     int type;
     int dimension;
+    int read;
 };
 extern char *iden_point;
 extern int line;
@@ -21,6 +22,6 @@ int JumpSpace(char *str);
 
 void WordExtract(char *str, char *word, int len);
 
-int SymInsert(string name, int type, int dimension);
+int SymInsert(string name, int type, int dimension,int read);
 
 #endif //COMPILER_LIB_H

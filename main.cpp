@@ -12,7 +12,7 @@ int main() {
     ReadFromFile();
     auto iter = SymTable.begin();
     while (iter != SymTable.end()) {
-        cout << iter->first << "," << iter->second.type << "," << iter->second.dimension << endl;
+        cout << iter->second.name << "," << iter->second.type << "," << iter->second.dimension<< ","<< iter->second.read << endl;
         iter++;
     }
     system("pause");

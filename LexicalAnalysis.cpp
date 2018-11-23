@@ -20,14 +20,23 @@ using namespace std;
 int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0;
-    char identifier[64];
+    int isConstDefine = 0;
+    char *identifier[64];
+    int identifier_len[64];
+    int identifier_type = 0;
+    int identifier_dim[64];
+    int identifier_num = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
+        identifier_type = 0;
         p += 3;
         if (*p != ' ') {
             return 0;
         }
         p++;
-        if ((process_len = Identifier(p))) {
+        p += JumpSpace(p);
+        while ((process_len = Identifier(p))) {
+            identifier[identifier_num] = p;
+            identifier_len[identifier_num] = process_len;
             p += process_len;
             p += JumpSpace(p);
             if (*p == '=') {
@@ -35,60 +44,57 @@ int ConstDefine(char *str) {
                 p += JumpSpace(p);
                 if ((process_len = Integer(p))) {
                     p += process_len;
-                    while (*p == ',') {
+                    p += JumpSpace(p);
+                    if (*p == ',') {
                         p++;
                         p += JumpSpace(p);
-                        if ((process_len = Identifier(p))) {
-                            p += process_len;
-                            if (*p++ == '=') {
-                                if ((process_len = Integer(p))) {
-                                    p += process_len;
-                                    p += JumpSpace(p);
-                                    return (int) ((p - str) / sizeof(char));
-                                }
-                            }
-                        }
+                        identifier_num++;
+                        continue;
+                    } else {
+                        isConstDefine = 1;
+                        break;
                     }
-                    p += JumpSpace(p);
-                    return (int) ((p - str) / sizeof(char));;
                 }
             }
         }
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
+        identifier_type = 1;
         p += 4;
         if (*p != ' ') {
             return 0;
         }
-        if (Identifier(p)) {
+        p++;
+        p += JumpSpace(p);
+        while ((process_len = Identifier(p))) {
             p += process_len;
+            p += JumpSpace(p);
             if (*p == '=') {
                 p++;
                 p += JumpSpace(p);
-                if ((process_len = Integer(p))) {
+                if ((process_len = Character(p))) {
                     p += process_len;
                     p += JumpSpace(p);
-                    while (*p == ',') {
+                    if (*p == ',') {
                         p++;
                         p += JumpSpace(p);
-                        if ((process_len = Identifier(p))) {
-                            p += process_len;
-                            p += JumpSpace(p);
-                            if (*p == '=') {
-                                p++;
-                                p += JumpSpace(p);
-                                if ((process_len = Integer(p))) {
-                                    p += process_len;
-                                    p += JumpSpace(p);
-                                    return (int) ((p - str) / sizeof(char));
-                                }
-                            }
-                        }
+                        continue;
+                    } else {
+                        isConstDefine = 1;
+                        break;
                     }
-                    p += JumpSpace(p);
-                    return (int) ((p - str) / sizeof(char));;
                 }
             }
         }
+    }
+    if (isConstDefine) {
+        for (int i = 0; i <= identifier_num; i++) {
+            string name;
+            for (int j = 0; j < identifier_len[i]; j++) {
+                name = name + *(identifier[i] + j);
+            }
+            SymInsert(name, identifier_type, 0, 1);
+        }
+        return (int) ((p - str) / sizeof(char));
     }
     return 0;
 }
@@ -203,7 +209,7 @@ int VarDefine(char *str) {
                     for (int j = 0; j < identifier_len[i]; j++) {
                         name = name + *(identifier[i] + j);
                     }
-                    SymInsert(name, identifier_type, identifier_dim[i]);
+                    SymInsert(name, identifier_type, identifier_dim[i], 1);
                 }
                 return (int) ((p - str) / sizeof(char));
             }

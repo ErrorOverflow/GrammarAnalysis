@@ -38,8 +38,8 @@ void WordExtract(char *str, char *word, int len) {
     }
 }
 
-int SymInsert(string name, int type, int dimension) {
-    Sym sym = {name, type, dimension};
+int SymInsert(string name, int type, int dimension, int read) {
+    Sym sym = {name, type, dimension, read};
     SymTable.insert(pair<string, Sym>(name, sym));
     return 1;
 }
