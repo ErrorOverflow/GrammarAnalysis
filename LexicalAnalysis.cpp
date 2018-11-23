@@ -157,49 +157,53 @@ int VarDefine(char *str) {
     int isVarDefine = 0;
     char *identifier[64];
     int identifier_len[64];
-    int identifier_type[64];
+    int identifier_type;
     int identifier_dim[64];
     int identifier_num = 0;
-    while ((process_len = TypeIdentifier(p))) {
+    if ((process_len = TypeIdentifier(p))) {
         p += process_len;
-        (process_len == 4) ? (identifier_type[identifier_num] = 1) : (identifier_type[identifier_num] = 0);
+        (process_len == 4) ? (identifier_type = 1) : (identifier_type = 0);
         if (*p == ' ') {
             p++;
             p += JumpSpace(p);
-            identifier[identifier_num] = p;
-            if ((process_len = Identifier(p))) {
+        }
+    } else {
+        return 0;
+    }
+    while ((process_len = Identifier(p))) {
+        identifier[identifier_num] = p;
+        p += process_len;
+        p += JumpSpace(p);
+        identifier_len[identifier_num] = process_len;
+        if (*p == '[') {
+            p++;
+            p += JumpSpace(p);
+            if ((process_len = NoSignNum(p))) {
                 p += process_len;
                 p += JumpSpace(p);
-                identifier_len[identifier_num] = process_len;
-                if (*p == '[') {
+                if (*p == ']') {
                     p++;
-                    p += JumpSpace(p);
-                    if ((process_len = NoSignNum(p))) {
-                        p += process_len;
-                        p += JumpSpace(p);
-                        if (*p == ']') {
-                            p++;
-                            isVarDefine = 1;
-                            identifier_dim[identifier_num] = 1;
-                        }
-                    }
-                } else {
                     isVarDefine = 1;
-                    identifier_dim[identifier_num] = 0;
+                    identifier_dim[identifier_num] = 1;
                 }
             }
+        } else {
+            isVarDefine = 1;
+            identifier_dim[identifier_num] = 0;
         }
+        p += JumpSpace(p);
         if (isVarDefine) {
             if (*p == ',') {
                 p++;
                 identifier_num++;
+                continue;
             } else {
                 for (int i = 0; i <= identifier_num; i++) {
                     string name = "";
                     for (int j = 0; j < identifier_len[i]; j++) {
                         name = name + *(identifier[i] + j);
                     }
-                    SymInsert(name, identifier_type[i], identifier_dim[i]);
+                    SymInsert(name, identifier_type, identifier_dim[i]);
                 }
                 return (int) ((p - str) / sizeof(char));
             }

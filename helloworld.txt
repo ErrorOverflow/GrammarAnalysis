@@ -23,7 +23,7 @@ void NoReturnFunc(char k){
 }
 
 void main(){
-    int a[10];
+    int a[10],e;
     for(i=0;i<MAX;i+1){
         scanf(e);
 		f[i] = e;
