@@ -13,6 +13,7 @@ using namespace std;
 char *iden_point;
 int line;
 unordered_map<string, Sym> SymTable;
+unordered_map<string, Func> FuncTable;
 
 int JumpSpace(char *str) {
     char *p = str;

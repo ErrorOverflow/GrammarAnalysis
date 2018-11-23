@@ -14,6 +14,12 @@ struct Sym {
     int dimension;
     int read;
 };
+struct Func{
+    string name;
+    int type;
+    int para_num;
+    int para_type[16];
+};
 extern char *iden_point;
 extern int line;
 extern unordered_map<string, Sym> SymTable;
