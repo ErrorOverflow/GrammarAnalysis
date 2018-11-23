@@ -20,7 +20,7 @@ using namespace std;
 int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0;
-    char iden[64];
+    char identifier[64];
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
         if (*p != ' ') {
@@ -117,6 +117,7 @@ int ConstDeclare(char *str) {
             }
         }
         if (isRight) {
+            cout << "<ConstDeclare>";
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -152,21 +153,24 @@ int TypeIdentifier(char *str) {
 
 int VarDefine(char *str) {
     char *p = str;
-    char *iden[64];
     int process_len = 0;
     int isVarDefine = 0;
-    int iden_len[64];
-    int iden_num = 0;
+    char *identifier[64];
+    int identifier_len[64];
+    int identifier_type[64];
+    int identifier_dim[64];
+    int identifier_num = 0;
     while ((process_len = TypeIdentifier(p))) {
         p += process_len;
+        (process_len == 4) ? (identifier_type[identifier_num] = 1) : (identifier_type[identifier_num] = 0);
         if (*p == ' ') {
             p++;
             p += JumpSpace(p);
-            iden[iden_num] = p;
+            identifier[identifier_num] = p;
             if ((process_len = Identifier(p))) {
                 p += process_len;
                 p += JumpSpace(p);
-                iden_len[iden_num++] = process_len;
+                identifier_len[identifier_num] = process_len;
                 if (*p == '[') {
                     p++;
                     p += JumpSpace(p);
@@ -174,21 +178,29 @@ int VarDefine(char *str) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ']') {
+                            p++;
                             isVarDefine = 1;
+                            identifier_dim[identifier_num] = 1;
                         }
                     }
                 } else {
                     isVarDefine = 1;
+                    identifier_dim[identifier_num] = 0;
                 }
             }
         }
         if (isVarDefine) {
             if (*p == ',') {
                 p++;
+                identifier_num++;
             } else {
-                //for(int i=0;i<iden_num;i++){
-                //    SymInsert(iden[i],)
-                //}
+                for (int i = 0; i <= identifier_num; i++) {
+                    string name = "";
+                    for (int j = 0; j < identifier_len[i]; j++) {
+                        name = name + *(identifier[i] + j);
+                    }
+                    SymInsert(name, identifier_type[i], identifier_dim[i]);
+                }
                 return (int) ((p - str) / sizeof(char));
             }
         } else {
@@ -212,6 +224,7 @@ int VarDeclare(char *str) {
     }
     if (isVarDeclare) {
         p += JumpSpace(p);
+        cout << "<VarDeclare>";
         return (int) ((p - str) / sizeof(char));
     } else {
         return 0;
@@ -913,12 +926,12 @@ int Program(char *str) {
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        cout << "<ConstDeclare>" << endl << endl;
+        cout << endl << endl;
     }
     if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        cout << "<VarDeclare>" << endl << endl;
+        cout << endl << endl;
     }
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
         cout << "<FuncDefine>" << endl << endl;

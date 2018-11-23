@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 using namespace std;
-struct Sym{
+struct Sym {
     string name;
     int type;
     int dimension;
@@ -18,6 +18,8 @@ extern int line;
 extern unordered_map<string, Sym> SymTable;
 
 int JumpSpace(char *str);
+
+void WordExtract(char *str, char *word, int len);
 
 int SymInsert(string name, int type, int dimension);
 
