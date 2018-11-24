@@ -3,4 +3,4 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(GrammarAnalysis main.cpp WordAnalysis.cpp WordAnalysis.h FileIO.cpp FileIO.h lib.cpp lib.h LexicalAnalysis.cpp LexicalAnalysis.h Exception.cpp Exception.h)
+add_executable(GrammarAnalysis main.cpp WordAnalysis.cpp WordAnalysis.h FileIO.cpp FileIO.h lib.cpp lib.h LexicalAnalysis.cpp LexicalAnalysis.h Exception.cpp Exception.h MipsGenerate.cpp MipsGenerate.h PCodeGenerate.cpp PCodeGenerate.h)

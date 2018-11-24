@@ -9,9 +9,10 @@
 
 using namespace std;
 struct Sym {
+    int code;
     string name;
     int type;
-    int dimension;
+    int dimension;//0.int 1.char 2.string
     int kind;//0.const 1.var 2.func
 };
 extern char *iden_point;

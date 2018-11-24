@@ -1,4 +1,4 @@
-const int MAX=5;const int k=1;
+const int MAX=5;
 int Variable;
 
 int func(int i,int PAR){
@@ -23,25 +23,20 @@ void NoReturnFunc(char k){
 }
 
 void main(){
-    int a[10],e;
+    int a[10],b,c,e;
     for(i=0;i<MAX;i+1){
         scanf(e);
 		f[i] = e;
 	}
 	i=0;
-	do{
-		e = f[i];
-		printf("233");
-		i = i+1;
-	}while(i<MAX)
 	printf("next period\n");
 	for( i =0; i<MAX;i+1){
 		NoReturnFunc(f[i]);
 	}
 	printf("next period\n");
-	printf(func(100,INTMAX)*'a');
+	printf(func(100,INTMAX)*11);
 	printf("next period\n");
-	b=ASSIGNB;
+	b=10;
 	c[5] = 7 ;
 	if(b>c[5])
 		printf("b is bigger than c[5]\n");

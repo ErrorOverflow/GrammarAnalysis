@@ -12,6 +12,8 @@ using namespace std;
 
 char *iden_point;
 int line;
+int LocalCode = 1000;
+int MidCode = 5000;
 unordered_map<string, Sym> SymTable;
 
 int JumpSpace(char *str) {
@@ -39,7 +41,7 @@ void WordExtract(char *str, char *word, int len) {
 }
 
 int SymInsert(string name, int type, int dimension, int read) {
-    Sym sym = {name, type, dimension, read};
+    Sym sym = {LocalCode++, name, type, dimension, read};
     SymTable.insert(pair<string, Sym>(name, sym));
     return 1;
 }
