@@ -1,7 +1,7 @@
 //
 // Created by WML on 2018/11/24.
 //
-
+#pragma warning(disable:4996)
 #include "PCodeGenerate.h"
 
 using namespace std;
