@@ -17,6 +17,9 @@
 
 using namespace std;
 
+char func_name[64];
+int func_type;
+
 int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0;
@@ -131,12 +134,19 @@ int DeclareHead(char *str) {
     int process_len = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
+        func_type=0;
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
         p += 4;
+        func_type=1;
     }
     if (*p == ' ') {
         p++;
+        p += JumpSpace(p);
         process_len = Identifier(p);
+        for (int i = 0; i < process_len; i++) {
+            func_name[i] = *(p + i);
+        }
+        func_name[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
@@ -267,6 +277,7 @@ int ReturnFuncDefine(char *str) {
                             if (*p == '}') {
                                 p++;
                                 p += JumpSpace(p);
+                                SymInsert(func_name,func_type);
                                 return (int) ((p - str) / sizeof(char));
                             }
                         }
@@ -287,6 +298,10 @@ int NoReturnFuncDefine(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
+                for (int i = 0; i < process_len; i++) {
+                    func_name[i] = *(p + i);
+                }
+                func_name[process_len] = '\0';
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == '(') {
@@ -307,6 +322,7 @@ int NoReturnFuncDefine(char *str) {
                                     if (*p == '}') {
                                         p++;
                                         p += JumpSpace(p);
+                                        SymInsert(func_name,2);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }

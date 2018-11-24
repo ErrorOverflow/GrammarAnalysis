@@ -11,7 +11,7 @@ using namespace std;
 struct Sym {
     int code;
     string name;
-    int type;
+    int type;//0.int 1.char 2.void
     int dimension;//0.int 1.char 2.string
     int kind;//0.const 1.var 2.func
 };
@@ -27,5 +27,7 @@ int JumpSpace(char *str);
 void WordExtract(char *str, char *word, int len);
 
 int SymInsert(string name, int type, int dimension, int read);
+
+int SymInsert(string name, int type);
 
 #endif //COMPILER_LIB_H

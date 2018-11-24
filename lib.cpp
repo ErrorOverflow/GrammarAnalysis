@@ -47,3 +47,9 @@ int SymInsert(string name, int type, int dimension, int read) {
     return 1;
 }
 
+int SymInsert(string name, int type) {
+    Sym sym = {LocalCode++, name, type, 0, 2};
+    SymTable[0].insert(pair<string, Sym>(name, sym));
+    return 1;
+}
+

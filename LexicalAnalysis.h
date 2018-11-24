@@ -5,6 +5,9 @@
 #ifndef COMPILER_LEXICALANALYSIS_H
 #define COMPILER_LEXICALANALYSIS_H
 
+extern char func_name[64];
+extern int func_type;
+
 int ConstDefine(char *str);
 
 int ConstDeclare(char *str);
