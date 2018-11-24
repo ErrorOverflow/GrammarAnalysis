@@ -17,12 +17,14 @@ struct Sym {
 };
 extern char *iden_point;
 extern int line;
+extern int LocalCode;
+extern int MidCode;
 extern unordered_map<string, Sym> SymTable;
 
 int JumpSpace(char *str);
 
 void WordExtract(char *str, char *word, int len);
 
-int SymInsert(string name, int type, int dimension,int read);
+int SymInsert(string name, int type, int dimension, int read);
 
 #endif //COMPILER_LIB_H
