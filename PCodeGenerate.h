@@ -10,8 +10,12 @@
 #define CALL 103
 #define RET 104
 #define GOTO 105
+#define PLUS 106
+#define SUB 107
+#define MULTI 108
+#define DIV 109
 
-struct PCode{
+struct PCode {
     int x;
     int y;
     int op;

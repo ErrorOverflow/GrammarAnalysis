@@ -24,10 +24,10 @@ extern unordered_map<string, Sym> SymTable[64];
 
 int JumpSpace(char *str);
 
-void WordExtract(char *str, char *word, int len);
-
 int SymInsert(string name, int type, int dimension, int read);
 
 int SymInsert(string name, int type);
+
+void SymPrint();
 
 #endif //COMPILER_LIB_H

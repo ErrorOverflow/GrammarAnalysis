@@ -29,18 +29,6 @@ int JumpSpace(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
-void WordExtract(char *str, char *word, int len) {
-    char *p = str;
-    try {
-        for (int i = 0; i < len; i++) {
-            *(word + i) = *(p + i);
-        }
-        *(word + len) = '\0';
-    } catch (exception e) {
-        cout << "WordExtract: " << *str << len << endl;
-    }
-}
-
 int SymInsert(string name, int type, int dimension, int read) {
     Sym sym = {LocalCode++, name, type, dimension, read};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
@@ -51,5 +39,17 @@ int SymInsert(string name, int type) {
     Sym sym = {LocalCode++, name, type, 0, 2};
     SymTable[0].insert(pair<string, Sym>(name, sym));
     return 1;
+}
+
+void SymPrint(){
+    for (int i = 0; i <= TableNum; i++) {
+        auto iter = SymTable[i].begin();
+        while (iter != SymTable[i].end()) {
+            cout << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
+                 << ","
+                 << iter->second.dimension << "," << iter->second.kind << endl;
+            iter++;
+        }
+    }
 }
 
