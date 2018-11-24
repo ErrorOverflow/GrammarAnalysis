@@ -202,7 +202,11 @@ int VarDefine(char *str) {
                             for (int j = 0; j < identifier_len[i]; j++) {
                                 name = name + *(identifier[i] + j);
                             }
-                            SymInsert(name, identifier_type, identifier_dim[i], 1);
+                            char *mid = p;
+                            mid += JumpSpace(mid);
+                            if (*mid == ';') {
+                                SymInsert(name, identifier_type, identifier_dim[i], 1);
+                            }
                         }
                         return (int) ((p - str) / sizeof(char));
                     }

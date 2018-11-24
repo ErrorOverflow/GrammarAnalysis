@@ -104,6 +104,7 @@ int String(char *str) {
                     word[i++] = *p;
                     p++;
                     word[i] = '\0';
+                    SymInsert(word, 2, 0, 0);
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
