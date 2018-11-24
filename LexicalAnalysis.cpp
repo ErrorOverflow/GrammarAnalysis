@@ -222,10 +222,12 @@ int VarDeclare(char *str) {
     while ((process_len = VarDefine(p))) {
         p += process_len;
         if (*p != ';') {
+            p -= process_len;
             break;
         } else {
             isVarDeclare = 1;
             p++;
+            p += JumpSpace(p);
         }
     }
     if (isVarDeclare) {
@@ -939,10 +941,12 @@ int Program(char *str) {
         p += JumpSpace(p);
         cout << endl << endl;
     }
+    TableNum++;
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
         cout << "<FuncDefine>" << endl << endl;
         p += process_len;
         p += JumpSpace(p);
+        TableNum++;
     }
     if ((process_len = MainFunc(p))) {
         cout << "<MainFunc>" << endl << endl;

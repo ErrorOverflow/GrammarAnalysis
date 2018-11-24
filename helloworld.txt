@@ -24,6 +24,7 @@ void NoReturnFunc(char k){
 
 void main(){
     int a[10],b,c,e;
+	char ch;
     for(i=0;i<MAX;i+1){
         scanf(e);
 		f[i] = e;

@@ -14,7 +14,8 @@ char *iden_point;
 int line;
 int LocalCode = 1000;
 int MidCode = 5000;
-unordered_map<string, Sym> SymTable;
+int TableNum = 0;
+unordered_map<string, Sym> SymTable[64];
 
 int JumpSpace(char *str) {
     char *p = str;
@@ -42,7 +43,7 @@ void WordExtract(char *str, char *word, int len) {
 
 int SymInsert(string name, int type, int dimension, int read) {
     Sym sym = {LocalCode++, name, type, dimension, read};
-    SymTable.insert(pair<string, Sym>(name, sym));
+    SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     return 1;
 }
 

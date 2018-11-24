@@ -10,11 +10,14 @@ using namespace std;
 
 int main() {
     ReadFromFile();
-    auto iter = SymTable.begin();
-    while (iter != SymTable.end()) {
-        cout << iter->second.code << "," << iter->second.name << "," << iter->second.type << ","
-             << iter->second.dimension << "," << iter->second.kind << endl;
-        iter++;
+    for (int i = 0; i <= TableNum; i++) {
+        auto iter = SymTable[i].begin();
+        while (iter != SymTable[i].end()) {
+            cout << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
+                 << ","
+                 << iter->second.dimension << "," << iter->second.kind << endl;
+            iter++;
+        }
     }
     system("pause");
     return 0;

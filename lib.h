@@ -19,7 +19,8 @@ extern char *iden_point;
 extern int line;
 extern int LocalCode;
 extern int MidCode;
-extern unordered_map<string, Sym> SymTable;
+extern int TableNum;
+extern unordered_map<string, Sym> SymTable[64];
 
 int JumpSpace(char *str);
 
