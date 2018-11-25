@@ -30,4 +30,6 @@ int SymInsert(string name, int type);
 
 void SymPrint();
 
+int SymFind(string name);
+
 #endif //COMPILER_LIB_H

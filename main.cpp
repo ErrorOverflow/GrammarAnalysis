@@ -10,10 +10,10 @@
 using namespace std;
 
 int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
-    pcode_num=0;
+    pcode_num = 0;
     ReadFromFile();
     SymPrint();
-    cout<<"-------------------------------"<<endl;
+    cout << "-------------------------------" << endl;
     PCodePrint();
     system("pause");
     return 0;

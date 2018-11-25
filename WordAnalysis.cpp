@@ -2,6 +2,7 @@
 
 #include "WordAnalysis.h"
 #include "lib.h"
+#include "PCodeGenerate.h"
 #include <string.h>
 
 int Plus(char str) {
@@ -162,6 +163,37 @@ int Identifier(char *str) {
     char *p = str;
     char word[63];
     int i = 0;
+    if (Letter(*p)) {
+        word[i++] = *p;
+        p++;
+    } else {
+        return 0;
+    }
+    while (true) {
+        if (Letter(*p) || Num(*p)) {
+            word[i++] = *p;
+            p++;
+        } else {
+            word[i] = '\0';
+            if (!strcmp(word, "while") || !strcmp(word, "for") || !strcmp(word, "return") || !strcmp(word, "void") ||
+                !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf")) {
+                return 0;
+            }
+            p += JumpSpace(p);
+            word[i] = '\0';
+            if (str > iden_point) {
+                iden_point = str;
+            }
+            return (int) ((p - str) / sizeof(char));
+        }
+    }
+}
+
+int Identifier(char *str, int code) {
+    char *p = str;
+    char word[63];
+    int i = 0;
+    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (Letter(*p)) {
         word[i++] = *p;
         p++;

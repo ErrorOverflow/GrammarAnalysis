@@ -465,12 +465,11 @@ int Expression(char *str, int code) {
 int Term(char *str, int code) {
     char *p = str;
     int process_len = 0;
-    int x = 0, y = 0, z = 0, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
-    x = MidCode++;
-    z = MidCode;
+    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     while ((process_len = Factor(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
+        PCodeInsert(pcode_num++, x, y, op, z);
         if ((process_len = Multi(*p))) {
             if (*p == '*')
                 op = MULTI;
@@ -481,21 +480,24 @@ int Term(char *str, int code) {
         } else {
             return (int) ((p - str) / sizeof(char));
         }
-        PCodeInsert(pcode_num++, x, y, op, z);
         y = x;
         z = MidCode;
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
 int Factor(char *str, int code) {
     char *p = str;
     int process_len = 0;
+    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = ReturnFuncCall(p))) {
         p += process_len;
         p += JumpSpace(p);
+        PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
-    } else if ((process_len = Identifier(p))) {
+    } else if ((process_len = Identifier(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == '[') {
@@ -507,19 +509,23 @@ int Factor(char *str, int code) {
                 if (*p == ']') {
                     p++;
                     p += JumpSpace(p);
+                    PCodeInsert(pcode_num++, x, y, op, z);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
         } else {
+            PCodeInsert(pcode_num++, x, y, op, z);
             return (int) ((p - str) / sizeof(char));
         }
     } else if ((process_len = Integer(p))) {
         p += process_len;
         p += JumpSpace(p);
+        PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Character(p))) {
         p += process_len;
         p += JumpSpace(p);
+        PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if (*p == '(') {
         p++;
@@ -530,10 +536,13 @@ int Factor(char *str, int code) {
             if (*p == ')') {
                 p++;
                 p += JumpSpace(p);
+                PCodeInsert(pcode_num++, x, y, op, z);
                 return (int) ((p - str) / sizeof(char));
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 

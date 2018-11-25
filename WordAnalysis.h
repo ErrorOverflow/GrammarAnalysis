@@ -25,6 +25,8 @@ int NoSignNum(char *str);
 
 int Integer(char *str);
 
+int Identifier(char *str, int code);
+
 int Identifier(char *str);
 
 #endif //COMPILER_WORDANALYSIS_H

@@ -53,3 +53,7 @@ void SymPrint(){
     }
 }
 
+int SymFind(string name){
+    return 0;
+}
+
