@@ -41,7 +41,7 @@ int SymInsert(string name, int type) {
     return 1;
 }
 
-void SymPrint(){
+void SymPrint() {
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
@@ -53,7 +53,16 @@ void SymPrint(){
     }
 }
 
-int SymFind(string name){
-    return 0;
+unordered_map<string, Sym>::iterator SymFind(string name) {//unordered_map<string,Sym>::iterator
+    auto iter = SymTable[TableNum].find(name);
+    if (iter != SymTable[TableNum].end()) {
+        return iter;
+    }
+    iter = SymTable[0].find(name);
+    if (iter != SymTable[0].end()) {
+        return iter;
+    }
+    cout << name << " is not in SymTable" << endl;
+    exit(-1);
 }
 

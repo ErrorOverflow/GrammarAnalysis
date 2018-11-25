@@ -4,6 +4,7 @@
 #include "lib.h"
 #include "PCodeGenerate.h"
 #include <string.h>
+#include <unordered_map>
 
 int Plus(char str) {
     if (str == '+') {
@@ -193,7 +194,7 @@ int Identifier(char *str, int code) {
     char *p = str;
     char word[63];
     int i = 0;
-    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int x = code, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (Letter(*p)) {
         word[i++] = *p;
         p++;
@@ -215,6 +216,9 @@ int Identifier(char *str, int code) {
             if (str > iden_point) {
                 iden_point = str;
             }
+            auto iter = SymFind(word);
+            z = iter->second.code;
+            PCodeInsert(pcode_num++, x, y, op, z);
             return (int) ((p - str) / sizeof(char));
         }
     }

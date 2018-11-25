@@ -30,6 +30,6 @@ int SymInsert(string name, int type);
 
 void SymPrint();
 
-int SymFind(string name);
+unordered_map<string, Sym>::iterator SymFind(string name);
 
 #endif //COMPILER_LIB_H
