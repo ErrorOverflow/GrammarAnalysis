@@ -5,8 +5,11 @@
 #ifndef COMPILER_LEXICALANALYSIS_H
 #define COMPILER_LEXICALANALYSIS_H
 
+#include "PCodeGenerate.h"
+
 extern char func_name[64];
 extern int func_type;
+extern PCode expression_buffer[256];
 
 int ConstDefine(char *str);
 

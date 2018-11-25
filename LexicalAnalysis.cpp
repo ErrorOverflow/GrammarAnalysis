@@ -7,6 +7,7 @@
 #include "lib.h"
 #include "WordAnalysis.h"
 #include "Exception.h"
+#include "PCodeGenerate.h"
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -134,10 +135,10 @@ int DeclareHead(char *str) {
     int process_len = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
-        func_type=0;
+        func_type = 0;
     } else if (*p == 'c' && *(p + 1) == 'h' && *(p + 2) == 'a' && *(p + 3) == 'r') {
         p += 4;
-        func_type=1;
+        func_type = 1;
     }
     if (*p == ' ') {
         p++;
@@ -277,7 +278,7 @@ int ReturnFuncDefine(char *str) {
                             if (*p == '}') {
                                 p++;
                                 p += JumpSpace(p);
-                                SymInsert(func_name,func_type);
+                                SymInsert(func_name, func_type);
                                 return (int) ((p - str) / sizeof(char));
                             }
                         }
@@ -322,7 +323,7 @@ int NoReturnFuncDefine(char *str) {
                                     if (*p == '}') {
                                         p++;
                                         p += JumpSpace(p);
-                                        SymInsert(func_name,2);
+                                        SymInsert(func_name, 2);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }
@@ -424,8 +425,11 @@ int MainFunc(char *str) {
 
 int Expression(char *str) {
     char *p = str;
-    int process_len = 0;
-    if (*p == '+' || *p == '-') {
+    int process_len = 0, MidCode_buf = MidCode;
+    int x = 0, y = 0, z = 0, op = 0;
+    if (*p == '+') {
+        p++;
+    } else if (*p == '-') {
         p++;
     }
     p += JumpSpace(p);
@@ -437,9 +441,11 @@ int Expression(char *str) {
             p += JumpSpace(p);
         } else {
             p += JumpSpace(p);
+            cout << "<Expression>";
             return (int) ((p - str) / sizeof(char));
         }
     }
+    MidCode = MidCode_buf;
     return 0;
 }
 

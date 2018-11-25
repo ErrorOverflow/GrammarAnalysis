@@ -4,8 +4,13 @@
 #pragma warning(disable:4996)
 
 #include "PCodeGenerate.h"
+#include "lib.h"
 #include <iostream>
 
 using namespace std;
 
 PCode code[4096];
+
+void PCode(){
+
+}
