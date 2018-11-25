@@ -360,12 +360,22 @@ int ParameterList(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
+    char sym[64];
+    int sym_len;
+    int sym_type;
     while ((process_len = TypeIdentifier(p))) {
         p += process_len;
+        (process_len == 4) ? (sym_type = 1) : (sym_type = 0);
         if (*p == ' ') {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
+                sym_len = process_len;
+                for (int i = 0; i < sym_len; i++) {
+                    sym[i] = *(p + i);
+                }
+                sym[process_len] = '\0';
+                SymInsert(sym, sym_type, 0, 1);
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p != ',') {
@@ -373,6 +383,7 @@ int ParameterList(char *str) {
                     p += JumpSpace(p);
                     break;
                 } else {
+                    isRight = 0;
                     p++;
                     p += JumpSpace(p);
                 }
@@ -451,7 +462,6 @@ int Expression(char *str, int code) {
             p += JumpSpace(p);
         } else {
             p += JumpSpace(p);
-            cout << "<Expression>";
             return (int) ((p - str) / sizeof(char));
         }
         y = x;

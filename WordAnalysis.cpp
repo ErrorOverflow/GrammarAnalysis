@@ -94,7 +94,7 @@ int String(char *str) {
     char word[64];
     int i = 0;
     if (*p == '"') {
-        word[i++] = *p;
+        word[i++] = *(p+1);
         p++;
         while (true) {
             if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
@@ -103,9 +103,8 @@ int String(char *str) {
                 continue;
             } else {
                 if (*p == '"') {
-                    word[i++] = *p;
-                    p++;
                     word[i] = '\0';
+                    p++;
                     SymInsert(word, 2, 0, 0);
                     return (int) ((p - str) / sizeof(char));
                 } else {
