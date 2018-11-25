@@ -33,11 +33,11 @@ int ParameterList(char *str);
 
 int MainFunc(char *str);
 
-int Expression(char *str);
+int Expression(char *str, int code);
 
-int Term(char *str);
+int Term(char *str, int code);
 
-int Factor(char *str);
+int Factor(char *str, int code);
 
 int Sentence(char *str);
 

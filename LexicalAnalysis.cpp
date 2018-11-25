@@ -423,20 +423,30 @@ int MainFunc(char *str) {
     return 0;
 }
 
-int Expression(char *str) {
+int Expression(char *str, int code) {
     char *p = str;
-    int process_len = 0, MidCode_buf = MidCode;
-    int x = 0, y = 0, z = 0, op = 0;
+    int process_len = 0;
+    int x = 0, y = 0, z = 0, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == '+') {
         p++;
+        p += JumpSpace(p);
+        op = PLUS;
     } else if (*p == '-') {
         p++;
+        p += JumpSpace(p);
+        op = SUB;
     }
-    p += JumpSpace(p);
-    while ((process_len = Term(p))) {
+    x = code;
+    z = MidCode;
+    while ((process_len = Term(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
+        PCodeInsert(pcode_num++, x, y, op, z);
         if ((process_len = Plus(*p))) {
+            if (*p == '+')
+                op = PLUS;
+            else
+                op = SUB;
             p += process_len;
             p += JumpSpace(p);
         } else {
@@ -444,28 +454,41 @@ int Expression(char *str) {
             cout << "<Expression>";
             return (int) ((p - str) / sizeof(char));
         }
+        y = x;
+        z = MidCode;
     }
     MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
-int Term(char *str) {
+int Term(char *str, int code) {
     char *p = str;
     int process_len = 0;
-    while ((process_len = Factor(p))) {
+    int x = 0, y = 0, z = 0, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    x = MidCode++;
+    z = MidCode;
+    while ((process_len = Factor(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         if ((process_len = Multi(*p))) {
+            if (*p == '*')
+                op = MULTI;
+            else
+                op = DIV;
             p += process_len;
             p += JumpSpace(p);
         } else {
             return (int) ((p - str) / sizeof(char));
         }
+        PCodeInsert(pcode_num++, x, y, op, z);
+        y = x;
+        z = MidCode;
     }
     return 0;
 }
 
-int Factor(char *str) {
+int Factor(char *str, int code) {
     char *p = str;
     int process_len = 0;
     if ((process_len = ReturnFuncCall(p))) {
@@ -478,7 +501,7 @@ int Factor(char *str) {
         if (*p == '[') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Expression(p))) {
+            if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ']') {
@@ -501,7 +524,7 @@ int Factor(char *str) {
     } else if (*p == '(') {
         p++;
         p += JumpSpace(p);
-        if ((process_len = Expression(p))) {
+        if ((process_len = Expression(p, MidCode++))) {
             p += process_len;
             p += JumpSpace(p);
             if (*p == ')') {
@@ -579,7 +602,7 @@ int AssignSentence(char *str) {
         if (*p == '=') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Expression(p))) {
+            if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 cout << "<AssignSentence>";
@@ -588,7 +611,7 @@ int AssignSentence(char *str) {
         } else if (*p == '[') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Expression(p))) {
+            if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ']') {
@@ -597,7 +620,7 @@ int AssignSentence(char *str) {
                     if (*p == '=') {
                         p++;
                         p += JumpSpace(p);
-                        if ((process_len = Expression(p))) {
+                        if ((process_len = Expression(p, MidCode++))) {
                             p += process_len;
                             p += JumpSpace(p);
                             cout << "<AssignSentence>";
@@ -653,13 +676,13 @@ int ConditionSentence(char *str) {
 int Condition(char *str) {
     char *p = str;
     int process_len = 0;
-    if ((process_len = Expression(p))) {
+    if ((process_len = Expression(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         if ((process_len = RelationalOperator(p))) {
             p += process_len;
             p += JumpSpace(p);
-            if ((process_len = Expression(p))) {
+            if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 return (int) ((p - str) / sizeof(char));
@@ -711,7 +734,7 @@ int LoopSentence(char *str) {
                 if (*p == '=') {
                     p++;
                     p += JumpSpace(p);
-                    if ((process_len = Expression(p))) {
+                    if ((process_len = Expression(p, MidCode++))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ';') {
@@ -818,7 +841,7 @@ int NoReturnFuncCall(char *str) {
 int ValueParameterList(char *str) {
     char *p = str;
     int process_len = 0;
-    while ((process_len = Expression(p))) {
+    while ((process_len = Expression(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == ',') {
@@ -896,7 +919,7 @@ int WriteSentence(char *str) {
                 if (*p == ',') {
                     p++;
                     p += JumpSpace(p);
-                    if ((process_len = Expression(p))) {
+                    if ((process_len = Expression(p, MidCode++))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
@@ -912,7 +935,7 @@ int WriteSentence(char *str) {
                     cout << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
-            } else if ((process_len = Expression(p))) {
+            } else if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -936,7 +959,7 @@ int ReturnSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Expression(p))) {
+            if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {

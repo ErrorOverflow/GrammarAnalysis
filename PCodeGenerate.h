@@ -5,6 +5,11 @@
 #ifndef COMPILER_PCODEGENERATE_H
 #define COMPILER_PCODEGENERATE_H
 
+#include <malloc.h>
+#include <iostream>
+
+using namespace std;
+
 #define PARA 101
 #define PUSH 102
 #define CALL 103
@@ -22,6 +27,11 @@ struct PCode {
     int z;
 };
 
-extern PCode code[4096];
+extern PCode pcode[4096];
+extern int pcode_num;
+
+void PCodeInsert(int num, int x, int y, int op, int z);
+
+void PCodePrint();
 
 #endif //COMPILER_PCODEGENERATE_H
