@@ -499,7 +499,7 @@ int Term(char *str, int code) {
 }
 
 int Factor(char *str, int code) {
-    char *p = str;
+    char *p = str, word[64];
     int process_len = 0;
     int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = ReturnFuncCall(p))) {
@@ -528,11 +528,17 @@ int Factor(char *str, int code) {
             return (int) ((p - str) / sizeof(char));
         }
     } else if ((process_len = Integer(p))) {
+        for (int i = 0; i < process_len; i++) {
+            word[i] = *(p + i);
+        }
+        word[process_len] = '\0';
+        sscanf(word, "%d", &z);
         p += process_len;
         p += JumpSpace(p);
-        PCodeInsert(pcode_num++, x, y, op, z);
+        PCodeInsert(pcode_num++, code, 0, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Character(p))) {
+        z = *(p + 1);
         p += process_len;
         p += JumpSpace(p);
         PCodeInsert(pcode_num++, x, y, op, z);
@@ -540,13 +546,14 @@ int Factor(char *str, int code) {
     } else if (*p == '(') {
         p++;
         p += JumpSpace(p);
+        z=MidCode;
         if ((process_len = Expression(p, MidCode++))) {
             p += process_len;
             p += JumpSpace(p);
             if (*p == ')') {
                 p++;
                 p += JumpSpace(p);
-                PCodeInsert(pcode_num++, x, y, op, z);
+                PCodeInsert(pcode_num++, code, 0, op, z);
                 return (int) ((p - str) / sizeof(char));
             }
         }
