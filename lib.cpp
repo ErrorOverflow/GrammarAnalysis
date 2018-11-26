@@ -12,8 +12,8 @@ using namespace std;
 
 char *iden_point;
 int line;
-int LocalCode = 1000;
-int MidCode = 5000;
+int LocalCode = 10000000;
+int MidCode = 50000000;
 int TableNum = 0;
 unordered_map<string, Sym> SymTable[64];
 

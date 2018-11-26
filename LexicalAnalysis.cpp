@@ -546,7 +546,7 @@ int Factor(char *str, int code) {
     } else if (*p == '(') {
         p++;
         p += JumpSpace(p);
-        z=MidCode;
+        z = MidCode;
         if ((process_len = Expression(p, MidCode++))) {
             p += process_len;
             p += JumpSpace(p);
