@@ -15,7 +15,7 @@ int ConstDefine(char *str);
 
 int ConstDeclare(char *str);
 
-int DeclareHead(char *str);
+int DeclareHead(char *str, int code);
 
 int TypeIdentifier(char *str);
 

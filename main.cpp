@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     pcode_num = 0;
     ReadFromFile();

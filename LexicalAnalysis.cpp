@@ -130,9 +130,10 @@ int ConstDeclare(char *str) {
     return 0;
 }
 
-int DeclareHead(char *str) {
+int DeclareHead(char *str, int code) {
     char *p = str;
     int process_len = 0;
+    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
         func_type = 0;
@@ -257,7 +258,8 @@ int VarDeclare(char *str) {
 int ReturnFuncDefine(char *str) {
     char *p = str;
     int process_len = 0;
-    if ((process_len = DeclareHead(p))) {
+    int x = MidCode, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    if ((process_len = DeclareHead(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
@@ -287,6 +289,8 @@ int ReturnFuncDefine(char *str) {
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
@@ -437,7 +441,7 @@ int MainFunc(char *str) {
 int Expression(char *str, int code) {
     char *p = str;
     int process_len = 0;
-    int x = 0, y = 0, z = 0, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int x = 0, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == '+') {
         p++;
         p += JumpSpace(p);
@@ -567,6 +571,7 @@ int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
+    int x = 0, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = ConditionSentence(p))) {
         isRight = 2;
     } else if ((process_len = LoopSentence(p))) {
@@ -979,6 +984,7 @@ int WriteSentence(char *str) {
 int ReturnSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    int x = 31, y = 0, z = MidCode, op = RET, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'r' && *(p + 1) == 'e' && *(p + 2) == 't' && *(p + 3) == 'u' && *(p + 4) == 'r' && *(p + 5) == 'n') {
         p += 6;
         p += JumpSpace(p);
@@ -991,6 +997,7 @@ int ReturnSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     cout << "<ReturnSen>";
+                    PCodeInsert(pcode_num++, x, y, op, z);
                     return (int) ((p - str) / sizeof(char));;
                 }
             }
@@ -999,6 +1006,8 @@ int ReturnSentence(char *str) {
             return (int) ((p - str) / sizeof(char));
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
