@@ -275,7 +275,7 @@ int ReturnFuncDefine(char *str) {
                         p++;
                         p += JumpSpace(p);
                         SymInsert(func_name, func_type);
-                        PCodeInsert(pcode_num++, 0, 0, FUNC, LocalCode - 1);
+                        PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                         if ((process_len = CompoundSentence(p))) {
                             p += process_len;
                             p += JumpSpace(p);
@@ -330,7 +330,7 @@ int NoReturnFuncDefine(char *str) {
                                         p++;
                                         p += JumpSpace(p);
                                         SymInsert(func_name, 2);
-                                        PCodeInsert(pcode_num++, 0, 0, FUNC, LocalCode - 1);
+                                        PCodeInsert(pcode_num++, 0, 0, LABLE, LocalCode - 1);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }
@@ -733,9 +733,11 @@ int Condition(char *str) {
 int LoopSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    int x = 0, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
+        PCodeInsert(pcode_num++, 0, 0, LABEL, MidCode++);
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
@@ -812,6 +814,8 @@ int LoopSentence(char *str) {
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 

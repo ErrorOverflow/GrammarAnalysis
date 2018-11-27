@@ -74,7 +74,7 @@ void OpExchange(int op) {
             cout << " DIV ";
             break;
         case 110:
-            cout << " FUNC ";
+            cout << " LAB ";
             break;
         default:
             cout << " " << op << " ";

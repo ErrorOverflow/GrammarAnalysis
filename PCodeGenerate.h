@@ -19,7 +19,7 @@ using namespace std;
 #define SUB 107
 #define MULTI 108
 #define DIV 109
-#define FUNC 110
+#define LABEL 110
 
 struct PCode {
     int x;
