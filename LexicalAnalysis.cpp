@@ -370,7 +370,6 @@ int ParameterList(char *str) {
     int process_len = 0;
     int isRight = 0;
     char sym[64];
-    int sym_len;
     int sym_type;
     while ((process_len = TypeIdentifier(p))) {
         p += process_len;
@@ -379,8 +378,7 @@ int ParameterList(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
-                sym_len = process_len;
-                for (int i = 0; i < sym_len; i++) {
+                for (int i = 0; i < process_len; i++) {
                     sym[i] = *(p + i);
                 }
                 sym[process_len] = '\0';
@@ -672,14 +670,14 @@ int AssignSentence(char *str) {
 int ConditionSentence(char *str) {
     char *p = str;
     int process_len = 0;
-    int label = LabelCode, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int label = LabelCode, LabelCode_buf = LabelCode++, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'i' && *(p + 1) == 'f') {
         p += 2;
         p += JumpSpace(p);
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Condition(p, label))) {
+            if ((process_len = Condition(p, label, BEQ))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -691,6 +689,7 @@ int ConditionSentence(char *str) {
                         if (*p == 'e' && *(p + 1) == 'l' && *(p + 2) == 's' && *(p + 3) == 'e') {
                             p += 4;
                             p += JumpSpace(p);
+                            PCodeInsert(pcode_num++, 0, 0, LABEL, label);
                             if ((process_len = Sentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
@@ -698,6 +697,7 @@ int ConditionSentence(char *str) {
                                 return (int) ((p - str) / sizeof(char));
                             }
                         } else {
+                            PCodeInsert(pcode_num++, 0, 0, LABEL, label);
                             cout << "<IF>" << endl;
                             return (int) ((p - str) / sizeof(char));
                         }
@@ -706,10 +706,13 @@ int ConditionSentence(char *str) {
             }
         }
     }
+    LabelCode = LabelCode_buf;
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
-int Condition(char *str, int code) {
+int Condition(char *str, int code, int jump_op) {
     char *p = str;
     int process_len = 0;
     int x = code, y = 0, z = 0, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
@@ -728,8 +731,8 @@ int Condition(char *str, int code) {
                 return (int) ((p - str) / sizeof(char));
             }
         } else {
-            op = BEQ;
-            PCodeInsert(pcode_num++, code, y, op, z);
+            op = jump_op;
+            PCodeInsert(pcode_num++, x, y, op, z);
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -741,11 +744,11 @@ int Condition(char *str, int code) {
 int LoopSentence(char *str) {
     char *p = str;
     int process_len = 0;
-    int label = LabelCode, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int label = LabelCode, LabelCode_buf = LabelCode++, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
-        PCodeInsert(pcode_num++, 0, 0, LABEL, LabelCode++);
+        PCodeInsert(pcode_num++, 0, 0, LABEL, label);
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
@@ -755,7 +758,7 @@ int LoopSentence(char *str) {
                 if (*p == '(') {
                     p++;
                     p += JumpSpace(p);
-                    if ((process_len = Condition(p, label))) {
+                    if ((process_len = Condition(p, label, BEQ))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
@@ -769,36 +772,61 @@ int LoopSentence(char *str) {
             }
         }
     } else if (*p == 'f' && *(p + 1) == 'o' && *(p + 2) == 'r') {
+        int x = 0, y = 0, op = 0, z = 0;
+        char ini[64], par[64], step[64];
         p += 3;
         p += JumpSpace(p);
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
+                for (int i = 0; i < process_len; i++) {
+                    ini[i] = *(p + i);
+                }
+                ini[process_len] = '\0';
+                auto iter = SymFind(ini);
+                x = iter->second.code;
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == '=') {
                     p++;
                     p += JumpSpace(p);
+                    z = MidCode;
                     if ((process_len = Expression(p, MidCode++))) {
                         p += process_len;
                         p += JumpSpace(p);
+                        y = 0;
+                        op = PLUS;
+                        PCodeInsert(pcode_num++, x, y, op, z);
+                        PCodeInsert(pcode_num++, 0, 0, LABEL, label);
                         if (*p == ';') {
                             p++;
                             p += JumpSpace(p);
-                            if ((process_len = Condition(p, label))) {
+                            if ((process_len = Condition(p, label, BNE))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == ';') {
                                     p++;
                                     p += JumpSpace(p);
                                     if ((process_len = Identifier(p))) {
+                                        for (int i = 0; i < process_len; i++) {
+                                            par[i] = *(p + i);
+                                        }
+                                        par[process_len] = '\0';
+                                        iter = SymFind(ini);
+                                        x = iter->second.code;
                                         p += process_len;
                                         p += JumpSpace(p);
                                         if (*p == '+' || *p == '-') {
                                             p++;
                                             p += JumpSpace(p);
                                             if ((process_len = Step(p))) {
+                                                for (int i = 0; i < process_len; i++) {
+                                                    step[i] = *(p + i);
+                                                }
+                                                step[process_len] = '\0';
+                                                sscanf(step, "%d", &z);
+                                                op = PLUS;
                                                 p += process_len;
                                                 p += JumpSpace(p);
                                                 if (*p == ')') {
@@ -807,6 +835,10 @@ int LoopSentence(char *str) {
                                                     if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
+                                                        PCodeInsert(pcode_num++, x, x, op, z);
+                                                        PCodeInsert(pcode_num++, 0, 0, GOTO, label);
+                                                        LabelCode++;
+                                                        PCodeInsert(pcode_num++, 0, 0, LABEL, label + 1);
                                                         cout << "<For>" << endl;
                                                         return (int) ((p - str) / sizeof(char));
                                                     }
@@ -822,6 +854,7 @@ int LoopSentence(char *str) {
             }
         }
     }
+    LabelCode = LabelCode_buf;
     MidCode = MidCode_buf;
     pcode_num = pcode_buf;
     return 0;
@@ -959,6 +992,7 @@ int ReadSentence(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
+    int z = MidCode, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 's' && *(p + 1) == 'c' && *(p + 2) == 'a' && *(p + 3) == 'n' && *(p + 4) == 'f') {
         p += 5;
         p += JumpSpace(p);
@@ -979,6 +1013,7 @@ int ReadSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    PCodeInsert(pcode_num++, 0, 0, READ, 0);
                     cout << "<ReadSentence>";
                     return (int) ((p - str) / sizeof(char));
                 } else {
@@ -987,12 +1022,15 @@ int ReadSentence(char *str) {
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
 int WriteSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    int z = MidCode, op = WRITE, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'p' && *(p + 1) == 'r' && *(p + 2) == 'i' && *(p + 3) == 'n' && *(p + 4) == 't' && *(p + 5) == 'f') {
         p += 6;
         p += JumpSpace(p);
@@ -1005,12 +1043,14 @@ int WriteSentence(char *str) {
                 if (*p == ',') {
                     p++;
                     p += JumpSpace(p);
+                    z = MidCode;
                     if ((process_len = Expression(p, MidCode++))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
                             p++;
                             p += JumpSpace(p);
+                            PCodeInsert(pcode_num++, 0, 0, op, z);
                             cout << "<WriteSentence>";
                             return (int) ((p - str) / sizeof(char));
                         }
@@ -1018,6 +1058,7 @@ int WriteSentence(char *str) {
                 } else if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    PCodeInsert(pcode_num++, 0, 0, op, z);
                     cout << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
@@ -1027,12 +1068,15 @@ int WriteSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    PCodeInsert(pcode_num++, 0, 0, op, z);
                     cout << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 

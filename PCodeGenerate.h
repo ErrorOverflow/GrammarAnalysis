@@ -26,6 +26,8 @@ using namespace std;
 #define BGTZ 114
 #define BLTZ 115
 #define BGEZ 116
+#define WRITE 117
+#define READ 118
 
 struct PCode {
     int x;

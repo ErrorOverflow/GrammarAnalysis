@@ -185,7 +185,6 @@ int Identifier(char *str) {
                 !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf")) {
                 return 0;
             }
-            p += JumpSpace(p);
             word[i] = '\0';
             if (str > iden_point) {
                 iden_point = str;
@@ -216,7 +215,6 @@ int Identifier(char *str, int code) {
                 !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf")) {
                 return 0;
             }
-            p += JumpSpace(p);
             word[i] = '\0';
             if (str > iden_point) {
                 iden_point = str;

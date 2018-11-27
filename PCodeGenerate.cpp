@@ -74,7 +74,7 @@ void OpExchange(int op) {
             cout << " DIV ";
             break;
         case 110:
-            cout << " LABEL ";
+            cout << "--- LABEL ---";
             break;
         case 111:
             cout << " BEQ ";
@@ -93,6 +93,12 @@ void OpExchange(int op) {
             break;
         case 116:
             cout << " BGEZ ";
+            break;
+        case 117:
+            cout << " WRITE ";
+            break;
+        case 118:
+            cout << " READ ";
             break;
         default:
             cout << " " << op << " ";
