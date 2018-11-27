@@ -16,6 +16,7 @@ int LocalCode = 10000000;
 int MidCode = 50000000;
 int TableNum = 0;
 unordered_map<string, Sym> SymTable[64];
+unordered_map<int, Sym> CodeIndex[64];
 
 int JumpSpace(char *str) {
     char *p = str;
@@ -32,12 +33,14 @@ int JumpSpace(char *str) {
 int SymInsert(string name, int type, int dimension, int read) {
     Sym sym = {LocalCode++, name, type, dimension, read};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
+    CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
 }
 
 int SymInsert(string name, int type) {
     Sym sym = {LocalCode++, name, type, 0, 2};
     SymTable[0].insert(pair<string, Sym>(name, sym));
+    CodeIndex[0].insert(pair<int, Sym>(sym.code, sym));
     return 1;
 }
 
@@ -64,5 +67,16 @@ unordered_map<string, Sym>::iterator SymFind(string name) {//unordered_map<strin
     }
     cout << name << " is not in SymTable" << endl;
     exit(-1);
+}
+
+unordered_map<int, Sym>::iterator CodeFind(int code) {//unordered_map<string,Sym>::iterator
+    for (int i = 0; i <= TableNum; i++) {
+        auto iter = CodeIndex[i].find(code);
+        if (iter != CodeIndex[i].end()) {
+            return iter;
+        }
+    }
+    cout << code << " is not LocalCode" << endl;
+    exit(-2);
 }
 

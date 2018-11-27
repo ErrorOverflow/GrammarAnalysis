@@ -21,6 +21,7 @@ extern int LocalCode;
 extern int MidCode;
 extern int TableNum;
 extern unordered_map<string, Sym> SymTable[64];
+extern unordered_map<int, Sym> CodeIndex[64];
 
 int JumpSpace(char *str);
 
@@ -31,5 +32,7 @@ int SymInsert(string name, int type);
 void SymPrint();
 
 unordered_map<string, Sym>::iterator SymFind(string name);
+
+unordered_map<int, Sym>::iterator CodeFind(int code);
 
 #endif //COMPILER_LIB_H

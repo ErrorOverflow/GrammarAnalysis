@@ -19,6 +19,7 @@ using namespace std;
 #define SUB 107
 #define MULTI 108
 #define DIV 109
+#define FUNC 110
 
 struct PCode {
     int x;
@@ -33,5 +34,7 @@ extern int pcode_num;
 void PCodeInsert(int num, int x, int y, int op, int z);
 
 void PCodePrint();
+
+void ZExchange(int z);
 
 #endif //COMPILER_PCODEGENERATE_H

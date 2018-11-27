@@ -6,6 +6,7 @@
 #include "PCodeGenerate.h"
 #include "lib.h"
 #include <iostream>
+#include <unordered_map>
 
 
 using namespace std;
@@ -24,9 +25,22 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 
 void PCodePrint() {
     for (int i = 0; i < pcode_num; i++) {
-        cout << "PCode#" << i << ": " << pcode[i].x << " " << pcode[i].y;
+        cout << "PCode#" << i << ": ";
+        if (pcode[i].x < 50000000 && pcode[i].x > 10000000)
+            ZExchange(pcode[i].x);
+        else
+            cout << pcode[i].x;
+        cout << " ";
+        if (pcode[i].y < 50000000 && pcode[i].y > 10000000)
+            ZExchange(pcode[i].y);
+        else
+            cout << pcode[i].y;
         OpExchange(pcode[i].op);
-        cout << pcode[i].z << endl;
+        if (pcode[i].z < 50000000 && pcode[i].z > 10000000)
+            ZExchange(pcode[i].z);
+        else
+            cout << pcode[i].z;
+        cout << endl;
     }
 }
 
@@ -59,7 +73,15 @@ void OpExchange(int op) {
         case 109:
             cout << " DIV ";
             break;
+        case 110:
+            cout << " FUNC ";
+            break;
         default:
             cout << " " << op << " ";
     }
+}
+
+void ZExchange(int z) {
+    auto iter = CodeFind(z);
+    cout << iter->second.name;
 }

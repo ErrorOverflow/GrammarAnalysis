@@ -258,7 +258,7 @@ int VarDeclare(char *str) {
 int ReturnFuncDefine(char *str) {
     char *p = str;
     int process_len = 0;
-    int x = MidCode, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = DeclareHead(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
@@ -274,13 +274,14 @@ int ReturnFuncDefine(char *str) {
                     if (*p == '{') {
                         p++;
                         p += JumpSpace(p);
+                        SymInsert(func_name, func_type);
+                        PCodeInsert(pcode_num++, 0, 0, FUNC, LocalCode - 1);
                         if ((process_len = CompoundSentence(p))) {
                             p += process_len;
                             p += JumpSpace(p);
                             if (*p == '}') {
                                 p++;
                                 p += JumpSpace(p);
-                                SymInsert(func_name, func_type);
                                 return (int) ((p - str) / sizeof(char));
                             }
                         }
@@ -297,6 +298,7 @@ int ReturnFuncDefine(char *str) {
 int NoReturnFuncDefine(char *str) {
     char *p = str;
     int process_len = 0;
+    int MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*str == 'v' && *(p + 1) == 'o' && *(p + 2) == 'i' && *(p + 3) == 'd') {
         p += 4;
         if (*p == ' ') {
@@ -328,6 +330,7 @@ int NoReturnFuncDefine(char *str) {
                                         p++;
                                         p += JumpSpace(p);
                                         SymInsert(func_name, 2);
+                                        PCodeInsert(pcode_num++, 0, 0, FUNC, LocalCode - 1);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }
@@ -338,6 +341,8 @@ int NoReturnFuncDefine(char *str) {
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
@@ -822,10 +827,14 @@ int Step(char *str) {
 }
 
 int ReturnFuncCall(char *str, int code) {
-    char *p = str;
-    int process_len = 0;
-    int x = code, y = 0, z = 31, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    char *p = str, word[64];
+    int process_len = 0, word_len = 0;
+    int x = code, y = 0, z = 0, op = CALL, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = Identifier(p))) {
+        for (int i = 0; i < process_len; i++) {
+            word[i] = *(p + i);
+        }
+        word[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
@@ -838,6 +847,8 @@ int ReturnFuncCall(char *str, int code) {
                     p++;
                     p += JumpSpace(p);
                     cout << "<ReturnFuncCall>";
+                    auto iter = SymFind(word);
+                    z = iter->second.code;
                     PCodeInsert(pcode_num++, code, 0, op, z);
                     return (int) ((p - str) / sizeof(char));
                 }
@@ -900,6 +911,7 @@ int NoReturnFuncCall(char *str) {
 int ValueParameterList(char *str) {
     char *p = str;
     int process_len = 0;
+    int x = 0, y = 0, z = MidCode, op = PUSH, MidCode_buf = MidCode, pcode_buf = pcode_num;
     while ((process_len = Expression(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
@@ -907,9 +919,12 @@ int ValueParameterList(char *str) {
             p++;
             p += JumpSpace(p);
         } else {
+            PCodeInsert(pcode_num++, x, y, op, z);
             return (int) ((p - str) / sizeof(char));
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 

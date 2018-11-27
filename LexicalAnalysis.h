@@ -55,8 +55,6 @@ int ReturnFuncCall(char *str, int code);
 
 int ReturnFuncCall(char *str);
 
-int NoReturnFuncCall(char *str, int code);
-
 int NoReturnFuncCall(char *str);
 
 int ValueParameterList(char *str);
