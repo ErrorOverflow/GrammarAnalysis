@@ -26,17 +26,17 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 void PCodePrint() {
     for (int i = 0; i < pcode_num; i++) {
         cout << "PCode#" << i << ": ";
-        if (pcode[i].x < 50000000 && pcode[i].x > 10000000)
+        if (pcode[i].x < MID_CODE_BASE && pcode[i].x >= LOCAL_CODE_BASE)
             ZExchange(pcode[i].x);
         else
             cout << pcode[i].x;
         cout << " ";
-        if (pcode[i].y < 50000000 && pcode[i].y > 10000000)
+        if (pcode[i].y < MID_CODE_BASE && pcode[i].y >= LOCAL_CODE_BASE)
             ZExchange(pcode[i].y);
         else
             cout << pcode[i].y;
         OpExchange(pcode[i].op);
-        if (pcode[i].z < 50000000 && pcode[i].z > 10000000)
+        if (pcode[i].z < MID_CODE_BASE && pcode[i].z >= LOCAL_CODE_BASE)
             ZExchange(pcode[i].z);
         else
             cout << pcode[i].z;

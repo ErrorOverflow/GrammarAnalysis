@@ -45,7 +45,7 @@ int AssignSentence(char *str);
 
 int ConditionSentence(char *str);
 
-int Condition(char *str);
+int Condition(char *str, int code);
 
 int LoopSentence(char *str);
 

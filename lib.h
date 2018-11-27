@@ -8,6 +8,11 @@
 #include <unordered_map>
 
 using namespace std;
+
+#define LABEL_CODE_BASE 1000
+#define LOCAL_CODE_BASE 10000000
+#define MID_CODE_BASE 50000000
+
 struct Sym {
     int code;
     string name;
@@ -17,6 +22,7 @@ struct Sym {
 };
 extern char *iden_point;
 extern int line;
+extern int LabelCode;
 extern int LocalCode;
 extern int MidCode;
 extern int TableNum;

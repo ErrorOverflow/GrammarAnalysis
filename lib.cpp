@@ -12,8 +12,9 @@ using namespace std;
 
 char *iden_point;
 int line;
-int LocalCode = 10000000;
-int MidCode = 50000000;
+int LabelCode = LABEL_CODE_BASE;
+int LocalCode = LOCAL_CODE_BASE;
+int MidCode = MID_CODE_BASE;
 int TableNum = 0;
 unordered_map<string, Sym> SymTable[64];
 unordered_map<int, Sym> CodeIndex[64];

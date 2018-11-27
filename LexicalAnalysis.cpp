@@ -330,7 +330,7 @@ int NoReturnFuncDefine(char *str) {
                                         p++;
                                         p += JumpSpace(p);
                                         SymInsert(func_name, 2);
-                                        PCodeInsert(pcode_num++, 0, 0, LABLE, LocalCode - 1);
+                                        PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }
@@ -576,7 +576,6 @@ int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
-    int x = 0, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = ConditionSentence(p))) {
         isRight = 2;
     } else if ((process_len = LoopSentence(p))) {
@@ -673,13 +672,14 @@ int AssignSentence(char *str) {
 int ConditionSentence(char *str) {
     char *p = str;
     int process_len = 0;
+    int label = LabelCode, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'i' && *(p + 1) == 'f') {
         p += 2;
         p += JumpSpace(p);
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Condition(p))) {
+            if ((process_len = Condition(p, label))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -709,15 +709,18 @@ int ConditionSentence(char *str) {
     return 0;
 }
 
-int Condition(char *str) {
+int Condition(char *str, int code) {
     char *p = str;
     int process_len = 0;
+    int x = code, y = 0, z = 0, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    y = MidCode;
     if ((process_len = Expression(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         if ((process_len = RelationalOperator(p))) {
             p += process_len;
             p += JumpSpace(p);
+            z = MidCode;
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -727,17 +730,19 @@ int Condition(char *str) {
             return (int) ((p - str) / sizeof(char));
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
 int LoopSentence(char *str) {
     char *p = str;
     int process_len = 0;
-    int x = 0, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int label = LabelCode, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
-        PCodeInsert(pcode_num++, 0, 0, LABEL, MidCode++);
+        PCodeInsert(pcode_num++, 0, 0, LABEL, LabelCode++);
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
@@ -747,7 +752,7 @@ int LoopSentence(char *str) {
                 if (*p == '(') {
                     p++;
                     p += JumpSpace(p);
-                    if ((process_len = Condition(p))) {
+                    if ((process_len = Condition(p, label))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')') {
@@ -778,7 +783,7 @@ int LoopSentence(char *str) {
                         if (*p == ';') {
                             p++;
                             p += JumpSpace(p);
-                            if ((process_len = Condition(p))) {
+                            if ((process_len = Condition(p, label))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == ';') {
@@ -832,8 +837,8 @@ int Step(char *str) {
 
 int ReturnFuncCall(char *str, int code) {
     char *p = str, word[64];
-    int process_len = 0, word_len = 0;
-    int x = code, y = 0, z = 0, op = CALL, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int process_len = 0;
+    int z = 0,  MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = Identifier(p))) {
         for (int i = 0; i < process_len; i++) {
             word[i] = *(p + i);
@@ -853,7 +858,7 @@ int ReturnFuncCall(char *str, int code) {
                     cout << "<ReturnFuncCall>";
                     auto iter = SymFind(word);
                     z = iter->second.code;
-                    PCodeInsert(pcode_num++, code, 0, op, z);
+                    PCodeInsert(pcode_num++, code, 0, CALL, z);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
