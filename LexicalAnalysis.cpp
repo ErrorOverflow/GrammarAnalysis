@@ -506,7 +506,7 @@ int Factor(char *str, int code) {
     char *p = str, word[64];
     int process_len = 0;
     int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
-    if ((process_len = ReturnFuncCall(p))) {
+    if ((process_len = ReturnFuncCall(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         PCodeInsert(pcode_num++, x, y, op, z);
@@ -818,6 +818,34 @@ int Step(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
+    return 0;
+}
+
+int ReturnFuncCall(char *str, int code) {
+    char *p = str;
+    int process_len = 0;
+    int x = code, y = 0, z = 31, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    if ((process_len = Identifier(p))) {
+        p += process_len;
+        p += JumpSpace(p);
+        if (*p == '(') {
+            p++;
+            p += JumpSpace(p);
+            if ((process_len = ValueParameterList(p)) || (*p == ')')) {
+                p += process_len;
+                p += JumpSpace(p);
+                if (*p == ')') {
+                    p++;
+                    p += JumpSpace(p);
+                    cout << "<ReturnFuncCall>";
+                    PCodeInsert(pcode_num++, code, 0, op, z);
+                    return (int) ((p - str) / sizeof(char));
+                }
+            }
+        }
+    }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 

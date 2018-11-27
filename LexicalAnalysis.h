@@ -51,7 +51,11 @@ int LoopSentence(char *str);
 
 int Step(char *str);
 
+int ReturnFuncCall(char *str, int code);
+
 int ReturnFuncCall(char *str);
+
+int NoReturnFuncCall(char *str, int code);
 
 int NoReturnFuncCall(char *str);
 
