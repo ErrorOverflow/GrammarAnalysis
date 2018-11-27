@@ -74,12 +74,31 @@ void OpExchange(int op) {
             cout << " DIV ";
             break;
         case 110:
-            cout << " LAB ";
+            cout << " LABEL ";
+            break;
+        case 111:
+            cout << " BEQ ";
+            break;
+        case 112:
+            cout << " BNE ";
+            break;
+        case 113:
+            cout << " BLEZ ";
+            break;
+        case 114:
+            cout << " BGTZ ";
+            break;
+        case 115:
+            cout << " BLTZ ";
+            break;
+        case 116:
+            cout << " BGEZ ";
             break;
         default:
             cout << " " << op << " ";
     }
 }
+
 
 void ZExchange(int z) {
     auto iter = CodeFind(z);

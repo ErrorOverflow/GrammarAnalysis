@@ -9,7 +9,7 @@ int Plus(char str);
 
 int Multi(char str);
 
-int RelationalOperator(char *str);
+int RelationalOperator(char *str, int *code);
 
 int Letter(char str);
 

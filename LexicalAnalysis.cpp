@@ -717,16 +717,19 @@ int Condition(char *str, int code) {
     if ((process_len = Expression(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
-        if ((process_len = RelationalOperator(p))) {
+        if ((process_len = RelationalOperator(p, &op))) {
             p += process_len;
             p += JumpSpace(p);
             z = MidCode;
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
+                PCodeInsert(pcode_num++, code, y, op, z);
                 return (int) ((p - str) / sizeof(char));
             }
         } else {
+            op = BEQ;
+            PCodeInsert(pcode_num++, code, y, op, z);
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -838,7 +841,7 @@ int Step(char *str) {
 int ReturnFuncCall(char *str, int code) {
     char *p = str, word[64];
     int process_len = 0;
-    int z = 0,  MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = Identifier(p))) {
         for (int i = 0; i < process_len; i++) {
             word[i] = *(p + i);

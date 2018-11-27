@@ -26,22 +26,28 @@ int Multi(char str) {
     }
 }
 
-int RelationalOperator(char *str) {
+int RelationalOperator(char *str, int *code) {
     if (*str == '<') {
         if (*(str + 1) == '=') {
+            *code = BLEZ;
             return 2;
         } else {
+            *code = BLTZ;
             return 1;
         }
     } else if (*str == '>') {
         if (*(str + 1) == '=') {
+            *code = BGEZ;
             return 2;
         } else {
+            *code = BGTZ;
             return 1;
         }
     } else if (*str == '!' && *(str + 1) == '=') {
+        *code = BNE;
         return 2;
     } else if (*str == '=' && *(str + 1) == '=') {
+        *code = BEQ;
         return 2;
     }
     return 0;
@@ -94,7 +100,7 @@ int String(char *str) {
     char word[64];
     int i = 0;
     if (*p == '"') {
-        word[i++] = *(p+1);
+        word[i++] = *(p + 1);
         p++;
         while (true) {
             if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {

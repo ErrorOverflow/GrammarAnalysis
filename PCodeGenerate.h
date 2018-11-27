@@ -20,6 +20,12 @@ using namespace std;
 #define MULTI 108
 #define DIV 109
 #define LABEL 110
+#define BEQ 111
+#define BNE 112
+#define BLEZ 113
+#define BGTZ 114
+#define BLTZ 115
+#define BGEZ 116
 
 struct PCode {
     int x;
