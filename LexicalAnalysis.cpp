@@ -989,7 +989,7 @@ int SentenceColumn(char *str) {
 }
 
 int ReadSentence(char *str) {
-    char *p = str;
+    char *p = str, word[64];
     int process_len = 0;
     int isRight = 0;
     int z = MidCode, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
@@ -1000,6 +1000,13 @@ int ReadSentence(char *str) {
             p++;
             p += JumpSpace(p);
             while ((process_len = Identifier(p))) {
+                for (int i = 0; i < process_len; i++) {
+                    word[i] = *(p + i);
+                }
+                word[process_len] = '\0';
+                auto iter = SymFind(word);
+                z = iter->second.code;
+                PCodeInsert(pcode_num++, 0, 0, READ, z);
                 p += process_len;
                 p += JumpSpace(p);
                 isRight = 1;
@@ -1013,7 +1020,6 @@ int ReadSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    PCodeInsert(pcode_num++, 0, 0, READ, 0);
                     cout << "<ReadSentence>";
                     return (int) ((p - str) / sizeof(char));
                 } else {
@@ -1028,7 +1034,7 @@ int ReadSentence(char *str) {
 }
 
 int WriteSentence(char *str) {
-    char *p = str;
+    char *p = str, word[54];
     int process_len = 0;
     int z = MidCode, op = WRITE, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'p' && *(p + 1) == 'r' && *(p + 2) == 'i' && *(p + 3) == 'n' && *(p + 4) == 't' && *(p + 5) == 'f') {
@@ -1038,6 +1044,13 @@ int WriteSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = String(p))) {
+                for (int i = 1; i < process_len-1; i++) {
+                    word[i-1] = *(p + i);
+                }
+                word[process_len-2] = '\0';
+                auto iter = SymFind(word);
+                z = iter->second.code;
+                PCodeInsert(pcode_num++, 0, 0, op, z);
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ',') {
@@ -1058,7 +1071,6 @@ int WriteSentence(char *str) {
                 } else if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    PCodeInsert(pcode_num++, 0, 0, op, z);
                     cout << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }

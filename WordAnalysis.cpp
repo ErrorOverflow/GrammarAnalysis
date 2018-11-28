@@ -76,17 +76,14 @@ int Num(char str) {
 
 int Character(char *str) {
     char *p = str;
-    char word[64];
+    char word;
     int i = 0;
     if (*p == '\'') {
-        word[i++] = *p;
         p++;
         if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
-            word[i++] = *p;
+            word = *p;
             p++;
             if (*p == '\'') {
-                word[i++] = *p;
-                word[i] = '\0';
                 return 3;
             } else {
             }
@@ -100,7 +97,6 @@ int String(char *str) {
     char word[64];
     int i = 0;
     if (*p == '"') {
-        word[i++] = *(p + 1);
         p++;
         while (true) {
             if (*p == 32 || *p == 33 || (*p >= 35 && *p <= 126)) {
