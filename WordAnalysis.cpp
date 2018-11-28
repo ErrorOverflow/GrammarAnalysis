@@ -76,14 +76,15 @@ int Num(char str) {
 
 int Character(char *str) {
     char *p = str;
-    char word;
-    int i = 0;
+    char word[2];
     if (*p == '\'') {
         p++;
         if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
-            word = *p;
+            word[0] = *p;
+            word[1] = '\0';
             p++;
             if (*p == '\'') {
+                SymInsert(word, 1, 0, 0);
                 return 3;
             } else {
             }
