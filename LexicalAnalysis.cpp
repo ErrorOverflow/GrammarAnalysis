@@ -23,9 +23,9 @@ int func_type;
 
 int ConstDefine(char *str) {
     char *p = str;
-    int process_len = 0;
+    int process_len = 0, value = 0;
     int isConstDefine = 0;
-    char *identifier[64];
+    char *identifier[64], word[16];
     int identifier_len[64];
     int identifier_type = 0;
     int identifier_num = 0;
@@ -46,6 +46,11 @@ int ConstDefine(char *str) {
                 p++;
                 p += JumpSpace(p);
                 if ((process_len = Integer(p))) {
+                    for (int i = 0; i < process_len; i++) {
+                        word[i] = *(p + i);
+                    }
+                    word[process_len] = '\0';
+                    sscanf(word, "%d", &value);
                     p += process_len;
                     p += JumpSpace(p);
                     if (*p == ',') {
@@ -75,6 +80,7 @@ int ConstDefine(char *str) {
                 p++;
                 p += JumpSpace(p);
                 if ((process_len = Character(p))) {
+                    value = *(p + 1);
                     p += process_len;
                     p += JumpSpace(p);
                     if (*p == ',') {
@@ -91,11 +97,11 @@ int ConstDefine(char *str) {
     }
     if (isConstDefine) {
         for (int i = 0; i <= identifier_num; i++) {
-            string name;
+            char name[64];
             for (int j = 0; j < identifier_len[i]; j++) {
-                name = name + *(identifier[i] + j);
+                name[j] = *(identifier[i] + j);
             }
-            SymInsert(name, identifier_type, 0, 0);
+            SymInsert(name, identifier_type, 0, 0, value);
         }
         return (int) ((p - str) / sizeof(char));
     }
@@ -133,7 +139,6 @@ int ConstDeclare(char *str) {
 int DeclareHead(char *str, int code) {
     char *p = str;
     int process_len = 0;
-    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         p += 3;
         func_type = 0;
@@ -520,7 +525,7 @@ int Factor(char *str, int code) {
         if (*p == '[') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Expression(p, MidCode++))) {
+            if ((process_len = Expression(p, 0))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ']') {
@@ -628,7 +633,7 @@ int Sentence(char *str) {
 
 int AssignSentence(char *str) {
     char *p = str;
-    int process_len = 0;
+    int process_len = 0, x = 0, y = 0, op = PLUS, z = 0,MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = Identifier(p))) {
         p += process_len;
         p += JumpSpace(p);
@@ -657,6 +662,7 @@ int AssignSentence(char *str) {
                             p += process_len;
                             p += JumpSpace(p);
                             cout << "<AssignSentence>";
+                            PCodeInsert(pcode_num++,x,y,op,z);
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -664,6 +670,8 @@ int AssignSentence(char *str) {
             }
         }
     }
+    MidCode = MidCode_buf;
+    pcode_num = pcode_buf;
     return 0;
 }
 
@@ -1044,10 +1052,10 @@ int WriteSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = String(p))) {
-                for (int i = 1; i < process_len-1; i++) {
-                    word[i-1] = *(p + i);
+                for (int i = 1; i < process_len - 1; i++) {
+                    word[i - 1] = *(p + i);
                 }
-                word[process_len-2] = '\0';
+                word[process_len - 2] = '\0';
                 auto iter = SymFind(word);
                 z = iter->second.code;
                 PCodeInsert(pcode_num++, 0, 0, op, z);

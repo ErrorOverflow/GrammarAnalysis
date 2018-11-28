@@ -19,6 +19,7 @@ struct Sym {
     int type;//0.int 1.char 2.void
     int dimension;//0.int 1.char 2.string
     int kind;//0.const 1.var 2.func
+    int value;
 };
 extern char *iden_point;
 extern int line;
@@ -30,6 +31,8 @@ extern unordered_map<string, Sym> SymTable[64];
 extern unordered_map<int, Sym> CodeIndex[64];
 
 int JumpSpace(char *str);
+
+int SymInsert(string name, int type, int dimension, int read, int value);
 
 int SymInsert(string name, int type, int dimension, int read);
 

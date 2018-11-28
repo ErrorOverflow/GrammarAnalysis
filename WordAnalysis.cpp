@@ -76,17 +76,12 @@ int Num(char str) {
 
 int Character(char *str) {
     char *p = str;
-    char word[2];
     if (*p == '\'') {
         p++;
         if (Plus(*p) || Multi(*p) || Num(*p) || Letter(*p)) {
-            word[0] = *p;
-            word[1] = '\0';
             p++;
             if (*p == '\'') {
-                SymInsert(word, 1, 0, 0);
                 return 3;
-            } else {
             }
         }
     }
@@ -121,18 +116,13 @@ int String(char *str) {
 
 int NoSignNum(char *str) {
     char *p = str;
-    char word[64];
-    int i = 0;
     if (NotZeroNum(*p)) {
-        word[i++] = *p;
         p++;
         while (true) {
             if (Num(*p)) {
-                word[i++] = *p;
                 p++;
                 continue;
             } else {
-                word[i] = '\0';
                 return (int) ((p - str) / sizeof(char));
             }
         }
@@ -144,19 +134,12 @@ int NoSignNum(char *str) {
 
 int Integer(char *str) {
     char *p = str;
-    char word[64];
-    int i = 0;
     int process_len = 0;
     if (*p == '+' || *p == '-') {
-        word[i++] = *p;
         p++;
     }
     if ((process_len = NoSignNum(p))) {
-        for (int mid = 0; mid < process_len; mid++) {
-            word[i + mid] = *(p + mid);
-        }
         p += process_len;
-        p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
     return 0;

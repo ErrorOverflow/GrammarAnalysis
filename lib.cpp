@@ -31,15 +31,23 @@ int JumpSpace(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
+int SymInsert(string name, int type, int dimension, int read, int value) {
+    Sym sym = {LocalCode++, name, type, dimension, read, value};
+    SymTable[TableNum].insert(pair<string, Sym>(name, sym));
+    CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
+    return 1;
+}
+
+
 int SymInsert(string name, int type, int dimension, int read) {
-    Sym sym = {LocalCode++, name, type, dimension, read};
+    Sym sym = {LocalCode++, name, type, dimension, read, 0};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
 }
 
 int SymInsert(string name, int type) {
-    Sym sym = {LocalCode++, name, type, 0, 2};
+    Sym sym = {LocalCode++, name, type, 0, 2, 0};
     SymTable[0].insert(pair<string, Sym>(name, sym));
     CodeIndex[0].insert(pair<int, Sym>(sym.code, sym));
     return 1;
@@ -51,7 +59,7 @@ void SymPrint() {
         while (iter != SymTable[i].end()) {
             cout << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
                  << ","
-                 << iter->second.dimension << "," << iter->second.kind << endl;
+                 << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << endl;
             iter++;
         }
     }
