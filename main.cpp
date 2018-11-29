@@ -6,6 +6,7 @@
 #include "FileIO.h"
 #include "lib.h"
 #include "PCodeGenerate.h"
+#include "MipsGenerate.h"
 
 using namespace std;
 
@@ -16,6 +17,7 @@ int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     SymPrint();
     cout << "-------------------------------" << endl;
     PCodePrint();
+    //WriteMipsFile();
     system("pause");
     return 0;
 }

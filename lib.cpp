@@ -65,6 +65,17 @@ void SymPrint() {
     }
 }
 
+void SpaceDel(char *des, char *src) {
+    for (int i = 0, j = 0; *(src + i) != '\0'; i++) {
+        if (*(src + i) == ' ') {
+            continue;
+        } else {
+            *(des + j) = *(src + i);
+            j++;
+        }
+    }
+}
+
 unordered_map<string, Sym>::iterator SymFind(string name) {//unordered_map<string,Sym>::iterator
     auto iter = SymTable[TableNum].find(name);
     if (iter != SymTable[TableNum].end()) {

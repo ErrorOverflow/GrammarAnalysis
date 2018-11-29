@@ -103,7 +103,7 @@ int String(char *str) {
                 if (*p == '"') {
                     word[i] = '\0';
                     p++;
-                    SymInsert(word, 2, 0, 0);
+                    SymInsert(word, 3, 0, 0);
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -173,37 +173,3 @@ int Identifier(char *str) {
         }
     }
 }
-/*
-int Identifier(char *str, int code) {
-    char *p = str;
-    char word[63];
-    int i = 0;
-    int x = code, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
-    if (Letter(*p)) {
-        word[i++] = *p;
-        p++;
-    } else {
-        return 0;
-    }
-    while (true) {
-        if (Letter(*p) || Num(*p)) {
-            word[i++] = *p;
-            p++;
-        } else {
-            word[i] = '\0';
-            if (!strcmp(word, "while") || !strcmp(word, "for") || !strcmp(word, "return") || !strcmp(word, "void") ||
-                !strcmp(word, "main") || !strcmp(word, "do") || !strcmp(word, "scanf") || !strcmp(word, "printf")) {
-                return 0;
-            }
-            word[i] = '\0';
-            if (str > iden_point) {
-                iden_point = str;
-            }
-            auto iter = SymFind(word);
-            z = iter->second.code;
-            PCodeInsert(pcode_num++, x, y, op, z);
-            return (int) ((p - str) / sizeof(char));
-        }
-    }
-}
- */

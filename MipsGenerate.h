@@ -5,12 +5,17 @@
 #ifndef COMPILER_MIPSGENERATE_H
 #define COMPILER_MIPSGENERATE_H
 
+#include "lib.h"
+#include "PCodeGenerate.h"
 #include <string>
 
 using namespace std;
 
 extern string result;
 
+void WriteMipsFile();
+
+void OpCheck();
 
 
 #endif //COMPILER_MIPSGENERATE_H
