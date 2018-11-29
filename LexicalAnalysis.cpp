@@ -174,7 +174,7 @@ int VarDefine(char *str) {
     char *p = str;
     int process_len = 0;
     int isVarDefine = 0;
-    char *identifier[64];
+    char *identifier[64], word[64];
     int identifier_len[64];
     int identifier_type;
     int identifier_dim[64];
@@ -194,12 +194,16 @@ int VarDefine(char *str) {
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = NoSignNum(p))) {
+                        for (int i = 0; i < process_len; i++) {
+                            word[i] = *(p + i);
+                        }
+                        word[process_len] = '\0';
+                        sscanf(word, "%d", &identifier_dim[identifier_num]);
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ']') {
                             p++;
                             isVarDefine = 1;
-                            identifier_dim[identifier_num] = 1;
                         }
                     }
                 } else {
@@ -374,6 +378,7 @@ int ParameterList(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
+    int MidCode_buf = MidCode, pcode_buf = pcode_num;
     char sym[64];
     int sym_type;
     while ((process_len = TypeIdentifier(p))) {
@@ -388,6 +393,7 @@ int ParameterList(char *str) {
                 }
                 sym[process_len] = '\0';
                 SymInsert(sym, sym_type, 0, 1);
+                PCodeInsert(pcode_num++, 0, 0, PARA, LocalCode - 1);
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p != ',') {
@@ -402,10 +408,13 @@ int ParameterList(char *str) {
             }
         }
     }
-    if (isRight)
+    if (isRight) {
         return (int) ((p - str) / sizeof(char));
-    else
+    } else {
+        MidCode = MidCode_buf;
+        pcode_num = pcode_buf;
         return 0;
+    }
 }
 
 int MainFunc(char *str) {
@@ -512,31 +521,42 @@ int Term(char *str, int code) {
 
 int Factor(char *str, int code) {
     char *p = str, word[64];
-    int process_len = 0;
+    int process_len = 0, array_code = 0, offset = 0;
     int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = ReturnFuncCall(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
         PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
-    } else if ((process_len = Identifier(p, MidCode++))) {
+    } else if ((process_len = Identifier(p))) {
+        for (int i = 0; i < process_len; i++) {
+            word[i] = *(p + i);
+        }
+        word[process_len] = '\0';
+        auto iter = SymFind(word);
+        array_code = iter->second.code;
         p += process_len;
         p += JumpSpace(p);
         if (*p == '[') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Expression(p, 0))) {
+            offset = MidCode;
+            if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ']') {
                     p++;
                     p += JumpSpace(p);
-                    PCodeInsert(pcode_num++, x, y, op, z);
+                    z = MidCode;
+                    op = LDA;
+                    PCodeInsert(pcode_num++, MidCode++, array_code, op, offset);
+                    op = PLUS;
+                    PCodeInsert(pcode_num++, x, 0, op, z);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
         } else {
-            PCodeInsert(pcode_num++, x, y, op, z);
+            PCodeInsert(pcode_num++, x, 0, op, array_code);
             return (int) ((p - str) / sizeof(char));
         }
     } else if ((process_len = Integer(p))) {
@@ -547,6 +567,7 @@ int Factor(char *str, int code) {
         sscanf(word, "%d", &z);
         p += process_len;
         p += JumpSpace(p);
+        op = ADI;
         PCodeInsert(pcode_num++, code, 0, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Character(p))) {
@@ -632,37 +653,49 @@ int Sentence(char *str) {
 }
 
 int AssignSentence(char *str) {
-    char *p = str;
-    int process_len = 0, x = 0, y = 0, op = PLUS, z = 0,MidCode_buf = MidCode, pcode_buf = pcode_num;
+    char *p = str, word[64];
+    int process_len = 0, x = 0, z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num, array_code = 0, offset = 0;
     if ((process_len = Identifier(p))) {
+        for (int i = 0; i < process_len; i++) {
+            word[i] = *(p + i);
+        }
+        word[process_len] = '\0';
+        auto iter = SymFind(word);
+        array_code = iter->second.code;
         p += process_len;
         p += JumpSpace(p);
         if (*p == '=') {
             p++;
             p += JumpSpace(p);
+            z = MidCode;
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
+                PCodeInsert(pcode_num++, array_code, 0, PLUS, z);
                 cout << "<AssignSentence>";
                 return (int) ((p - str) / sizeof(char));
             }
         } else if (*p == '[') {
             p++;
             p += JumpSpace(p);
+            offset = MidCode;
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ']') {
                     p++;
                     p += JumpSpace(p);
+                    x = MidCode;
+                    PCodeInsert(pcode_num++, MidCode++, array_code, LDA, offset);
                     if (*p == '=') {
                         p++;
                         p += JumpSpace(p);
+                        z = MidCode;
                         if ((process_len = Expression(p, MidCode++))) {
                             p += process_len;
                             p += JumpSpace(p);
                             cout << "<AssignSentence>";
-                            PCodeInsert(pcode_num++,x,y,op,z);
+                            PCodeInsert(pcode_num++, x, 0, PLUS, z);
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -834,7 +867,6 @@ int LoopSentence(char *str) {
                                                 }
                                                 step[process_len] = '\0';
                                                 sscanf(step, "%d", &z);
-                                                op = PLUS;
                                                 p += process_len;
                                                 p += JumpSpace(p);
                                                 if (*p == ')') {
@@ -843,6 +875,7 @@ int LoopSentence(char *str) {
                                                     if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
+                                                        op = ADI;
                                                         PCodeInsert(pcode_num++, x, x, op, z);
                                                         PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                                                         LabelCode++;

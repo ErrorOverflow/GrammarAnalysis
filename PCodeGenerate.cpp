@@ -100,6 +100,12 @@ void OpExchange(int op) {
         case 118:
             cout << " READ ";
             break;
+        case 119:
+            cout << " ADI ";
+            break;
+        case 120:
+            cout << " OFFSET ";
+            break;
         default:
             cout << " " << op << " ";
     }

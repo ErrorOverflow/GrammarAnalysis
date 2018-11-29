@@ -173,7 +173,7 @@ int Identifier(char *str) {
         }
     }
 }
-
+/*
 int Identifier(char *str, int code) {
     char *p = str;
     char word[63];
@@ -206,3 +206,4 @@ int Identifier(char *str, int code) {
         }
     }
 }
+ */

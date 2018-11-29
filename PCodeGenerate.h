@@ -28,6 +28,8 @@ using namespace std;
 #define BGEZ 116
 #define WRITE 117
 #define READ 118
+#define ADI 119
+#define LDA 120
 
 struct PCode {
     int x;

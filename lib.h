@@ -17,7 +17,7 @@ struct Sym {
     int code;
     string name;
     int type;//0.int 1.char 2.void
-    int dimension;//0.int 1.char 2.string
+    int dimension;//0.0 other:space
     int kind;//0.const 1.var 2.func
     int value;
 };
