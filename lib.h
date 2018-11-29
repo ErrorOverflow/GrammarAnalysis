@@ -20,6 +20,7 @@ struct Sym {
     int dimension;//0.0 other:space
     int kind;//0.const 1.var 2.func
     int value;
+    string label;
 };
 extern char *iden_point;
 extern int line;
@@ -27,12 +28,15 @@ extern int LabelCode;
 extern int LocalCode;
 extern int MidCode;
 extern int TableNum;
+extern int StringNum;
 extern unordered_map<string, Sym> SymTable[64];
 extern unordered_map<int, Sym> CodeIndex[64];
 
 int JumpSpace(char *str);
 
 void SpaceDel(char *des, char *src);
+
+int SymInsert(string name, int type, int dimension, int read, string label);
 
 int SymInsert(string name, int type, int dimension, int read, int value);
 

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+#include <fstream>
 #include <cstring>
 
 using namespace std;
@@ -15,22 +16,28 @@ using namespace std;
 string result;
 
 void WriteMipsFile() {
-    FILE *fp = fopen("C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm", "w");
-    char stream[64] = ".data";
-    char cat[64];
-    char name[64];
-    fputs(stream, fp);
+    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm";
+    ofstream file;
+    file.open(MIPSFILE, ios::out);
+    file << ".data\n";
+    StaticDataOutput(file);
+    file << "\n.text\n";
+    file.close();
+}
+
+void StaticDataOutput(ofstream &file) {
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
             if (iter->second.type == 3) {
-                strcpy(stream, "string");
-                //SpaceDel(name, iter->second.name);
-                //strcat(stream,);
-                //fputs(, fp);
+                file << iter->second.label << ": .ascii " << "\"" << iter->second.name << "\"\n";
+            } else if (iter->second.dimension >= 1) {
+                file << iter->second.name << ": .space " << iter->second.dimension * 4 << "\n";
             }
+            iter++;
         }
     }
+    file << "newLine: .ascii \"\\n\"\n" << endl;
 }
 
 void OpCheck() {
@@ -65,7 +72,7 @@ void OpCheck() {
                 cout << " DIV ";
                 break;
             case 110:
-                cout << "--- LABEL ---";
+                cout << " --- LABEL --- ";
                 break;
             case 111:
                 cout << " BEQ ";

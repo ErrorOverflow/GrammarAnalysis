@@ -15,6 +15,8 @@ extern string result;
 
 void WriteMipsFile();
 
+void StaticDataOutput(ofstream &file);
+
 void OpCheck();
 
 

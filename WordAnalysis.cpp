@@ -5,6 +5,7 @@
 #include "PCodeGenerate.h"
 #include <string.h>
 #include <unordered_map>
+#include <sstream>
 
 int Plus(char str) {
     if (str == '+') {
@@ -103,7 +104,13 @@ int String(char *str) {
                 if (*p == '"') {
                     word[i] = '\0';
                     p++;
-                    SymInsert(word, 3, 0, 0);
+                    string label = "string";
+                    stringstream s;
+                    s << StringNum++;
+                    string num;
+                    s >> num;
+                    label.append(num);
+                    SymInsert(word, 3, 0, 0, label);
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;

@@ -16,6 +16,7 @@ int LabelCode = LABEL_CODE_BASE;
 int LocalCode = LOCAL_CODE_BASE;
 int MidCode = MID_CODE_BASE;
 int TableNum = 0;
+int StringNum = 0;
 unordered_map<string, Sym> SymTable[64];
 unordered_map<int, Sym> CodeIndex[64];
 
@@ -31,8 +32,15 @@ int JumpSpace(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
+int SymInsert(string name, int type, int dimension, int read, string label) {
+    Sym sym = {LocalCode++, name, type, dimension, read, 0, label};
+    SymTable[TableNum].insert(pair<string, Sym>(name, sym));
+    CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
+    return 1;
+}
+
 int SymInsert(string name, int type, int dimension, int read, int value) {
-    Sym sym = {LocalCode++, name, type, dimension, read, value};
+    Sym sym = {LocalCode++, name, type, dimension, read, value, ""};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
@@ -40,14 +48,14 @@ int SymInsert(string name, int type, int dimension, int read, int value) {
 
 
 int SymInsert(string name, int type, int dimension, int read) {
-    Sym sym = {LocalCode++, name, type, dimension, read, 0};
+    Sym sym = {LocalCode++, name, type, dimension, read, 0, ""};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
 }
 
 int SymInsert(string name, int type) {
-    Sym sym = {LocalCode++, name, type, 0, 2, 0};
+    Sym sym = {LocalCode++, name, type, 0, 2, 0, ""};
     SymTable[0].insert(pair<string, Sym>(name, sym));
     CodeIndex[0].insert(pair<int, Sym>(sym.code, sym));
     return 1;
@@ -59,19 +67,9 @@ void SymPrint() {
         while (iter != SymTable[i].end()) {
             cout << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
                  << ","
-                 << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << endl;
+                 << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << ","
+                 << iter->second.label << endl;
             iter++;
-        }
-    }
-}
-
-void SpaceDel(char *des, char *src) {
-    for (int i = 0, j = 0; *(src + i) != '\0'; i++) {
-        if (*(src + i) == ' ') {
-            continue;
-        } else {
-            *(des + j) = *(src + i);
-            j++;
         }
     }
 }
