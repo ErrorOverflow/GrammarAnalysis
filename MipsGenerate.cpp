@@ -365,7 +365,7 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case 120:
-                //cout << " OFFSET ";
+                cout << " OFFSET ";
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;
