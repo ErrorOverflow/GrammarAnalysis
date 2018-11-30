@@ -440,6 +440,8 @@ int MainFunc(char *str) {
                         if (*p == '{') {
                             p++;
                             p += JumpSpace(p);
+                            SymInsert("main", 2);
+                            PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                             if ((process_len = CompoundSentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);

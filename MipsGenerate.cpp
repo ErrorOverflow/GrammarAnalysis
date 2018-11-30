@@ -88,8 +88,8 @@ void TextDataOutput(ofstream &file) {
                 if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
                     file << "move $fp,$sp\n";
                     auto iter = CodeFind(pc.z);
-                    for (int j = 1; pcode[i + j].op != LABEL &&
-                                    (pcode[i + j].z >= LOCAL_CODE_BASE && pcode[i + j].z < MID_CODE_BASE); j++) {
+                    for (int j = 1; i + j < pcode_num && (pcode[i + j].op != LABEL ||
+                                                          pcode[i + j].z >= MID_CODE_BASE); j++) {
                         if (pcode[i + j].x > mid_code_max) {
                             mid_code_max = pcode[i + j].x;
                         }
