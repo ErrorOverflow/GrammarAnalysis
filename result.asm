@@ -9,3 +9,13 @@ newLine: .ascii "\n"
 
 
 .text
+faaaaaab:
+aaab:
+baab:
+caab:
+iaaaaaab:
+daab:
+eaab:
+faab:
+gaab:
+haab:

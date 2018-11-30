@@ -50,4 +50,6 @@ unordered_map<string, Sym>::iterator SymFind(string name);
 
 unordered_map<int, Sym>::iterator CodeFind(int code);
 
+void Num2Char(int num, char *str);
+
 #endif //COMPILER_LIB_H

@@ -98,3 +98,14 @@ unordered_map<int, Sym>::iterator CodeFind(int code) {//unordered_map<string,Sym
     exit(-2);
 }
 
+void Num2Char(int num, char *str) {
+    int number = num;
+    int i = 0;
+    while (number != 0) {
+        *(str + i) = (char) ('a' + number % 10);
+        number = number / 10;
+        i++;
+    }
+    *(str + i) = '\0';
+}
+

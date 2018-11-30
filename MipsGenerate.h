@@ -17,7 +17,7 @@ void WriteMipsFile();
 
 void StaticDataOutput(ofstream &file);
 
-void OpCheck();
+void TextDataOutput(ofstream &file);
 
 
 #endif //COMPILER_MIPSGENERATE_H

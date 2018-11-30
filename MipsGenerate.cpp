@@ -22,6 +22,7 @@ void WriteMipsFile() {
     file << ".data\n";
     StaticDataOutput(file);
     file << "\n.text\n";
+    TextDataOutput(file);
     file.close();
 }
 
@@ -40,69 +41,77 @@ void StaticDataOutput(ofstream &file) {
     file << "newLine: .ascii \"\\n\"\n" << endl;
 }
 
-void OpCheck() {
+void TextDataOutput(ofstream &file) {
     for (int i = 0; i < pcode_num; i++) {
         PCode pc = pcode[i];
         switch (pc.op) {
             case 101:
-                cout << " PARA ";
+                //cout << " PARA ";
                 break;
             case 102:
-                cout << " PUSH ";
+                //cout << " PUSH ";
                 break;
             case 103:
-                cout << " CALL ";
+                //cout << " CALL ";
                 break;
             case 104:
-                cout << " RET ";
+                //cout << " RET ";
                 break;
             case 105:
-                cout << " GOTO ";
+                //cout << " GOTO ";
                 break;
             case 106:
-                cout << " PLUS ";
+                //cout << " PLUS ";
                 break;
             case 107:
-                cout << " SUB ";
+                //cout << " SUB ";
                 break;
             case 108:
-                cout << " MULTI ";
+                //cout << " MULTI ";
                 break;
             case 109:
-                cout << " DIV ";
+                //cout << " DIV ";
                 break;
             case 110:
-                cout << " --- LABEL --- ";
+                //cout << " --- LABEL --- ";
+                if (pc.z > 0 && pc.z <= MID_CODE_BASE) {
+                    char label_name[16];
+                    Num2Char(pc.z, label_name);
+                    file << label_name << ":\n";
+                } else {
+                    cout << "label error";
+                    exit(-3);
+                }
                 break;
             case 111:
-                cout << " BEQ ";
+                //cout << " BEQ ";
                 break;
             case 112:
-                cout << " BNE ";
+                //cout << " BNE ";
                 break;
             case 113:
-                cout << " BLEZ ";
+                //cout << " BLEZ ";
                 break;
             case 114:
-                cout << " BGTZ ";
+                //cout << " BGTZ ";
                 break;
             case 115:
-                cout << " BLTZ ";
+                //cout << " BLTZ ";
                 break;
             case 116:
-                cout << " BGEZ ";
+                //cout << " BGEZ ";
                 break;
             case 117:
-                cout << " WRITE ";
+                //cout << " WRITE ";
                 break;
             case 118:
-                cout << " READ ";
+                //cout << " READ ";
                 break;
             case 119:
-                cout << " ADI ";
+                //cout << " ADI ";
                 break;
             case 120:
-                cout << " OFFSET ";
+                //cout << " OFFSET ";
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;

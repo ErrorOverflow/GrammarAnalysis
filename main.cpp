@@ -17,6 +17,7 @@ int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     SymPrint();
     cout << "-------------------------------" << endl;
     PCodePrint();
+    cout << "-------------------------------" << endl;
     WriteMipsFile();
     system("pause");
     return 0;
