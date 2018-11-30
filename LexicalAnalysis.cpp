@@ -731,6 +731,7 @@ int ConditionSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Condition(p, label, BEQ))) {
+                PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
