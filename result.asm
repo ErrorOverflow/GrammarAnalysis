@@ -7,7 +7,6 @@ string4: .ascii "b is bigger than c[5]\n"
 a: .space 40
 newLine: .ascii "\n"
 
-
 .text
 faaaaaab:
 move $fp,$sp
