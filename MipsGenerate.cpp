@@ -14,11 +14,13 @@
 
 using namespace std;
 
+
 string result;
-unordered_map<int, int> RuntimeStack;
+unordered_map<int, FuncRuntime> RuntimeStack;
 
 void WriteMipsFile() {
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm";
+    FuncRuntimeCheck();
     ofstream file;
     file.open(MIPSFILE, ios::out);
     file << ".data\n";
@@ -26,6 +28,62 @@ void WriteMipsFile() {
     file << "\n.text\n";
     TextDataOutput(file);
     file.close();
+}
+
+void FuncRuntimeCheck() {
+    int local_code_min = 0;
+    int local_code_max = 0;
+    int mid_code_max = 0;
+    int func_code = 0;
+    for (int i = 0; i < pcode_num; i++) {
+        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE) {
+            if (func_code != 0) {
+                auto iter = CodeFind(func_code);
+                FuncRuntime funcRuntime = {iter->second.name, func_code, local_code_max - local_code_min,
+                                           mid_code_max - MID_CODE_BASE};
+                RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
+                local_code_max = 0;
+                local_code_min = 0;
+                mid_code_max = 0;
+            }
+            func_code = pcode[i].z;
+        } else {
+            if (pcode[i].x >= LOCAL_CODE_BASE && pcode[i].x < MID_CODE_BASE) {
+                if (pcode[i].x > local_code_max) {
+                    local_code_max = pcode[i].x;
+                }
+                if (pcode[i].x < local_code_min || local_code_min == 0) {
+                    local_code_min = pcode[i].x;
+                }
+            } else if (pcode[i].x >= MID_CODE_BASE && pcode[i].x > mid_code_max) {
+                mid_code_max = pcode[i].x;
+            }
+            if (pcode[i].y >= LOCAL_CODE_BASE && pcode[i].y < MID_CODE_BASE) {
+                if (pcode[i].y > local_code_max) {
+                    local_code_max = pcode[i].y;
+                }
+                if (pcode[i].y < local_code_min || local_code_min == 0) {
+                    local_code_min = pcode[i].y;
+                }
+            } else if (pcode[i].y >= MID_CODE_BASE && pcode[i].y > mid_code_max) {
+                mid_code_max = pcode[i].y;
+            }
+            if (pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE && pcode[i].op != ADI) {
+                if (pcode[i].z > local_code_max) {
+                    local_code_max = pcode[i].z;
+                }
+                if (pcode[i].z < local_code_min || local_code_min == 0) {
+                    local_code_min = pcode[i].z;
+                }
+            } else if (pcode[i].z >= MID_CODE_BASE && pcode[i].z > mid_code_max && pcode[i].op != LABEL) {
+                mid_code_max = pcode[i].z;
+            }
+        }
+    }
+    auto iter = CodeFind(func_code);
+    FuncRuntime funcRuntime = {iter->second.name, func_code, local_code_max - local_code_min,
+                               mid_code_max - MID_CODE_BASE};
+    RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
 }
 
 void StaticDataOutput(ofstream &file) {
@@ -61,6 +119,9 @@ void TextDataOutput(ofstream &file) {
                 break;
             case 105:
                 //cout << " GOTO ";
+                char word[64];
+                Num2Char(pc.z, word);
+                file << "j " << word << "\n";
                 break;
             case 106:
                 //cout << " PLUS ";
@@ -76,7 +137,7 @@ void TextDataOutput(ofstream &file) {
                 break;
             case 110: {
                 //cout << " --- LABEL --- ";
-                int mid_code_max = MID_CODE_BASE;
+                //int mid_code_max = MID_CODE_BASE;
                 if (pc.z > 0 && pc.z <= MID_CODE_BASE) {
                     char label_name[16];
                     Num2Char(pc.z, label_name);
@@ -87,40 +148,34 @@ void TextDataOutput(ofstream &file) {
                 }
                 if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
                     file << "move $fp,$sp\n";
-                    auto iter = CodeFind(pc.z);
-                    for (int j = 1; i + j < pcode_num && (pcode[i + j].op != LABEL ||
-                                                          pcode[i + j].z >= MID_CODE_BASE || pcode[i + j].z < LOCAL_CODE_BASE); j++) {
-                        if (pcode[i + j].x > mid_code_max) {
-                            mid_code_max = pcode[i + j].x;
-                        }
-                        if (pcode[i + j].y > mid_code_max) {
-                            mid_code_max = pcode[i + j].y;
-                        }
-                        if (pcode[i + j].z > mid_code_max) {
-                            mid_code_max = pcode[i + j].z;
-                        }
-                    }
-                    file << "addi $sp,$sp," << (mid_code_max - MID_CODE_BASE) * 4 << "\n";
+                    auto iter = RuntimeStack.find(pc.z);
+                    file << "addi $sp,$sp," << (iter->second.local_code_num + iter->second.mid_code_num) * -4 << "\n";
                 }
                 break;
             }
             case 111:
                 //cout << " BEQ ";
+                file << "nop\n";
                 break;
             case 112:
                 //cout << " BNE ";
+                file << "nop\n";
                 break;
             case 113:
                 //cout << " BLEZ ";
+                file << "nop\n";
                 break;
             case 114:
                 //cout << " BGTZ ";
+                file << "nop\n";
                 break;
             case 115:
                 //cout << " BLTZ ";
+                file << "nop\n";
                 break;
             case 116:
                 //cout << " BGEZ ";
+                file << "nop\n";
                 break;
             case 117:
                 //cout << " WRITE ";
