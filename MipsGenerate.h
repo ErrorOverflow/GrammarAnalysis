@@ -12,6 +12,7 @@
 using namespace std;
 
 extern string result;
+extern unordered_map<int, int> RuntimeStack;
 
 void WriteMipsFile();
 

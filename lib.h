@@ -34,8 +34,6 @@ extern unordered_map<int, Sym> CodeIndex[64];
 
 int JumpSpace(char *str);
 
-void SpaceDel(char *des, char *src);
-
 int SymInsert(string name, int type, int dimension, int read, string label);
 
 int SymInsert(string name, int type, int dimension, int read, int value);

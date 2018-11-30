@@ -101,6 +101,8 @@ int ConstDefine(char *str) {
             for (int j = 0; j < identifier_len[i]; j++) {
                 name[j] = *(identifier[i] + j);
             }
+            name[identifier_len[i]] = '\0';
+            cout << name << endl;
             SymInsert(name, identifier_type, 0, 0, value);
         }
         return (int) ((p - str) / sizeof(char));
@@ -333,13 +335,13 @@ int NoReturnFuncDefine(char *str) {
                             if (*p == '{') {
                                 p++;
                                 p += JumpSpace(p);
+                                SymInsert(func_name, 2);
                                 if ((process_len = CompoundSentence(p))) {
                                     p += process_len;
                                     p += JumpSpace(p);
                                     if (*p == '}') {
                                         p++;
                                         p += JumpSpace(p);
-                                        SymInsert(func_name, 2);
                                         PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                                         return (int) ((p - str) / sizeof(char));
                                     }
@@ -1186,11 +1188,13 @@ int Program(char *str) {
         cout << endl << endl;
     }
     TableNum++;
+    MidCode = MID_CODE_BASE;
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
         cout << "<FuncDefine>" << endl << endl;
         p += process_len;
         p += JumpSpace(p);
         TableNum++;
+        MidCode = MID_CODE_BASE;
     }
     if ((process_len = MainFunc(p))) {
         cout << "<MainFunc>" << endl << endl;

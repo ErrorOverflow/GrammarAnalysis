@@ -10,10 +10,12 @@
 #include <stdlib.h>
 #include <fstream>
 #include <cstring>
+#include <unordered_map>
 
 using namespace std;
 
 string result;
+unordered_map<int, int> RuntimeStack;
 
 void WriteMipsFile() {
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm";
@@ -32,7 +34,7 @@ void StaticDataOutput(ofstream &file) {
         while (iter != SymTable[i].end()) {
             if (iter->second.type == 3) {
                 file << iter->second.label << ": .ascii " << "\"" << iter->second.name << "\"\n";
-            } else if (iter->second.dimension >= 1) {
+            } else if (iter->second.dimension >= 1 && iter->second.kind == 1) {
                 file << iter->second.name << ": .space " << iter->second.dimension * 4 << "\n";
             }
             iter++;
@@ -72,8 +74,9 @@ void TextDataOutput(ofstream &file) {
             case 109:
                 //cout << " DIV ";
                 break;
-            case 110:
+            case 110: {
                 //cout << " --- LABEL --- ";
+                int mid_code_max = MID_CODE_BASE;
                 if (pc.z > 0 && pc.z <= MID_CODE_BASE) {
                     char label_name[16];
                     Num2Char(pc.z, label_name);
@@ -82,7 +85,25 @@ void TextDataOutput(ofstream &file) {
                     cout << "label error";
                     exit(-3);
                 }
+                if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
+                    file << "move $fp,$sp\n";
+                    auto iter = CodeFind(pc.z);
+                    for (int j = 1; pcode[i + j].op != LABEL &&
+                                    (pcode[i + j].z >= LOCAL_CODE_BASE && pcode[i + j].z < MID_CODE_BASE); j++) {
+                        if (pcode[i + j].x > mid_code_max) {
+                            mid_code_max = pcode[i + j].x;
+                        }
+                        if (pcode[i + j].y > mid_code_max) {
+                            mid_code_max = pcode[i + j].y;
+                        }
+                        if (pcode[i + j].z > mid_code_max) {
+                            mid_code_max = pcode[i + j].z;
+                        }
+                    }
+                    file << "addi $sp,$sp," << (mid_code_max - MID_CODE_BASE) * 4 << "\n";
+                }
                 break;
+            }
             case 111:
                 //cout << " BEQ ";
                 break;

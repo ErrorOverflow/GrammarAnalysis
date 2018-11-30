@@ -10,10 +10,14 @@ newLine: .ascii "\n"
 
 .text
 faaaaaab:
+move $fp,$sp
+addi $sp,$sp,8
 aaab:
 baab:
 caab:
 iaaaaaab:
+move $fp,$sp
+addi $sp,$sp,0
 daab:
 eaab:
 faab:
