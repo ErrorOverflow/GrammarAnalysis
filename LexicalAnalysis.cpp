@@ -336,13 +336,13 @@ int NoReturnFuncDefine(char *str) {
                                 p++;
                                 p += JumpSpace(p);
                                 SymInsert(func_name, 2);
+                                PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                                 if ((process_len = CompoundSentence(p))) {
                                     p += process_len;
                                     p += JumpSpace(p);
                                     if (*p == '}') {
                                         p++;
                                         p += JumpSpace(p);
-                                        PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }
