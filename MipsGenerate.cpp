@@ -114,10 +114,17 @@ void TextDataOutput(ofstream &file) {
                 break;
             case 103:
                 //cout << " CALL ";
+                Num2Char(pc.z, word);
+                file << "jal " << word << "\nnop\n";
+                iter = RuntimeStack.find(func_code);
+                file << "move $t1,$v0\n";
+                file << "sw $t1," << X_FIND << "($sp)\n";
                 break;
             case 104:
                 //cout << " RET ";
-                file << "move $vo," << Z_FIND << "\n";
+                iter = RuntimeStack.find(func_code);
+                file << "lw $t3," << Z_FIND << "($sp)\n";
+                file << "move $vo,$t3" << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case 105:
@@ -214,8 +221,8 @@ void TextDataOutput(ofstream &file) {
                     exit(-3);
                 }
                 if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
-                    file << "move $fp,$sp\n";
                     auto iter = RuntimeStack.find(pc.z);
+                    file << "#------------------------------\n";
                     file << "addi $sp,$sp," <<
                          (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
                           MID_CODE_BASE) * -4 << "\n";
@@ -381,6 +388,12 @@ void TextDataOutput(ofstream &file) {
                 file << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
             }
+            case 121:
+                iter = RuntimeStack.find(func_code);
+                file << "addi $sp,$sp,"
+                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
+                         MID_CODE_BASE) * 4 << "\n";
+                break;
             default:
                 cout << pc.op << "unknown op" << endl;
                 exit(-1);

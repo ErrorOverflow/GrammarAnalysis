@@ -30,6 +30,7 @@ using namespace std;
 #define READ 118
 #define ADI 119
 #define LDA 120
+#define END 121
 
 struct PCode {
     int x;

@@ -294,6 +294,7 @@ int ReturnFuncDefine(char *str) {
                             if (*p == '}') {
                                 p++;
                                 p += JumpSpace(p);
+                                PCodeInsert(pcode_num++, 0, 0, END, 0);
                                 return (int) ((p - str) / sizeof(char));
                             }
                         }
@@ -343,6 +344,7 @@ int NoReturnFuncDefine(char *str) {
                                     if (*p == '}') {
                                         p++;
                                         p += JumpSpace(p);
+                                        PCodeInsert(pcode_num++, 0, 0, END, 0);
                                         return (int) ((p - str) / sizeof(char));
                                     }
                                 }
@@ -448,6 +450,7 @@ int MainFunc(char *str) {
                                 if (*p == '}') {
                                     p++;
                                     p += JumpSpace(p);
+                                    PCodeInsert(pcode_num++, 0, 0, END, 0);
                                     return (int) ((p - str) / sizeof(char));
                                 }
                             }

@@ -10,7 +10,7 @@ newLine: .ascii "\n"
 
 .text
 faaaaaab:
-move $fp,$sp
+#------------------------------
 addi $sp,$sp,-64
 
 lw $t3,12($sp)
@@ -62,7 +62,8 @@ lw $t3,24($sp)
 add $t1,$0,$t3
 sw $t1,20($sp)
 
-move $vo,20
+lw $t3,20($sp)
+move $vo,$t3
 jr $ra
 nop
 
@@ -144,6 +145,10 @@ lw $t3,52($sp)
 add $t1,$0,$t3
 sw $t1,48($sp)
 
+jal faaaaaab
+nop
+move $t1,$v0
+sw $t1,44($sp)
 lw $t3,44($sp)
 add $t1,$0,$t3
 sw $t1,40($sp)
@@ -156,7 +161,8 @@ lw $t3,36($sp)
 add $t1,$0,$t3
 sw $t1,32($sp)
 
-move $vo,32
+lw $t3,32($sp)
+move $vo,$t3
 jr $ra
 nop
 
@@ -185,6 +191,10 @@ lw $t3,56($sp)
 add $t1,$0,$t3
 sw $t1,52($sp)
 
+jal faaaaaab
+nop
+move $t1,$v0
+sw $t1,48($sp)
 lw $t3,48($sp)
 add $t1,$0,$t3
 sw $t1,44($sp)
@@ -197,7 +207,8 @@ lw $t3,40($sp)
 add $t1,$0,$t3
 sw $t1,36($sp)
 
-move $vo,36
+lw $t3,36($sp)
+move $vo,$t3
 jr $ra
 nop
 
@@ -214,12 +225,14 @@ lw $t3,44($sp)
 add $t1,$0,$t3
 sw $t1,40($sp)
 
-move $vo,40
+lw $t3,40($sp)
+move $vo,$t3
 jr $ra
 nop
 
+addi $sp,$sp,64
 haaaaaab:
-move $fp,$sp
+#------------------------------
 addi $sp,$sp,-24
 
 lw $t3,24($sp)
@@ -287,8 +300,9 @@ syscall
 
 iaab:
 
+addi $sp,$sp,24
 jaaaaaab:
-move $fp,$sp
+#------------------------------
 addi $sp,$sp,-188
 
 adi $t1,$0,0
@@ -498,6 +512,10 @@ lw $t3,152($sp)
 add $t1,$0,$t3
 sw $t1,148($sp)
 
+jal faaaaaab
+nop
+move $t1,$v0
+sw $t1,140($sp)
 lw $t3,140($sp)
 add $t1,$0,$t3
 sw $t1,136($sp)
@@ -700,3 +718,4 @@ move $a0,$t3
 li $v0,4
 syscall
 
+addi $sp,$sp,188

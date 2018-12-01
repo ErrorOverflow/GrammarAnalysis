@@ -104,7 +104,10 @@ void OpExchange(int op) {
             cout << " ADI ";
             break;
         case 120:
-            cout << " OFFSET ";
+            cout << " LDA ";
+            break;
+        case 121:
+            cout << " END ";
             break;
         default:
             cout << " " << op << " ";
