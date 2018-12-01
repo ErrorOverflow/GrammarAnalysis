@@ -12,6 +12,7 @@
 #define X_FIND ((pc.x >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.x - MID_CODE_BASE) * 4): ((pc.x - LOCAL_CODE_BASE) * 4))
 #define Y_FIND ((pc.y >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.y - MID_CODE_BASE) * 4): ((pc.y - LOCAL_CODE_BASE) * 4))
 #define Z_FIND ((pc.z >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.z - MID_CODE_BASE) * 4): ((pc.z - LOCAL_CODE_BASE) * 4))
+#define PARA_REG_FIND ((para_reg <= 4) ? (para_reg+3) : (para_reg+7))
 
 using namespace std;
 

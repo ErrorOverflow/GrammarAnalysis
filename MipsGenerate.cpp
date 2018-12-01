@@ -102,15 +102,28 @@ void StaticDataOutput(ofstream &file) {
 void TextDataOutput(ofstream &file) {
     char word[64];
     int func_code = 0;
+    int para_reg = 0;
     unordered_map<int, FuncRuntime>::iterator iter;
     for (int i = 0; i < pcode_num; i++) {
         PCode pc = pcode[i];
         switch (pc.op) {
-            case 101:
+            case 101: {
                 //cout << " PARA ";
+                iter = RuntimeStack.find(func_code);
+                file << "move $t3,$" << PARA_REG_FIND << "\n";
+                file << "sw $t3," << Z_FIND << "($sp)\n\n";
+                if (pcode[i + 1].op != PARA)
+                    para_reg = 0;
+                else
+                    para_reg++;
                 break;
+            }
             case 102:
                 //cout << " PUSH ";
+                iter = RuntimeStack.find(func_code);
+                file << "lw $t3," << Z_FIND << "($sp)\n";
+                file << "move $" << PARA_REG_FIND << ",$t3\n\n";
+                para_reg++;
                 break;
             case 103:
                 //cout << " CALL ";
@@ -119,6 +132,7 @@ void TextDataOutput(ofstream &file) {
                 iter = RuntimeStack.find(func_code);
                 file << "move $t1,$v0\n";
                 file << "sw $t1," << X_FIND << "($sp)\n";
+                para_reg = 0;
                 break;
             case 104:
                 //cout << " RET ";

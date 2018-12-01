@@ -9,233 +9,17 @@ newLine: .ascii "\n"
 
 
 .text
-faaaaaab:
+daaaaaab:
 #------------------------------
-addi $sp,$sp,-64
+addi $sp,$sp,-60
 
-lw $t3,12($sp)
-add $t1,$0,$t3
-sw $t1,20($sp)
+move $t3,$3
+sw $t3,16($sp)
 
-lw $t3,20($sp)
-add $t1,$0,$t3
-sw $t1,16($sp)
+move $t3,$4
+sw $t3,20($sp)
 
 lw $t3,16($sp)
-add $t1,$0,$t3
-sw $t1,12($sp)
-
-lw $t3,16($sp)
-add $t1,$0,$t3
-sw $t1,24($sp)
-
-lw $t3,24($sp)
-add $t1,$0,$t3
-sw $t1,20($sp)
-
-lw $t3,20($sp)
-add $t1,$0,$t3
-sw $t1,16($sp)
-
-lw $t1,12($sp)
-lw $t2,16($sp)
-bgez $t1,$t2,aaab
-nop
-
-j aaab
-nop
-
-j baab
-nop
-
-aaab:
-
-lw $t3,16($sp)
-add $t1,$0,$t3
-sw $t1,28($sp)
-
-lw $t3,28($sp)
-add $t1,$0,$t3
-sw $t1,24($sp)
-
-lw $t3,24($sp)
-add $t1,$0,$t3
-sw $t1,20($sp)
-
-lw $t3,20($sp)
-move $vo,$t3
-jr $ra
-nop
-
-j caab
-nop
-
-aaab:
-
-lw $t3,12($sp)
-add $t1,$0,$t3
-sw $t1,32($sp)
-
-lw $t3,32($sp)
-add $t1,$0,$t3
-sw $t1,28($sp)
-
-lw $t3,28($sp)
-add $t1,$0,$t3
-sw $t1,24($sp)
-
-lw $t3,16($sp)
-add $t1,$0,$t3
-sw $t1,36($sp)
-
-lw $t3,36($sp)
-add $t1,$0,$t3
-sw $t1,32($sp)
-
-adi $t1,$0,100
-sw $t1,40($sp)
-
-lw $t2,32($sp)
-lw $t3,40($sp)
-div $t1,$t2,$t3
-mflo 32
-
-adi $t1,$0,1
-sw $t1,44($sp)
-
-lw $t2,32($sp)
-lw $t3,44($sp)
-mult $t1,$t2,$t3
-mflo 32
-
-lw $t3,32($sp)
-add $t1,$0,$t3
-sw $t1,28($sp)
-
-lw $t1,24($sp)
-lw $t2,28($sp)
-blez $t1,$t2,daab
-nop
-
-j daab
-nop
-
-j eaab
-nop
-
-daab:
-
-lw $t3,12($sp)
-add $t1,$0,$t3
-sw $t1,56($sp)
-
-lw $t3,56($sp)
-add $t1,$0,$t3
-sw $t1,52($sp)
-
-adi $t1,$0,100
-sw $t1,60($sp)
-
-lw $t2,52($sp)
-lw $t3,60($sp)
-mult $t1,$t2,$t3
-mflo 52
-
-lw $t3,52($sp)
-add $t1,$0,$t3
-sw $t1,48($sp)
-
-jal faaaaaab
-nop
-move $t1,$v0
-sw $t1,44($sp)
-lw $t3,44($sp)
-add $t1,$0,$t3
-sw $t1,40($sp)
-
-lw $t3,40($sp)
-add $t1,$0,$t3
-sw $t1,36($sp)
-
-lw $t3,36($sp)
-add $t1,$0,$t3
-sw $t1,32($sp)
-
-lw $t3,32($sp)
-move $vo,$t3
-jr $ra
-nop
-
-j faab
-nop
-
-eaab:
-
-lw $t3,12($sp)
-add $t1,$0,$t3
-sw $t1,60($sp)
-
-lw $t3,60($sp)
-add $t1,$0,$t3
-sw $t1,56($sp)
-
-adi $t1,$0,10
-sw $t1,64($sp)
-
-lw $t2,56($sp)
-lw $t3,64($sp)
-mult $t1,$t2,$t3
-mflo 56
-
-lw $t3,56($sp)
-add $t1,$0,$t3
-sw $t1,52($sp)
-
-jal faaaaaab
-nop
-move $t1,$v0
-sw $t1,48($sp)
-lw $t3,48($sp)
-add $t1,$0,$t3
-sw $t1,44($sp)
-
-lw $t3,44($sp)
-add $t1,$0,$t3
-sw $t1,40($sp)
-
-lw $t3,40($sp)
-add $t1,$0,$t3
-sw $t1,36($sp)
-
-lw $t3,36($sp)
-move $vo,$t3
-jr $ra
-nop
-
-faab:
-
-adi $t1,$0,0
-sw $t1,48($sp)
-
-lw $t3,48($sp)
-add $t1,$0,$t3
-sw $t1,44($sp)
-
-lw $t3,44($sp)
-add $t1,$0,$t3
-sw $t1,40($sp)
-
-lw $t3,40($sp)
-move $vo,$t3
-jr $ra
-nop
-
-addi $sp,$sp,64
-haaaaaab:
-#------------------------------
-addi $sp,$sp,-24
-
-lw $t3,24($sp)
 add $t1,$0,$t3
 sw $t1,16($sp)
 
@@ -247,7 +31,8 @@ lw $t3,12($sp)
 add $t1,$0,$t3
 sw $t1,8($sp)
 
-adi $t1,$0,72
+lw $t3,20($sp)
+add $t1,$0,$t3
 sw $t1,20($sp)
 
 lw $t3,20($sp)
@@ -260,18 +45,18 @@ sw $t1,12($sp)
 
 lw $t1,8($sp)
 lw $t2,12($sp)
-beq $t1,$t2,gaab
+bgez $t1,$t2,aaab
 nop
 
-j gaab
+j aaab
 nop
 
-j haab
+j baab
 nop
 
-gaab:
+aaab:
 
-lw $t3,24($sp)
+lw $t3,20($sp)
 add $t1,$0,$t3
 sw $t1,24($sp)
 
@@ -284,6 +69,236 @@ add $t1,$0,$t3
 sw $t1,16($sp)
 
 lw $t3,16($sp)
+move $vo,$t3
+jr $ra
+nop
+
+j caab
+nop
+
+aaab:
+
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,28($sp)
+
+lw $t3,28($sp)
+add $t1,$0,$t3
+sw $t1,24($sp)
+
+lw $t3,24($sp)
+add $t1,$0,$t3
+sw $t1,20($sp)
+
+lw $t3,20($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+lw $t3,32($sp)
+add $t1,$0,$t3
+sw $t1,28($sp)
+
+adi $t1,$0,100
+sw $t1,36($sp)
+
+lw $t2,28($sp)
+lw $t3,36($sp)
+div $t1,$t2,$t3
+mflo 28
+
+adi $t1,$0,1
+sw $t1,40($sp)
+
+lw $t2,28($sp)
+lw $t3,40($sp)
+mult $t1,$t2,$t3
+mflo 28
+
+lw $t3,28($sp)
+add $t1,$0,$t3
+sw $t1,24($sp)
+
+lw $t1,20($sp)
+lw $t2,24($sp)
+blez $t1,$t2,daab
+nop
+
+j daab
+nop
+
+j eaab
+nop
+
+daab:
+
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,52($sp)
+
+lw $t3,52($sp)
+add $t1,$0,$t3
+sw $t1,48($sp)
+
+adi $t1,$0,100
+sw $t1,56($sp)
+
+lw $t2,48($sp)
+lw $t3,56($sp)
+mult $t1,$t2,$t3
+mflo 48
+
+lw $t3,48($sp)
+add $t1,$0,$t3
+sw $t1,44($sp)
+
+lw $t3,44($sp)
+move $3,$t3
+
+jal daaaaaab
+nop
+move $t1,$v0
+sw $t1,40($sp)
+lw $t3,40($sp)
+add $t1,$0,$t3
+sw $t1,36($sp)
+
+lw $t3,36($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+lw $t3,32($sp)
+add $t1,$0,$t3
+sw $t1,28($sp)
+
+lw $t3,28($sp)
+move $vo,$t3
+jr $ra
+nop
+
+j faab
+nop
+
+eaab:
+
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,56($sp)
+
+lw $t3,56($sp)
+add $t1,$0,$t3
+sw $t1,52($sp)
+
+adi $t1,$0,10
+sw $t1,60($sp)
+
+lw $t2,52($sp)
+lw $t3,60($sp)
+mult $t1,$t2,$t3
+mflo 52
+
+lw $t3,52($sp)
+add $t1,$0,$t3
+sw $t1,48($sp)
+
+lw $t3,48($sp)
+move $3,$t3
+
+jal daaaaaab
+nop
+move $t1,$v0
+sw $t1,44($sp)
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,40($sp)
+
+lw $t3,40($sp)
+add $t1,$0,$t3
+sw $t1,36($sp)
+
+lw $t3,36($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+lw $t3,32($sp)
+move $vo,$t3
+jr $ra
+nop
+
+faab:
+
+adi $t1,$0,0
+sw $t1,44($sp)
+
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,40($sp)
+
+lw $t3,40($sp)
+add $t1,$0,$t3
+sw $t1,36($sp)
+
+lw $t3,36($sp)
+move $vo,$t3
+jr $ra
+nop
+
+addi $sp,$sp,60
+gaaaaaab:
+#------------------------------
+addi $sp,$sp,-20
+
+move $t3,$3
+sw $t3,28($sp)
+
+lw $t3,28($sp)
+add $t1,$0,$t3
+sw $t1,12($sp)
+
+lw $t3,12($sp)
+add $t1,$0,$t3
+sw $t1,8($sp)
+
+lw $t3,8($sp)
+add $t1,$0,$t3
+sw $t1,4($sp)
+
+adi $t1,$0,72
+sw $t1,16($sp)
+
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,12($sp)
+
+lw $t3,12($sp)
+add $t1,$0,$t3
+sw $t1,8($sp)
+
+lw $t1,4($sp)
+lw $t2,8($sp)
+beq $t1,$t2,gaab
+nop
+
+j gaab
+nop
+
+j haab
+nop
+
+gaab:
+
+lw $t3,28($sp)
+add $t1,$0,$t3
+sw $t1,20($sp)
+
+lw $t3,20($sp)
+add $t1,$0,$t3
+sw $t1,16($sp)
+
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,12($sp)
+
+lw $t3,12($sp)
 move $a0,$t3
 li $v0,4
 syscall
@@ -300,7 +315,7 @@ syscall
 
 iaab:
 
-addi $sp,$sp,24
+addi $sp,$sp,20
 jaaaaaab:
 #------------------------------
 addi $sp,$sp,-188
@@ -475,6 +490,9 @@ lw $t3,128($sp)
 add $t1,$0,$t3
 sw $t1,124($sp)
 
+lw $t3,124($sp)
+move $3,$t3
+
 lw $t2,56($sp)
 adi $t1,$t2,1
 sw $t1,56($sp)
@@ -512,7 +530,10 @@ lw $t3,152($sp)
 add $t1,$0,$t3
 sw $t1,148($sp)
 
-jal faaaaaab
+lw $t3,144($sp)
+move $4,$t3
+
+jal daaaaaab
 nop
 move $t1,$v0
 sw $t1,140($sp)

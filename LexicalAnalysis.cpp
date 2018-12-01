@@ -277,6 +277,8 @@ int ReturnFuncDefine(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            SymInsert(func_name, func_type);
+            PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
             if ((process_len = ParameterList(p)) || *p == ')') {
                 p += process_len;
                 p += JumpSpace(p);
@@ -286,8 +288,6 @@ int ReturnFuncDefine(char *str) {
                     if (*p == '{') {
                         p++;
                         p += JumpSpace(p);
-                        SymInsert(func_name, func_type);
-                        PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                         if ((process_len = CompoundSentence(p))) {
                             p += process_len;
                             p += JumpSpace(p);
@@ -327,6 +327,8 @@ int NoReturnFuncDefine(char *str) {
                 if (*p == '(') {
                     p++;
                     *p += JumpSpace(p);
+                    SymInsert(func_name, 2);
+                    PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                     if ((process_len = ParameterList(p)) || *p == ')') {
                         p += process_len;
                         p += JumpSpace(p);
@@ -336,8 +338,6 @@ int NoReturnFuncDefine(char *str) {
                             if (*p == '{') {
                                 p++;
                                 p += JumpSpace(p);
-                                SymInsert(func_name, 2);
-                                PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
                                 if ((process_len = CompoundSentence(p))) {
                                     p += process_len;
                                     p += JumpSpace(p);
