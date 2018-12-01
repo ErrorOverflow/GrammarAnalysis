@@ -104,7 +104,8 @@ sw $t1,36($sp)
 lw $t2,28($sp)
 lw $t3,36($sp)
 div $t1,$t2,$t3
-mflo 28
+mflo $t1
+sw $t1,28($sp)
 
 adi $t1,$0,1
 sw $t1,40($sp)
@@ -112,7 +113,8 @@ sw $t1,40($sp)
 lw $t2,28($sp)
 lw $t3,40($sp)
 mult $t1,$t2,$t3
-mflo 28
+mflo $t1
+sw $t1,28($sp)
 
 lw $t3,28($sp)
 add $t1,$0,$t3
@@ -145,7 +147,8 @@ sw $t1,56($sp)
 lw $t2,48($sp)
 lw $t3,56($sp)
 mult $t1,$t2,$t3
-mflo 48
+mflo $t1
+sw $t1,48($sp)
 
 lw $t3,48($sp)
 add $t1,$0,$t3
@@ -194,7 +197,8 @@ sw $t1,60($sp)
 lw $t2,52($sp)
 lw $t3,60($sp)
 mult $t1,$t2,$t3
-mflo 52
+mflo $t1
+sw $t1,52($sp)
 
 lw $t3,52($sp)
 add $t1,$0,$t3
@@ -551,7 +555,8 @@ sw $t1,140($sp)
 lw $t2,132($sp)
 lw $t3,140($sp)
 mult $t1,$t2,$t3
-mflo 132
+mflo $t1
+sw $t1,132($sp)
 
 lw $t3,132($sp)
 add $t1,$0,$t3
@@ -707,7 +712,8 @@ sw $t1,188($sp)
 lw $t2,180($sp)
 lw $t3,188($sp)
 mult $t1,$t2,$t3
-mflo 180
+mflo $t1
+sw $t1,180($sp)
 
 lw $t2,172($sp)
 lw $t3,180($sp)
@@ -728,7 +734,8 @@ sw $t1,168($sp)
 lw $t2,160($sp)
 lw $t3,168($sp)
 mult $t1,$t2,$t3
-mflo 160
+mflo $t1
+sw $t1,160($sp)
 
 lw $t3,160($sp)
 add $t1,$0,$t3

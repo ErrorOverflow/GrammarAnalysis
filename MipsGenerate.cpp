@@ -203,7 +203,7 @@ void TextDataOutput(ofstream &file) {
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
                     file << "mult $t1,$t2,$t3" << "\n";
                 }
-                file << "mflo " << X_FIND << "\n\n";
+                file << "mflo $t1\n" << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
             case 109:
                 //cout << " DIV ";
@@ -221,7 +221,7 @@ void TextDataOutput(ofstream &file) {
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
                     file << "div $t1,$t2,$t3" << "\n";
                 }
-                file << "mflo " << X_FIND << "\n\n";
+                file << "mflo $t1\n" << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
             case 110: {
                 //cout << " --- LABEL --- ";
