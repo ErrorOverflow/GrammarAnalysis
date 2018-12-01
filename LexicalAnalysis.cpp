@@ -585,6 +585,7 @@ int Factor(char *str, int code) {
         z = *(p + 1);
         p += process_len;
         p += JumpSpace(p);
+        op = ADI;
         PCodeInsert(pcode_num++, x, y, op, z);
         MidCode = MidCode_buf;
         return (int) ((p - str) / sizeof(char));
@@ -723,7 +724,7 @@ int AssignSentence(char *str) {
 int ConditionSentence(char *str) {
     char *p = str;
     int process_len = 0;
-    int label = LabelCode, LabelCode_buf = LabelCode++, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int LabelCode_buf = LabelCode, MidCode_buf = MidCode, pcode_buf = pcode_num, label = LabelCode++, label_else = LabelCode++, label_end = LabelCode++;
     if (*p == 'i' && *(p + 1) == 'f') {
         p += 2;
         p += JumpSpace(p);
@@ -737,16 +738,20 @@ int ConditionSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
+                    PCodeInsert(pcode_num++, 0, 0, GOTO, label_else);
+                    PCodeInsert(pcode_num++, 0, 0, LABEL, label);
                     if ((process_len = Sentence(p))) {
                         p += process_len;
                         p += JumpSpace(p);
+                        PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
                         if (*p == 'e' && *(p + 1) == 'l' && *(p + 2) == 's' && *(p + 3) == 'e') {
                             p += 4;
                             p += JumpSpace(p);
-                            PCodeInsert(pcode_num++, 0, 0, LABEL, label);
+                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
                             if ((process_len = Sentence(p))) {
                                 p += process_len;
                                 p += JumpSpace(p);
+                                PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
                                 cout << "<IF>" << endl;
                                 return (int) ((p - str) / sizeof(char));
                             }
@@ -1046,7 +1051,7 @@ int ReadSentence(char *str) {
     char *p = str, word[64];
     int process_len = 0;
     int isRight = 0;
-    int z = MidCode, op = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int z = 0, op = READ, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 's' && *(p + 1) == 'c' && *(p + 2) == 'a' && *(p + 3) == 'n' && *(p + 4) == 'f') {
         p += 5;
         p += JumpSpace(p);

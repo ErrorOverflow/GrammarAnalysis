@@ -23,7 +23,6 @@ struct FuncRuntime {
     int mid_code_max;
 };
 
-extern string result;
 extern unordered_map<int, FuncRuntime> RuntimeStack;
 
 void WriteMipsFile();

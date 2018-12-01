@@ -45,6 +45,11 @@ nop
 j aaab
 nop
 
+j baab
+nop
+
+aaab:
+
 lw $t3,16($sp)
 add $t1,$0,$t3
 sw $t1,28($sp)
@@ -59,6 +64,9 @@ sw $t1,20($sp)
 
 move $vo,20
 jr $ra
+nop
+
+j caab
 nop
 
 aaab:
@@ -105,11 +113,16 @@ sw $t1,28($sp)
 
 lw $t1,24($sp)
 lw $t2,28($sp)
-blez $t1,$t2,baab
+blez $t1,$t2,daab
 nop
 
-j baab
+j daab
 nop
+
+j eaab
+nop
+
+daab:
 
 lw $t3,12($sp)
 add $t1,$0,$t3
@@ -147,7 +160,10 @@ move $vo,32
 jr $ra
 nop
 
-baab:
+j faab
+nop
+
+eaab:
 
 lw $t3,12($sp)
 add $t1,$0,$t3
@@ -185,6 +201,8 @@ move $vo,36
 jr $ra
 nop
 
+faab:
+
 adi $t1,$0,0
 sw $t1,48($sp)
 
@@ -216,8 +234,7 @@ lw $t3,12($sp)
 add $t1,$0,$t3
 sw $t1,8($sp)
 
-lw $t3,-39999712($sp)
-add $t1,$0,$t3
+adi $t1,$0,72
 sw $t1,20($sp)
 
 lw $t3,20($sp)
@@ -230,11 +247,16 @@ sw $t1,12($sp)
 
 lw $t1,8($sp)
 lw $t2,12($sp)
-beq $t1,$t2,caab
+beq $t1,$t2,gaab
 nop
 
-j caab
+j gaab
 nop
+
+j haab
+nop
+
+gaab:
 
 lw $t3,24($sp)
 add $t1,$0,$t3
@@ -248,7 +270,22 @@ lw $t3,20($sp)
 add $t1,$0,$t3
 sw $t1,16($sp)
 
-caab:
+lw $t3,16($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
+j iaab
+nop
+
+haab:
+
+lw $t3,32($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
+iaab:
 
 jaaaaaab:
 move $fp,$sp
@@ -269,7 +306,7 @@ lw $t3,84($sp)
 add $t1,$0,$t3
 sw $t1,56($sp)
 
-daab:
+jaab:
 
 lw $t3,56($sp)
 add $t1,$0,$t3
@@ -297,8 +334,12 @@ sw $t1,92($sp)
 
 lw $t1,88($sp)
 lw $t2,92($sp)
-bltz $t1,$t2,daab
+bltz $t1,$t2,jaab
 nop
+
+li $v0,5
+syscall
+sw $v0,52($sp)
 
 lw $t3,56($sp)
 add $t1,$0,$t3
@@ -311,6 +352,11 @@ sw $t1,100($sp)
 lw $t3,100($sp)
 add $t1,$0,$t3
 sw $t1,96($sp)
+
+la $t2,
+lw $t1,100($sp)
+add $t1,$0,96($t2)
+sw $t1,100($sp)
 
 lw $t3,52($sp)
 add $t1,$0,$t3
@@ -332,10 +378,10 @@ lw $t2,56($sp)
 adi $t1,$t2,1
 sw $t1,56($sp)
 
-j daab
+j jaab
 nop
 
-eaab:
+abab:
 
 adi $t1,$0,0
 sw $t1,116($sp)
@@ -352,6 +398,11 @@ lw $t3,108($sp)
 add $t1,$0,$t3
 sw $t1,56($sp)
 
+lw $t3,68($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
 adi $t1,$0,0
 sw $t1,120($sp)
 
@@ -367,7 +418,7 @@ lw $t3,112($sp)
 add $t1,$0,$t3
 sw $t1,56($sp)
 
-faab:
+bbab:
 
 lw $t3,56($sp)
 add $t1,$0,$t3
@@ -395,7 +446,7 @@ sw $t1,120($sp)
 
 lw $t1,116($sp)
 lw $t2,120($sp)
-bltz $t1,$t2,faab
+bltz $t1,$t2,bbab
 nop
 
 lw $t3,64($sp)
@@ -414,10 +465,15 @@ lw $t2,56($sp)
 adi $t1,$t2,1
 sw $t1,56($sp)
 
-j faab
+j bbab
 nop
 
-gaab:
+cbab:
+
+lw $t3,68($sp)
+move $a0,$t3
+li $v0,4
+syscall
 
 adi $t1,$0,100
 sw $t1,152($sp)
@@ -462,6 +518,16 @@ lw $t3,132($sp)
 add $t1,$0,$t3
 sw $t1,128($sp)
 
+lw $t3,128($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
+lw $t3,68($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
 adi $t1,$0,10
 sw $t1,140($sp)
 
@@ -487,6 +553,11 @@ sw $t1,140($sp)
 lw $t3,140($sp)
 add $t1,$0,$t3
 sw $t1,136($sp)
+
+la $t2,
+lw $t1,140($sp)
+add $t1,$0,136($t2)
+sw $t1,140($sp)
 
 adi $t1,$0,7
 sw $t1,152($sp)
@@ -526,6 +597,11 @@ lw $t3,172($sp)
 add $t1,$0,$t3
 sw $t1,168($sp)
 
+la $t2,
+lw $t1,172($sp)
+add $t1,$0,168($t2)
+sw $t1,172($sp)
+
 lw $t3,172($sp)
 add $t1,$0,$t3
 sw $t1,160($sp)
@@ -540,13 +616,33 @@ sw $t1,152($sp)
 
 lw $t1,148($sp)
 lw $t2,152($sp)
-bgtz $t1,$t2,haab
+bgtz $t1,$t2,dbab
 nop
 
-j haab
+j dbab
 nop
 
-haab:
+j ebab
+nop
+
+dbab:
+
+lw $t3,80($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
+j fbab
+nop
+
+ebab:
+
+lw $t3,84($sp)
+move $a0,$t3
+li $v0,4
+syscall
+
+fbab:
 
 adi $t1,$0,1
 sw $t1,180($sp)
@@ -598,4 +694,9 @@ mflo 160
 lw $t3,160($sp)
 add $t1,$0,$t3
 sw $t1,156($sp)
+
+lw $t3,156($sp)
+move $a0,$t3
+li $v0,4
+syscall
 

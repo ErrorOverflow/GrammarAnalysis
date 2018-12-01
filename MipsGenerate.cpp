@@ -14,8 +14,6 @@
 
 using namespace std;
 
-
-string result;
 unordered_map<int, FuncRuntime> RuntimeStack;
 
 void WriteMipsFile() {
@@ -348,9 +346,18 @@ void TextDataOutput(ofstream &file) {
                 break;
             case 117:
                 //cout << " WRITE ";
+                iter = RuntimeStack.find(func_code);
+                file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                file << "move $a0,$t3\n";
+                file << "li $v0,4\n";
+                file << "syscall\n\n";
                 break;
             case 118:
                 //cout << " READ ";
+                iter = RuntimeStack.find(func_code);
+                file << "li $v0,5\n";
+                file << "syscall\n";
+                file << "sw $v0," << Z_FIND << "($sp)\n\n";
                 break;
             case 119:
                 //cout << " ADI ";
@@ -364,28 +371,19 @@ void TextDataOutput(ofstream &file) {
                 file << "sw $t1," << X_FIND << "($sp)" << "\n";
                 file << "\n";
                 break;
-            case 120:
-                cout << " OFFSET ";
+            case 120: {
+                //cout << " LDA ";
+                iter = RuntimeStack.find(func_code);
+                auto it = CodeFind(pc.y);
+                file << "la $t2," << it->second.label << "\n";
+                file << "lw $t1," << X_FIND << "($sp)\n";
+                file << "add $t1,$0," << Z_FIND << "($t2)\n";
+                file << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
+            }
             default:
                 cout << pc.op << "unknown op" << endl;
                 exit(-1);
         }
     }
-}
-
-void PrintASM(int reg) {
-    //result.append("move $a0,$"+reg+"\n");
-    result.append("li $v0,4");
-    result.append("syscall\n");
-}
-
-void PrintASM(string label) {
-    result.append("la $a0," + label + "\n");
-    result.append("li $v0,4");
-    result.append("syscall\n");
-}
-
-void WriteMips() {
-    cout << result << endl;
 }
