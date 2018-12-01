@@ -104,6 +104,11 @@ void TextDataOutput(ofstream &file) {
     int func_code = 0;
     int para_reg = 0;
     unordered_map<int, FuncRuntime>::iterator iter;
+    unordered_map<string, Sym>::iterator it;
+    unordered_map<int, Sym>::iterator it_code;
+    it = SymFind("main");
+    Num2Char(it->second.code, word);
+    file << "j " << word << "\n";
     for (int i = 0; i < pcode_num; i++) {
         PCode pc = pcode[i];
         switch (pc.op) {
@@ -138,7 +143,7 @@ void TextDataOutput(ofstream &file) {
                 //cout << " RET ";
                 iter = RuntimeStack.find(func_code);
                 file << "lw $t3," << Z_FIND << "($sp)\n";
-                file << "move $vo,$t3" << "\n";
+                file << "move $v0,$t3" << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case 105:
@@ -191,17 +196,17 @@ void TextDataOutput(ofstream &file) {
                 //cout << " MULTI ";
                 iter = RuntimeStack.find(func_code);
                 if (pc.y == 0 && pc.z == 0) {
-                    file << "mult $t1,$0,$0" << "\n";
+                    file << "mult $0,$0" << "\n";
                 } else if (pc.y == 0) {
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
-                    file << "mult $t1,$0,$t3" << "\n";
+                    file << "mult $0,$t3" << "\n";
                 } else if (pc.z == 0) {
                     file << "lw $t2," << Y_FIND << "($sp)" << "\n";
-                    file << "mult $t1,$t2,$0" << "\n";
+                    file << "mult $t2,$0" << "\n";
                 } else {
                     file << "lw $t2," << Y_FIND << "($sp)" << "\n";
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
-                    file << "mult $t1,$t2,$t3" << "\n";
+                    file << "mult $t2,$t3" << "\n";
                 }
                 file << "mflo $t1\n" << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
@@ -209,17 +214,17 @@ void TextDataOutput(ofstream &file) {
                 //cout << " DIV ";
                 iter = RuntimeStack.find(func_code);
                 if (pc.y == 0 && pc.z == 0) {
-                    file << "div $t1,$0,$0" << "\n";
+                    file << "div $0,$0" << "\n";
                 } else if (pc.y == 0) {
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
-                    file << "div $t1,$0,$t3" << "\n";
+                    file << "div $0,$t3" << "\n";
                 } else if (pc.z == 0) {
                     file << "lw $t2," << Y_FIND << "($sp)" << "\n";
-                    file << "div $t1,$t2,$0" << "\n";
+                    file << "div $t2,$0" << "\n";
                 } else {
                     file << "lw $t2," << Y_FIND << "($sp)" << "\n";
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
-                    file << "div $t1,$t2,$t3" << "\n";
+                    file << "div $t2,$t3" << "\n";
                 }
                 file << "mflo $t1\n" << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
@@ -235,14 +240,15 @@ void TextDataOutput(ofstream &file) {
                     exit(-3);
                 }
                 if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
-                    auto iter = RuntimeStack.find(pc.z);
+                    iter = RuntimeStack.find(pc.z);
                     file << "#------------------------------\n";
                     file << "addi $sp,$sp," <<
                          (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                          MID_CODE_BASE) * -4 << "\n";
+                          MID_CODE_BASE + 1) * -4 << "\n\n";
+                    cout << iter->second.local_code_max << " " << iter->second.local_code_min << " "
+                         << iter->second.mid_code_max << endl;
                     func_code = pc.z;
                 }
-                file << "\n";
                 break;
             }
             case 111:
@@ -286,41 +292,42 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case 113:
-                //cout << " BLEZ ";
+                //cout << " BLEZ <=";
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
-                    file << "blez $t1,$t2," << word << "\n";
+                    file << "j " << word << "\n";
                 } else if (pc.y == 0) {
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "blez $0,$t2," << word << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "bgez $t3," << word << "\n";
                 } else if (pc.z == 0) {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "blez $t1,$0," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "blez $t2," << word << "\n";
                 } else {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "blez $t1,$t2," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "sub $t1,$t2,$t3\n";
+                    file << "blez $t1," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
             case 114:
-                //cout << " BGTZ ";
+                //cout << " BGTZ >";
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
-                    file << "bgtz $t1,$t2," << word << "\n";
                 } else if (pc.y == 0) {
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "bgtz $0,$t2," << word << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "bltz $t3," << word << "\n";
                 } else if (pc.z == 0) {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "bgtz $t1,$0," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "bgtz $t2," << word << "\n";
                 } else {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "bgtz $t1,$t2," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "sub $t1,$t2,$t3\n";
+                    file << "bgtz $t1," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
@@ -330,17 +337,17 @@ void TextDataOutput(ofstream &file) {
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
-                    file << "bltz $t1,$t2," << word << "\n";
                 } else if (pc.y == 0) {
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "bltz $0,$t2," << word << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "bgtz $t3," << word << "\n";
                 } else if (pc.z == 0) {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "bltz $t1,$0," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "bltz $t2," << word << "\n";
                 } else {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "bltz $t1,$t2," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "sub $t1,$t2,$t3\n";
+                    file << "bltz $t1," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
@@ -350,17 +357,18 @@ void TextDataOutput(ofstream &file) {
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
-                    file << "bgez $t1,$t2," << word << "\n";
+                    file << "j " << word << "\n";
                 } else if (pc.y == 0) {
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "bgez $0,$t2," << word << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "blez $t3," << word << "\n";
                 } else if (pc.z == 0) {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "bgez $t1,$0," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "bgez $t2," << word << "\n";
                 } else {
-                    file << "lw $t1," << Y_FIND << "($sp)" << "\n";
-                    file << "lw $t2," << Z_FIND << "($sp)" << "\n";
-                    file << "bgez $t1,$t2," << word << "\n";
+                    file << "lw $t2," << Y_FIND << "($sp)" << "\n";
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "sub $t1,$t2,$t3\n";
+                    file << "bgez $t1," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
@@ -368,8 +376,18 @@ void TextDataOutput(ofstream &file) {
             case 117:
                 //cout << " WRITE ";
                 iter = RuntimeStack.find(func_code);
-                file << "lw $t3," << Z_FIND << "($sp)" << "\n";
-                file << "move $a0,$t3\n";
+                if (pc.z >= MID_CODE_BASE) {
+                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                    file << "move $a0,$t3\n";
+                    file << "li $v0,1\n";
+                    file << "syscall\n";
+                } else if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
+                    it_code = CodeFind(pc.z);
+                    file << "la $a0," << it_code->second.label << "\n";
+                    file << "li $v0,4\n";
+                    file << "syscall\n";
+                }
+                file << "la $a0,newLine\n";
                 file << "li $v0,4\n";
                 file << "syscall\n\n";
                 break;
@@ -384,10 +402,10 @@ void TextDataOutput(ofstream &file) {
                 //cout << " ADI ";
                 iter = RuntimeStack.find(func_code);
                 if (pc.y == 0) {
-                    file << "adi $t1,$0," << pc.z << "\n";
+                    file << "addi $t1,$0," << pc.z << "\n";
                 } else {
                     file << "lw $t2," << Y_FIND << "($sp)" << "\n";
-                    file << "adi $t1,$t2," << pc.z << "\n";
+                    file << "addi $t1,$t2," << pc.z << "\n";
                 }
                 file << "sw $t1," << X_FIND << "($sp)" << "\n";
                 file << "\n";
@@ -395,18 +413,21 @@ void TextDataOutput(ofstream &file) {
             case 120: {
                 //cout << " LDA ";
                 iter = RuntimeStack.find(func_code);
-                auto it = CodeFind(pc.y);
-                file << "la $t2," << it->second.label << "\n";
-                file << "lw $t1," << X_FIND << "($sp)\n";
-                file << "add $t1,$0," << Z_FIND << "($t2)\n";
+                it_code = CodeFind(pc.y);
+                file << "la $t2," << it_code->second.name << "\n";
+                file << "lw $t3," << Z_FIND << "($sp)\n";
+                file << "sll $t3,$t3,2\nadd $t2,$t2,$t3\n";
+                file << "lw $t1,0($t2)\n";
                 file << "sw $t1," << X_FIND << "($sp)\n\n";
                 break;
             }
             case 121:
+                //cout << " END ";
                 iter = RuntimeStack.find(func_code);
                 file << "addi $sp,$sp,"
                      << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE) * 4 << "\n";
+                         MID_CODE_BASE + 1) * 4 << "\n";
+                file << "jr $ra\nnop\n\n";
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;

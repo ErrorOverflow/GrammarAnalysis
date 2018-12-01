@@ -1,0 +1,15 @@
+const int MAX=5;const int INTMAX=100000;
+int Variable;
+
+void func(){
+    int k;
+    k=1*1000-2/1;
+    printf(k);
+}
+
+void main(){
+    int i;
+    i=1;
+    printf(i);
+    func();
+}

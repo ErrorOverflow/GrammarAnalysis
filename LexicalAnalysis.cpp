@@ -450,7 +450,6 @@ int MainFunc(char *str) {
                                 if (*p == '}') {
                                     p++;
                                     p += JumpSpace(p);
-                                    PCodeInsert(pcode_num++, 0, 0, END, 0);
                                     return (int) ((p - str) / sizeof(char));
                                 }
                             }
@@ -735,7 +734,6 @@ int ConditionSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Condition(p, label, BEQ))) {
-                PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -746,10 +744,10 @@ int ConditionSentence(char *str) {
                     if ((process_len = Sentence(p))) {
                         p += process_len;
                         p += JumpSpace(p);
-                        PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
                         if (*p == 'e' && *(p + 1) == 'l' && *(p + 2) == 's' && *(p + 3) == 'e') {
                             p += 4;
                             p += JumpSpace(p);
+                            PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
                             PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
                             if ((process_len = Sentence(p))) {
                                 p += process_len;
@@ -759,7 +757,7 @@ int ConditionSentence(char *str) {
                                 return (int) ((p - str) / sizeof(char));
                             }
                         } else {
-                            PCodeInsert(pcode_num++, 0, 0, LABEL, label);
+                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
                             cout << "<IF>" << endl;
                             return (int) ((p - str) / sizeof(char));
                         }
@@ -968,9 +966,13 @@ int ReturnFuncCall(char *str, int code) {
 }
 
 int ReturnFuncCall(char *str) {
-    char *p = str;
+    char *p = str, word[64];
     int process_len = 0;
     if ((process_len = Identifier(p))) {
+        for (int i = 0; i < process_len; i++) {
+            word[i] = *(p + i);
+        }
+        word[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
@@ -983,6 +985,8 @@ int ReturnFuncCall(char *str) {
                     p++;
                     p += JumpSpace(p);
                     cout << "<ReturnFuncCall>";
+                    auto iter = SymFind(word);
+                    PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -992,9 +996,13 @@ int ReturnFuncCall(char *str) {
 }
 
 int NoReturnFuncCall(char *str) {
-    char *p = str;
+    char *p = str, word[64];
     int process_len = 0;
     if ((process_len = Identifier(p))) {
+        for (int i = 0; i < process_len; i++) {
+            word[i] = *(p + i);
+        }
+        word[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
         if (*p == '(') {
@@ -1007,6 +1015,8 @@ int NoReturnFuncCall(char *str) {
                     p++;
                     p += JumpSpace(p);
                     cout << "<NoReturnFuncCall>";
+                    auto iter = SymFind(word);
+                    PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
