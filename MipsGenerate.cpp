@@ -88,15 +88,20 @@ void StaticDataOutput(ofstream &file) {
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
-            if (iter->second.type == 3) {
-                file << iter->second.label << ": .ascii " << "\"" << iter->second.name << "\"\n";
-            } else if (iter->second.dimension >= 1 && iter->second.kind == 1) {
+            if (iter->second.dimension >= 1 && iter->second.kind == 1) {
                 file << iter->second.name << ": .space " << iter->second.dimension * 4 << "\n";
             }
             iter++;
         }
+        iter = SymTable[i].begin();
+        while (iter != SymTable[i].end()) {
+            if (iter->second.type == 3) {
+                file << iter->second.label << ": .ascii " << "\"" << iter->second.name << "\\0\"\n";
+            }
+            iter++;
+        }
     }
-    file << "newLine: .ascii \"\\n\"\n" << endl;
+    file << "newLine: .ascii \"\\n\\0\"\n" << endl;
 }
 
 void TextDataOutput(ofstream &file) {
@@ -144,6 +149,9 @@ void TextDataOutput(ofstream &file) {
                 iter = RuntimeStack.find(func_code);
                 file << "lw $t3," << Z_FIND << "($sp)\n";
                 file << "move $v0,$t3" << "\n";
+                file << "addi $sp,$sp,"
+                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
+                         MID_CODE_BASE + 1) * 4 << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case 105:
@@ -428,6 +436,16 @@ void TextDataOutput(ofstream &file) {
                      << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
                          MID_CODE_BASE + 1) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
+                break;
+            case 122:
+                //cout << " SW ";
+                iter = RuntimeStack.find(func_code);
+                it_code = CodeFind(pc.y);
+                file << "la $t2," << it_code->second.name << "\n";
+                file << "lw $t1," << X_FIND << "($sp)\n";
+                file << "lw $t3," << Z_FIND << "($sp)\n";
+                file << "sll $t3,$t3,2\nadd $t2,$t2,$t3\n";
+                file << "sw $t1,0($t2)\n";
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;

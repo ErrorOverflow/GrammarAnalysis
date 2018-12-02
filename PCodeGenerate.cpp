@@ -36,9 +36,10 @@ void PCodePrint() {
         else
             cout << pcode[i].y;
         OpExchange(pcode[i].op);
-        if (pcode[i].z < MID_CODE_BASE && pcode[i].z >= LOCAL_CODE_BASE)
+        if (pcode[i].z < MID_CODE_BASE && pcode[i].z >= LOCAL_CODE_BASE) {
             ZExchange(pcode[i].z);
-        else
+            cout << " " << pcode[i].z;
+        } else
             cout << pcode[i].z;
         cout << endl;
     }
@@ -108,6 +109,9 @@ void OpExchange(int op) {
             break;
         case 121:
             cout << " END ";
+            break;
+        case 122:
+            cout << " SW  ";
             break;
         default:
             cout << " " << op << " ";

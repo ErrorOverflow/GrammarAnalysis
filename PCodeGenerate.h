@@ -31,6 +31,7 @@ using namespace std;
 #define ADI 119
 #define LDA 120
 #define END 121
+#define SW 122
 
 struct PCode {
     int x;

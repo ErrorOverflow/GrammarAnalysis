@@ -1,6 +1,10 @@
 const int MAX=5;const int INTMAX=100000;
 int Variable;
 
+int foo(){
+    return(233);
+}
+
 void func(){
     int k;
     k=1*1000-2/1;
@@ -8,8 +12,17 @@ void func(){
 }
 
 void main(){
-    int i;
+    int i,j,a[10],k;
     i=1;
+    j=0;
+    scanf(k);
+    printf("before",k);
+    i=foo();
+    printf("after",k);
+    for(j=0;j<k;j+1){
+        a[j]=j*3;
+        printf(a[j]);
+    }
     printf(i);
     func();
 }

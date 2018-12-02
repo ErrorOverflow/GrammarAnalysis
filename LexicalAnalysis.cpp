@@ -700,8 +700,7 @@ int AssignSentence(char *str) {
                 if (*p == ']') {
                     p++;
                     p += JumpSpace(p);
-                    x = MidCode;
-                    PCodeInsert(pcode_num++, MidCode++, array_code, LDA, offset);
+                    x = MidCode++;
                     if (*p == '=') {
                         p++;
                         p += JumpSpace(p);
@@ -711,6 +710,7 @@ int AssignSentence(char *str) {
                             p += JumpSpace(p);
                             cout << "<AssignSentence>";
                             PCodeInsert(pcode_num++, x, 0, PLUS, z);
+                            PCodeInsert(pcode_num++, x, array_code, SW, offset);
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -733,7 +733,7 @@ int ConditionSentence(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
-            if ((process_len = Condition(p, label, BEQ))) {
+            if ((process_len = Condition(p, label, BNE))) {
                 p += process_len;
                 p += JumpSpace(p);
                 if (*p == ')') {
@@ -804,7 +804,7 @@ int Condition(char *str, int code, int jump_op) {
 int LoopSentence(char *str) {
     char *p = str;
     int process_len = 0;
-    int label = LabelCode, LabelCode_buf = LabelCode++, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int LabelCode_buf = LabelCode, MidCode_buf = MidCode, pcode_buf = pcode_num, label = LabelCode++, label_for = LabelCode++, label_end = LabelCode++;
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
@@ -862,7 +862,7 @@ int LoopSentence(char *str) {
                         if (*p == ';') {
                             p++;
                             p += JumpSpace(p);
-                            if ((process_len = Condition(p, label, BNE))) {
+                            if ((process_len = Condition(p, label_for, BEQ))) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 if (*p == ';') {
@@ -891,6 +891,8 @@ int LoopSentence(char *str) {
                                                 if (*p == ')') {
                                                     p++;
                                                     p += JumpSpace(p);
+                                                    PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
+                                                    PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
                                                     if ((process_len = Sentence(p))) {
                                                         p += process_len;
                                                         p += JumpSpace(p);
@@ -898,7 +900,7 @@ int LoopSentence(char *str) {
                                                         PCodeInsert(pcode_num++, x, x, op, z);
                                                         PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                                                         LabelCode++;
-                                                        PCodeInsert(pcode_num++, 0, 0, LABEL, label + 1);
+                                                        PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
                                                         cout << "<For>" << endl;
                                                         return (int) ((p - str) / sizeof(char));
                                                     }
