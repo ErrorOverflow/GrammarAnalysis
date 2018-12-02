@@ -9,9 +9,9 @@
 #include "PCodeGenerate.h"
 #include <string>
 
-#define X_FIND ((pc.x >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.x - MID_CODE_BASE) * 4): ((pc.x - iter->second.local_code_min) * 4))
-#define Y_FIND ((pc.y >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.y - MID_CODE_BASE) * 4): ((pc.y - iter->second.local_code_min) * 4))
-#define Z_FIND ((pc.z >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.z - MID_CODE_BASE) * 4): ((pc.z - iter->second.local_code_min) * 4))
+#define X_FIND ((pc.x >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.x - MID_CODE_BASE+1) * 4): ((pc.x - iter->second.local_code_min) * 4))
+#define Y_FIND ((pc.y >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.y - MID_CODE_BASE+1) * 4): ((pc.y - iter->second.local_code_min) * 4))
+#define Z_FIND ((pc.z >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.z - MID_CODE_BASE+1) * 4): ((pc.z - iter->second.local_code_min) * 4))
 #define PARA_REG_FIND ((para_reg <= 4) ? (para_reg+3) : (para_reg+7))
 
 using namespace std;

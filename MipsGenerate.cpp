@@ -142,9 +142,15 @@ void TextDataOutput(ofstream &file) {
                 break;
             case 103:
                 //cout << " CALL ";
-                Num2Char(pc.z, word);
-                file << "jal " << word << "\nnop\n";
                 iter = RuntimeStack.find(func_code);
+                Num2Char(pc.z, word);
+                file << "sw $ra,"
+                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
+                         MID_CODE_BASE + 2) * 4 << "($sp)\n";
+                file << "jal " << word << "\nnop\n";
+                file << "lw $ra,"
+                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
+                         MID_CODE_BASE + 2) * 4 << "($sp)\n";
                 file << "move $t1,$v0\n";
                 file << "sw $t1," << X_FIND << "($sp)\n";
                 para_reg = 0;
@@ -156,7 +162,7 @@ void TextDataOutput(ofstream &file) {
                 file << "move $v0,$t3" << "\n";
                 file << "addi $sp,$sp,"
                      << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE + 1) * 4 << "\n";
+                         MID_CODE_BASE + 2) * 4 << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case 105:
@@ -275,7 +281,7 @@ void TextDataOutput(ofstream &file) {
                     file << "#------------------------------\n";
                     file << "addi $sp,$sp," <<
                          (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                          MID_CODE_BASE + 1) * -4 << "\n\n";
+                          MID_CODE_BASE + 2) * -4 << "\n\n";
                     func_code = pc.z;
                 }
                 break;
@@ -473,7 +479,7 @@ void TextDataOutput(ofstream &file) {
                 iter = RuntimeStack.find(func_code);
                 file << "addi $sp,$sp,"
                      << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE + 1) * 4 << "\n";
+                         MID_CODE_BASE + 2) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
                 break;
             case 122:

@@ -1040,6 +1040,8 @@ int ValueParameterList(char *str) {
         if (*p == ',') {
             p++;
             p += JumpSpace(p);
+            PCodeInsert(pcode_num++, x, y, op, z);
+            z = MidCode;
         } else {
             PCodeInsert(pcode_num++, x, y, op, z);
             return (int) ((p - str) / sizeof(char));
