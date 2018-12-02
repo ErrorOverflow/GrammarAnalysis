@@ -7,6 +7,7 @@
 
 #include <malloc.h>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -47,6 +48,6 @@ void PCodeInsert(int num, int x, int y, int op, int z);
 
 void PCodePrint();
 
-void ZExchange(int z);
+void ZExchange(int z, ofstream &file);
 
 #endif //COMPILER_PCODEGENERATE_H

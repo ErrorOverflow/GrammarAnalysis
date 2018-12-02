@@ -5,7 +5,7 @@
 #ifndef COMPILER_EXCEPTION_H
 #define COMPILER_EXCEPTION_H
 
-extern char *exp;
+extern char *excep;
 
 int Exception(char *str);
 

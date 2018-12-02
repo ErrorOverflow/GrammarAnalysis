@@ -7,6 +7,7 @@
 #include "Exception.h"
 #include <unordered_map>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -23,9 +24,9 @@ unordered_map<int, Sym> CodeIndex[64];
 int JumpSpace(char *str) {
     char *p = str;
     while (*p == ' ' || *p == '\n' || *p == '\t') {
-        if (*p == '\n' && p >= exp) {
+        if (*p == '\n' && p >= excep) {
             line++;
-            exp = p + 1;
+            excep = p + 1;
         }
         p++;
     }

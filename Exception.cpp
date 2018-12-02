@@ -9,7 +9,7 @@
 
 using namespace std;
 
-char *exp;
+char *excep;
 
 int Exception(char *str) {
     int process_len = JumpExp(str);

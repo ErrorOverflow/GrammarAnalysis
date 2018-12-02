@@ -18,7 +18,7 @@ unordered_map<int, FuncRuntime> RuntimeStack;
 unordered_map<int, int> RuntimeType;
 
 void WriteMipsFile() {
-    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm";
+    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm\0";
     FuncRuntimeCheck();
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -172,8 +172,6 @@ void TextDataOutput(ofstream &file) {
                     if (it_code->second.type == 1) {
                         RuntimeType.insert(pair<int, int>(pcode[i].z, pcode[i].z));
                         RuntimeType.insert(pair<int, int>(pcode[i].x, pcode[i].x));
-                        cout << pcode[i].x << endl;
-                        cout << pcode[i].z << endl;
                     } else {
                         RuntimeType.erase(pcode[i].x);
                         RuntimeType.erase(pcode[i].z);
@@ -182,7 +180,6 @@ void TextDataOutput(ofstream &file) {
                     it_type = RuntimeType.find(pcode[i].z);
                     if (it_type != RuntimeType.end()) {
                         RuntimeType.insert(pair<int, int>(pcode[i].x, pcode[i].x));
-                        cout << pcode[i].x << endl;
                     } else {
                         RuntimeType.erase(pcode[i].x);
                     }
