@@ -13,16 +13,20 @@ void func(){
 
 void main(){
     int i,j,a[10],k;
+    char ch;
     i=1;
     j=0;
+    scanf(ch);
+    printf(ch);
     scanf(k);
     printf("before",k);
     i=foo();
     printf("after",k);
-    for(j=0;j<k;j+1){
+    do{
         a[j]=j*3;
         printf(a[j]);
-    }
+        j=j+1;
+    }while(j<k)
     printf(i);
     func();
 }

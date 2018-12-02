@@ -1,87 +1,32 @@
 .data
+c: .space 40
 a: .space 40
-string1: .ascii "after\0"
-string0: .ascii "before\0"
-newLine: .ascii "\n"
+f: .space 80
+string0: .ascii "not H\0"
+string5: .ascii "b is not bigger than c[5]\0"
+string3: .ascii "next period\n\0"
+string1: .ascii "next period\0"
+string4: .ascii "b is bigger than c[5]\0"
+newLine: .ascii "\n\0"
 
 
 .text
-j gaaaaaab
+j jaaaaaab
 daaaaaab:
 #------------------------------
-addi $sp,$sp,-12
+addi $sp,$sp,-64
 
-addi $t1,$0,233
-sw $t1,8($sp)
+move $t3,$3
+sw $t3,4($sp)
 
-lw $t3,8($sp)
-add $t1,$0,$t3
-sw $t1,4($sp)
-
-lw $t3,4($sp)
-add $t1,$0,$t3
-sw $t1,0($sp)
-
-lw $t3,0($sp)
-move $v0,$t3
-addi $sp,$sp,12
-jr $ra
-nop
-
-addi $sp,$sp,12
-jr $ra
-nop
-
-eaaaaaab:
-#------------------------------
-addi $sp,$sp,-20
-
-addi $t1,$0,1
-sw $t1,8($sp)
-
-lw $t3,8($sp)
-add $t1,$0,$t3
-sw $t1,4($sp)
-
-addi $t1,$0,1000
-sw $t1,12($sp)
-
-lw $t2,4($sp)
-lw $t3,12($sp)
-mult $t2,$t3
-mflo $t1
-sw $t1,4($sp)
+move $t3,$4
+sw $t3,8($sp)
 
 lw $t3,4($sp)
 add $t1,$0,$t3
-sw $t1,0($sp)
-
-addi $t1,$0,2
-sw $t1,12($sp)
-
-lw $t3,12($sp)
-add $t1,$0,$t3
-sw $t1,8($sp)
-
-addi $t1,$0,1
 sw $t1,16($sp)
 
-lw $t2,8($sp)
 lw $t3,16($sp)
-div $t2,$t3
-mflo $t1
-sw $t1,8($sp)
-
-lw $t2,0($sp)
-lw $t3,8($sp)
-sub $t1,$t2,$t3
-sw $t1,0($sp)
-
-lw $t3,0($sp)
-add $t1,$0,$t3
-sw $t1,0($sp)
-
-lw $t3,0($sp)
 add $t1,$0,$t3
 sw $t1,12($sp)
 
@@ -91,25 +36,195 @@ sw $t1,8($sp)
 
 lw $t3,8($sp)
 add $t1,$0,$t3
-sw $t1,4($sp)
+sw $t1,20($sp)
 
-lw $t3,4($sp)
-move $a0,$t3
-li $v0,1
-syscall
-la $a0,newLine
-li $v0,4
-syscall
+lw $t3,20($sp)
+add $t1,$0,$t3
+sw $t1,16($sp)
 
-addi $sp,$sp,20
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,12($sp)
+
+lw $t2,8($sp)
+lw $t3,12($sp)
+sub $t1,$t2,$t3
+bgez $t1,aaab
+nop
+
+j baab
+nop
+
+aaab:
+lw $t3,8($sp)
+add $t1,$0,$t3
+sw $t1,24($sp)
+
+lw $t3,24($sp)
+add $t1,$0,$t3
+sw $t1,20($sp)
+
+lw $t3,20($sp)
+add $t1,$0,$t3
+sw $t1,16($sp)
+
+lw $t3,16($sp)
+move $v0,$t3
+addi $sp,$sp,64
 jr $ra
 nop
 
-gaaaaaab:
-#------------------------------
-addi $sp,$sp,-108
+baab:
+lw $t3,4($sp)
+add $t1,$0,$t3
+sw $t1,28($sp)
+
+lw $t3,28($sp)
+add $t1,$0,$t3
+sw $t1,24($sp)
+
+lw $t3,24($sp)
+add $t1,$0,$t3
+sw $t1,20($sp)
+
+lw $t3,8($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+lw $t3,32($sp)
+add $t1,$0,$t3
+sw $t1,28($sp)
+
+addi $t1,$0,100
+sw $t1,36($sp)
+
+lw $t2,28($sp)
+lw $t3,36($sp)
+div $t2,$t3
+mflo $t1
+sw $t1,28($sp)
 
 addi $t1,$0,1
+sw $t1,40($sp)
+
+lw $t2,28($sp)
+lw $t3,40($sp)
+mult $t2,$t3
+mflo $t1
+sw $t1,28($sp)
+
+lw $t3,28($sp)
+add $t1,$0,$t3
+sw $t1,24($sp)
+
+lw $t2,20($sp)
+lw $t3,24($sp)
+sub $t1,$t2,$t3
+blez $t1,daab
+nop
+
+j eaab
+nop
+
+daab:
+lw $t3,4($sp)
+add $t1,$0,$t3
+sw $t1,52($sp)
+
+lw $t3,52($sp)
+add $t1,$0,$t3
+sw $t1,48($sp)
+
+addi $t1,$0,100
+sw $t1,56($sp)
+
+lw $t2,48($sp)
+lw $t3,56($sp)
+mult $t2,$t3
+mflo $t1
+sw $t1,48($sp)
+
+lw $t3,48($sp)
+add $t1,$0,$t3
+sw $t1,44($sp)
+
+lw $t3,44($sp)
+move $3,$t3
+
+jal daaaaaab
+nop
+move $t1,$v0
+sw $t1,40($sp)
+lw $t3,40($sp)
+add $t1,$0,$t3
+sw $t1,36($sp)
+
+lw $t3,36($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+lw $t3,32($sp)
+add $t1,$0,$t3
+sw $t1,28($sp)
+
+lw $t3,28($sp)
+move $v0,$t3
+addi $sp,$sp,64
+jr $ra
+nop
+
+j faab
+nop
+
+eaab:
+lw $t3,4($sp)
+add $t1,$0,$t3
+sw $t1,56($sp)
+
+lw $t3,56($sp)
+add $t1,$0,$t3
+sw $t1,52($sp)
+
+addi $t1,$0,10
+sw $t1,60($sp)
+
+lw $t2,52($sp)
+lw $t3,60($sp)
+mult $t2,$t3
+mflo $t1
+sw $t1,52($sp)
+
+lw $t3,52($sp)
+add $t1,$0,$t3
+sw $t1,48($sp)
+
+lw $t3,48($sp)
+move $3,$t3
+
+jal daaaaaab
+nop
+move $t1,$v0
+sw $t1,44($sp)
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,40($sp)
+
+lw $t3,40($sp)
+add $t1,$0,$t3
+sw $t1,36($sp)
+
+lw $t3,36($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+lw $t3,32($sp)
+move $v0,$t3
+addi $sp,$sp,64
+jr $ra
+nop
+
+faab:
+addi $t1,$0,0
 sw $t1,44($sp)
 
 lw $t3,44($sp)
@@ -121,28 +236,78 @@ add $t1,$0,$t3
 sw $t1,36($sp)
 
 lw $t3,36($sp)
+move $v0,$t3
+addi $sp,$sp,64
+jr $ra
+nop
+
+addi $sp,$sp,64
+jr $ra
+nop
+
+gaaaaaab:
+#------------------------------
+addi $sp,$sp,-24
+
+move $t3,$3
+sw $t3,0($sp)
+
+lw $t3,0($sp)
 add $t1,$0,$t3
+sw $t1,12($sp)
+
+lw $t3,12($sp)
+add $t1,$0,$t3
+sw $t1,8($sp)
+
+lw $t3,8($sp)
+add $t1,$0,$t3
+sw $t1,4($sp)
+
+addi $t1,$0,72
 sw $t1,16($sp)
 
-addi $t1,$0,0
-sw $t1,48($sp)
-
-lw $t3,48($sp)
+lw $t3,16($sp)
 add $t1,$0,$t3
-sw $t1,44($sp)
+sw $t1,12($sp)
 
-lw $t3,44($sp)
+lw $t3,12($sp)
 add $t1,$0,$t3
-sw $t1,40($sp)
+sw $t1,8($sp)
 
-lw $t3,40($sp)
+lw $t1,4($sp)
+lw $t2,8($sp)
+beq $t1,$t2,gaab
+nop
+
+j haab
+nop
+
+gaab:
+lw $t3,0($sp)
 add $t1,$0,$t3
 sw $t1,20($sp)
 
-li $v0,5
-syscall
-sw $v0,28($sp)
+lw $t3,20($sp)
+add $t1,$0,$t3
+sw $t1,16($sp)
 
+lw $t3,16($sp)
+add $t1,$0,$t3
+sw $t1,12($sp)
+
+lw $t3,12($sp)
+move $a0,$t3
+li $v0,11
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+j iaab
+nop
+
+haab:
 la $a0,string0
 li $v0,4
 syscall
@@ -150,150 +315,16 @@ la $a0,newLine
 li $v0,4
 syscall
 
-lw $t3,28($sp)
-add $t1,$0,$t3
-sw $t1,52($sp)
-
-lw $t3,52($sp)
-add $t1,$0,$t3
-sw $t1,48($sp)
-
-lw $t3,48($sp)
-add $t1,$0,$t3
-sw $t1,44($sp)
-
-lw $t3,44($sp)
-move $a0,$t3
-li $v0,1
-syscall
-la $a0,newLine
-li $v0,4
-syscall
-
-jal daaaaaab
-nop
-move $t1,$v0
-sw $t1,60($sp)
-lw $t3,60($sp)
-add $t1,$0,$t3
-sw $t1,56($sp)
-
-lw $t3,56($sp)
-add $t1,$0,$t3
-sw $t1,52($sp)
-
-lw $t3,52($sp)
-add $t1,$0,$t3
-sw $t1,48($sp)
-
-lw $t3,48($sp)
-add $t1,$0,$t3
-sw $t1,16($sp)
-
-la $a0,string1
-li $v0,4
-syscall
-la $a0,newLine
-li $v0,4
-syscall
-
-lw $t3,28($sp)
-add $t1,$0,$t3
-sw $t1,60($sp)
-
-lw $t3,60($sp)
-add $t1,$0,$t3
-sw $t1,56($sp)
-
-lw $t3,56($sp)
-add $t1,$0,$t3
-sw $t1,52($sp)
-
-lw $t3,52($sp)
-move $a0,$t3
-li $v0,1
-syscall
-la $a0,newLine
-li $v0,4
-syscall
-
-addi $t1,$0,0
-sw $t1,64($sp)
-
-lw $t3,64($sp)
-add $t1,$0,$t3
-sw $t1,60($sp)
-
-lw $t3,60($sp)
-add $t1,$0,$t3
-sw $t1,56($sp)
-
-lw $t3,56($sp)
-add $t1,$0,$t3
-sw $t1,20($sp)
-
-aaab:
-lw $t3,20($sp)
-add $t1,$0,$t3
-sw $t1,68($sp)
-
-lw $t3,68($sp)
-add $t1,$0,$t3
-sw $t1,64($sp)
-
-lw $t3,64($sp)
-add $t1,$0,$t3
-sw $t1,60($sp)
-
-lw $t3,28($sp)
-add $t1,$0,$t3
-sw $t1,72($sp)
-
-lw $t3,72($sp)
-add $t1,$0,$t3
-sw $t1,68($sp)
-
-lw $t3,68($sp)
-add $t1,$0,$t3
-sw $t1,64($sp)
-
-lw $t2,60($sp)
-lw $t3,64($sp)
-sub $t1,$t2,$t3
-bltz $t1,baab
+iaab:
+addi $sp,$sp,24
+jr $ra
 nop
 
-j caab
-nop
+jaaaaaab:
+#------------------------------
+addi $sp,$sp,-188
 
-baab:
-lw $t3,20($sp)
-add $t1,$0,$t3
-sw $t1,76($sp)
-
-lw $t3,76($sp)
-add $t1,$0,$t3
-sw $t1,72($sp)
-
-lw $t3,72($sp)
-add $t1,$0,$t3
-sw $t1,68($sp)
-
-lw $t3,20($sp)
-add $t1,$0,$t3
-sw $t1,84($sp)
-
-lw $t3,84($sp)
-add $t1,$0,$t3
-sw $t1,80($sp)
-
-addi $t1,$0,3
-sw $t1,88($sp)
-
-lw $t2,80($sp)
-lw $t3,88($sp)
-mult $t2,$t3
-mflo $t1
+addi $t1,$0,5
 sw $t1,80($sp)
 
 lw $t3,80($sp)
@@ -304,13 +335,80 @@ lw $t3,76($sp)
 add $t1,$0,$t3
 sw $t1,72($sp)
 
-la $t2,a
-lw $t1,72($sp)
-lw $t3,68($sp)
-sll $t3,$t3,2
-add $t2,$t2,$t3
-sw $t1,0($t2)
-lw $t3,20($sp)
+lw $t3,72($sp)
+move $a0,$t3
+li $v0,11
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+addi $t1,$0,0
+sw $t1,84($sp)
+
+lw $t3,84($sp)
+add $t1,$0,$t3
+sw $t1,80($sp)
+
+lw $t3,80($sp)
+add $t1,$0,$t3
+sw $t1,76($sp)
+
+lw $t3,76($sp)
+add $t1,$0,$t3
+sw $t1,44($sp)
+
+jaab:
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,88($sp)
+
+lw $t3,88($sp)
+add $t1,$0,$t3
+sw $t1,84($sp)
+
+lw $t3,84($sp)
+add $t1,$0,$t3
+sw $t1,80($sp)
+
+addi $t1,$0,5
+sw $t1,92($sp)
+
+lw $t3,92($sp)
+add $t1,$0,$t3
+sw $t1,88($sp)
+
+lw $t3,88($sp)
+add $t1,$0,$t3
+sw $t1,84($sp)
+
+lw $t2,80($sp)
+lw $t3,84($sp)
+sub $t1,$t2,$t3
+bltz $t1,abab
+nop
+
+j bbab
+nop
+
+abab:
+li $v0,5
+syscall
+sw $v0,40($sp)
+
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,96($sp)
+
+lw $t3,96($sp)
+add $t1,$0,$t3
+sw $t1,92($sp)
+
+lw $t3,92($sp)
+add $t1,$0,$t3
+sw $t1,88($sp)
+
+lw $t3,40($sp)
 add $t1,$0,$t3
 sw $t1,104($sp)
 
@@ -322,62 +420,371 @@ lw $t3,100($sp)
 add $t1,$0,$t3
 sw $t1,96($sp)
 
-la $t2,a
 lw $t3,96($sp)
+add $t1,$0,$t3
+sw $t1,92($sp)
+
+la $t2,f
+lw $t1,92($sp)
+lw $t3,88($sp)
 sll $t3,$t3,2
 add $t2,$t2,$t3
-lw $t1,0($t2)
+sw $t1,0($t2)
+lw $t2,44($sp)
+addi $t1,$t2,1
+sw $t1,44($sp)
+
+j jaab
+nop
+
+bbab:
+addi $t1,$0,0
+sw $t1,108($sp)
+
+lw $t3,108($sp)
+add $t1,$0,$t3
+sw $t1,104($sp)
+
+lw $t3,104($sp)
+add $t1,$0,$t3
 sw $t1,100($sp)
 
 lw $t3,100($sp)
 add $t1,$0,$t3
-sw $t1,88($sp)
+sw $t1,44($sp)
 
-lw $t3,88($sp)
-add $t1,$0,$t3
-sw $t1,84($sp)
-
-lw $t3,84($sp)
-add $t1,$0,$t3
-sw $t1,80($sp)
-
-lw $t3,80($sp)
-move $a0,$t3
-li $v0,1
+la $a0,string1
+li $v0,4
 syscall
 la $a0,newLine
 li $v0,4
 syscall
 
-lw $t2,20($sp)
-addi $t1,$t2,1
-sw $t1,20($sp)
-
-j aaab
-nop
-
-caab:
-lw $t3,16($sp)
+dbab:
+lw $t3,52($sp)
 add $t1,$0,$t3
-sw $t1,92($sp)
+sw $t1,112($sp)
 
-lw $t3,92($sp)
+lw $t3,112($sp)
 add $t1,$0,$t3
-sw $t1,88($sp)
+sw $t1,108($sp)
 
-lw $t3,88($sp)
+lw $t3,108($sp)
 add $t1,$0,$t3
-sw $t1,84($sp)
+sw $t1,104($sp)
 
-lw $t3,84($sp)
-move $a0,$t3
-li $v0,1
-syscall
-la $a0,newLine
-li $v0,4
-syscall
+lw $t3,104($sp)
+move $3,$t3
 
-jal eaaaaaab
+jal gaaaaaab
 nop
 move $t1,$v0
-sw $t1,88($sp)
+sw $t1,108($sp)
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,120($sp)
+
+lw $t3,120($sp)
+add $t1,$0,$t3
+sw $t1,116($sp)
+
+lw $t3,116($sp)
+add $t1,$0,$t3
+sw $t1,112($sp)
+
+addi $t1,$0,1
+sw $t1,124($sp)
+
+lw $t3,124($sp)
+add $t1,$0,$t3
+sw $t1,120($sp)
+
+lw $t2,112($sp)
+lw $t3,120($sp)
+add $t1,$t2,$t3
+sw $t1,112($sp)
+
+lw $t3,112($sp)
+add $t1,$0,$t3
+sw $t1,44($sp)
+
+lw $t3,44($sp)
+add $t1,$0,$t3
+sw $t1,124($sp)
+
+lw $t3,124($sp)
+add $t1,$0,$t3
+sw $t1,120($sp)
+
+lw $t3,120($sp)
+add $t1,$0,$t3
+sw $t1,116($sp)
+
+addi $t1,$0,5
+sw $t1,128($sp)
+
+lw $t3,128($sp)
+add $t1,$0,$t3
+sw $t1,124($sp)
+
+lw $t3,124($sp)
+add $t1,$0,$t3
+sw $t1,120($sp)
+
+lw $t2,116($sp)
+lw $t3,120($sp)
+sub $t1,$t2,$t3
+bltz $t1,dbab
+nop
+
+la $a0,string1
+li $v0,4
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+addi $t1,$0,100
+sw $t1,148($sp)
+
+lw $t3,148($sp)
+add $t1,$0,$t3
+sw $t1,144($sp)
+
+lw $t3,144($sp)
+add $t1,$0,$t3
+sw $t1,140($sp)
+
+addi $t1,$0,100000
+sw $t1,152($sp)
+
+lw $t3,152($sp)
+add $t1,$0,$t3
+sw $t1,148($sp)
+
+lw $t3,148($sp)
+add $t1,$0,$t3
+sw $t1,144($sp)
+
+lw $t3,140($sp)
+move $3,$t3
+
+jal daaaaaab
+nop
+move $t1,$v0
+sw $t1,136($sp)
+lw $t3,136($sp)
+add $t1,$0,$t3
+sw $t1,132($sp)
+
+lw $t3,132($sp)
+add $t1,$0,$t3
+sw $t1,128($sp)
+
+addi $t1,$0,11
+sw $t1,136($sp)
+
+lw $t2,128($sp)
+lw $t3,136($sp)
+mult $t2,$t3
+mflo $t1
+sw $t1,128($sp)
+
+lw $t3,128($sp)
+add $t1,$0,$t3
+sw $t1,124($sp)
+
+lw $t3,124($sp)
+move $a0,$t3
+li $v0,1
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+la $a0,string3
+li $v0,4
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+addi $t1,$0,10
+sw $t1,136($sp)
+
+lw $t3,136($sp)
+add $t1,$0,$t3
+sw $t1,132($sp)
+
+lw $t3,132($sp)
+add $t1,$0,$t3
+sw $t1,128($sp)
+
+lw $t3,128($sp)
+add $t1,$0,$t3
+sw $t1,32($sp)
+
+addi $t1,$0,5
+sw $t1,140($sp)
+
+lw $t3,140($sp)
+add $t1,$0,$t3
+sw $t1,136($sp)
+
+lw $t3,136($sp)
+add $t1,$0,$t3
+sw $t1,132($sp)
+
+addi $t1,$0,7
+sw $t1,148($sp)
+
+lw $t3,148($sp)
+add $t1,$0,$t3
+sw $t1,144($sp)
+
+lw $t3,144($sp)
+add $t1,$0,$t3
+sw $t1,140($sp)
+
+lw $t3,140($sp)
+add $t1,$0,$t3
+sw $t1,136($sp)
+
+la $t2,c
+lw $t1,136($sp)
+lw $t3,132($sp)
+sll $t3,$t3,2
+add $t2,$t2,$t3
+sw $t1,0($t2)
+lw $t3,32($sp)
+add $t1,$0,$t3
+sw $t1,152($sp)
+
+lw $t3,152($sp)
+add $t1,$0,$t3
+sw $t1,148($sp)
+
+lw $t3,148($sp)
+add $t1,$0,$t3
+sw $t1,144($sp)
+
+addi $t1,$0,5
+sw $t1,172($sp)
+
+lw $t3,172($sp)
+add $t1,$0,$t3
+sw $t1,168($sp)
+
+lw $t3,168($sp)
+add $t1,$0,$t3
+sw $t1,164($sp)
+
+la $t2,c
+lw $t3,164($sp)
+sll $t3,$t3,2
+add $t2,$t2,$t3
+lw $t1,0($t2)
+sw $t1,168($sp)
+
+lw $t3,168($sp)
+add $t1,$0,$t3
+sw $t1,156($sp)
+
+lw $t3,156($sp)
+add $t1,$0,$t3
+sw $t1,152($sp)
+
+lw $t3,152($sp)
+add $t1,$0,$t3
+sw $t1,148($sp)
+
+lw $t2,144($sp)
+lw $t3,148($sp)
+sub $t1,$t2,$t3
+bgtz $t1,gbab
+nop
+
+j hbab
+nop
+
+gbab:
+la $a0,string4
+li $v0,4
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+j ibab
+nop
+
+hbab:
+la $a0,string5
+li $v0,4
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+
+ibab:
+addi $t1,$0,1
+sw $t1,176($sp)
+
+lw $t3,176($sp)
+add $t1,$0,$t3
+sw $t1,172($sp)
+
+lw $t3,172($sp)
+add $t1,$0,$t3
+sw $t1,168($sp)
+
+addi $t1,$0,2
+sw $t1,180($sp)
+
+lw $t3,180($sp)
+add $t1,$0,$t3
+sw $t1,176($sp)
+
+addi $t1,$0,3
+sw $t1,184($sp)
+
+lw $t2,176($sp)
+lw $t3,184($sp)
+mult $t2,$t3
+mflo $t1
+sw $t1,176($sp)
+
+lw $t2,168($sp)
+lw $t3,176($sp)
+add $t1,$t2,$t3
+sw $t1,168($sp)
+
+lw $t3,168($sp)
+add $t1,$0,$t3
+sw $t1,160($sp)
+
+lw $t3,160($sp)
+add $t1,$0,$t3
+sw $t1,156($sp)
+
+addi $t1,$0,111
+sw $t1,164($sp)
+
+lw $t2,156($sp)
+lw $t3,164($sp)
+mult $t2,$t3
+mflo $t1
+sw $t1,156($sp)
+
+lw $t3,156($sp)
+add $t1,$0,$t3
+sw $t1,152($sp)
+
+lw $t3,152($sp)
+move $a0,$t3
+li $v0,1
+syscall
+la $a0,newLine
+li $v0,4
+syscall
+

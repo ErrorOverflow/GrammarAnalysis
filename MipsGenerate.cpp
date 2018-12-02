@@ -15,6 +15,7 @@
 using namespace std;
 
 unordered_map<int, FuncRuntime> RuntimeStack;
+unordered_map<int, int> RuntimeType;
 
 void WriteMipsFile() {
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm";
@@ -93,6 +94,9 @@ void StaticDataOutput(ofstream &file) {
             }
             iter++;
         }
+    }
+    for (int i = 0; i <= TableNum; i++) {
+        auto iter = SymTable[i].begin();
         iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
             if (iter->second.type == 3) {
@@ -111,6 +115,7 @@ void TextDataOutput(ofstream &file) {
     unordered_map<int, FuncRuntime>::iterator iter;
     unordered_map<string, Sym>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
+    unordered_map<int, int>::iterator it_type;
     it = SymFind("main");
     Num2Char(it->second.code, word);
     file << "j " << word << "\n";
@@ -162,8 +167,29 @@ void TextDataOutput(ofstream &file) {
             case 106:
                 //cout << " PLUS ";
                 iter = RuntimeStack.find(func_code);
-                if (Z_FIND < 0) {
-                    cout << pc.z << endl;
+                if (pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE && pcode[i].y == 0) {
+                    it_code = CodeFind(pcode[i].z);
+                    if (it_code->second.type == 1) {
+                        RuntimeType.insert(pair<int, int>(pcode[i].z, pcode[i].z));
+                        RuntimeType.insert(pair<int, int>(pcode[i].x, pcode[i].x));
+                        cout << pcode[i].x << endl;
+                        cout << pcode[i].z << endl;
+                    } else {
+                        RuntimeType.erase(pcode[i].x);
+                        RuntimeType.erase(pcode[i].z);
+                    }
+                } else if (pcode[i].z >= MID_CODE_BASE && pcode[i].y == 0) {
+                    it_type = RuntimeType.find(pcode[i].z);
+                    if (it_type != RuntimeType.end()) {
+                        RuntimeType.insert(pair<int, int>(pcode[i].x, pcode[i].x));
+                        cout << pcode[i].x << endl;
+                    } else {
+                        RuntimeType.erase(pcode[i].x);
+                    }
+                } else {
+                    RuntimeType.erase(pcode[i].x);
+                    RuntimeType.erase(pcode[i].y);
+                    RuntimeType.erase(pcode[i].z);
                 }
                 if (pc.y == 0 && pc.z == 0) {
                     file << "add $t1,$0,$0" << "\n";
@@ -253,8 +279,6 @@ void TextDataOutput(ofstream &file) {
                     file << "addi $sp,$sp," <<
                          (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
                           MID_CODE_BASE + 1) * -4 << "\n\n";
-                    cout << iter->second.local_code_max << " " << iter->second.local_code_min << " "
-                         << iter->second.mid_code_max << endl;
                     func_code = pc.z;
                 }
                 break;
@@ -385,10 +409,18 @@ void TextDataOutput(ofstream &file) {
                 //cout << " WRITE ";
                 iter = RuntimeStack.find(func_code);
                 if (pc.z >= MID_CODE_BASE) {
-                    file << "lw $t3," << Z_FIND << "($sp)" << "\n";
-                    file << "move $a0,$t3\n";
-                    file << "li $v0,1\n";
-                    file << "syscall\n";
+                    it_type = RuntimeType.find(pc.z);
+                    if (it_type != RuntimeType.end()) {
+                        file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                        file << "move $a0,$t3\n";
+                        file << "li $v0,11\n";
+                        file << "syscall\n";
+                    } else {
+                        file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                        file << "move $a0,$t3\n";
+                        file << "li $v0,1\n";
+                        file << "syscall\n";
+                    }
                 } else if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
                     it_code = CodeFind(pc.z);
                     file << "la $a0," << it_code->second.label << "\n";
@@ -402,9 +434,19 @@ void TextDataOutput(ofstream &file) {
             case 118:
                 //cout << " READ ";
                 iter = RuntimeStack.find(func_code);
-                file << "li $v0,5\n";
-                file << "syscall\n";
-                file << "sw $v0," << Z_FIND << "($sp)\n\n";
+                it_code = CodeFind(pc.z);
+                if (it_code->second.type == 0) {
+                    file << "li $v0,5\n";
+                    file << "syscall\n";
+                    file << "sw $v0," << Z_FIND << "($sp)\n\n";
+                } else {
+                    file << "li $v0,12\n";
+                    file << "syscall\n";
+                    file << "sw $v0," << Z_FIND << "($sp)\n\n";
+                    file << "la $a0,newLine\n";
+                    file << "li $v0,4\n";
+                    file << "syscall\n";
+                }
                 break;
             case 119:
                 //cout << " ADI ";

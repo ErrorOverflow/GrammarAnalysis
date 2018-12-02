@@ -567,7 +567,10 @@ int Factor(char *str, int code) {
                 }
             }
         } else {
-            PCodeInsert(pcode_num++, x, 0, op, array_code);
+            if (iter->second.kind == 0)
+                PCodeInsert(pcode_num++, x, 0, ADI, iter->second.value);
+            else
+                PCodeInsert(pcode_num++, x, 0, op, array_code);
             MidCode = MidCode_buf;
             return (int) ((p - str) / sizeof(char));
         }

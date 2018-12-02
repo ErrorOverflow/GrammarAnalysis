@@ -25,6 +25,7 @@ struct FuncRuntime {
 };
 
 extern unordered_map<int, FuncRuntime> RuntimeStack;
+extern unordered_map<int, int> RuntimeType;
 
 void WriteMipsFile();
 
