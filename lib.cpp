@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
@@ -63,6 +64,9 @@ int SymInsert(string name, int type) {
 }
 
 void SymPrint() {
+    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\SymTable.txt\0";
+    ofstream file;
+    file.open(MIPSFILE, ios::out);
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
@@ -70,9 +74,14 @@ void SymPrint() {
                  << ","
                  << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << ","
                  << iter->second.label << endl;
+            file << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
+                 << ","
+                 << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << ","
+                 << iter->second.label << endl;
             iter++;
         }
     }
+    file.close();
 }
 
 unordered_map<string, Sym>::iterator SymFind(string name) {//unordered_map<string,Sym>::iterator

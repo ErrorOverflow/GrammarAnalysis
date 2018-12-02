@@ -1,12 +1,12 @@
 .data
-c: .space 40
 a: .space 40
+c: .space 40
 f: .space 80
 string0: .ascii "not H\0"
-string5: .ascii "b is not bigger than c[5]\0"
-string3: .ascii "next period\n\0"
 string1: .ascii "next period\0"
+string3: .ascii "next period\n\0"
 string4: .ascii "b is bigger than c[5]\0"
+string5: .ascii "b is not bigger than c[5]\0"
 newLine: .ascii "\n\0"
 
 
