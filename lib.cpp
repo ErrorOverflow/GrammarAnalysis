@@ -15,6 +15,7 @@ using namespace std;
 char *iden_point;
 int line;
 int LabelCode = LABEL_CODE_BASE;
+int GlobalCode = GLOBAL_CODE_BASE;
 int LocalCode = LOCAL_CODE_BASE;
 int MidCode = MID_CODE_BASE;
 int TableNum = 0;
@@ -42,7 +43,7 @@ int SymInsert(string name, int type, int dimension, int read, string label) {
 }
 
 int SymInsert(string name, int type, int dimension, int read, int value) {
-    Sym sym = {LocalCode++, name, type, dimension, read, value, ""};
+    Sym sym = {GlobalCode++, name, type, dimension, read, value, ""};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;

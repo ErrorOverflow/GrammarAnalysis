@@ -10,6 +10,7 @@
 using namespace std;
 
 #define LABEL_CODE_BASE 1000
+#define GLOBAL_CODE_BASE 100000
 #define LOCAL_CODE_BASE 10000000
 #define MID_CODE_BASE 50000000
 
@@ -24,6 +25,7 @@ struct Sym {
 };
 extern char *iden_point;
 extern int line;
+extern int GlobalCode;
 extern int LabelCode;
 extern int LocalCode;
 extern int MidCode;

@@ -80,6 +80,20 @@ void PCodeOptimize() {
                     pcode[j].x = pcode[i].z;
                 }
             }
+        } else if (pcode[i].x >= MID_CODE_BASE && pcode[i].z == 0 && pcode[i].op == PLUS &&
+                   pcode[i].y >= LOCAL_CODE_BASE) {
+            pcode[i].op = NOP;
+            for (int j = i + 1; j < pcode_num; j++) {
+                if (pcode[j].y == pcode[i].x) {
+                    pcode[j].y = pcode[i].y;
+                }
+                if (pcode[j].z == pcode[i].x) {
+                    pcode[j].z = pcode[i].y;
+                }
+                if (pcode[j].x == pcode[i].x) {
+                    pcode[j].x = pcode[i].y;
+                }
+            }
         } else if (pcode[i].x == pcode[i].z && pcode[i].y == 0 && (pcode[i].op == PLUS || pcode[i].op == SUB)) {
             pcode[i].op = NOP;
         }

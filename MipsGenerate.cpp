@@ -86,6 +86,7 @@ void FuncRuntimeCheck() {
 }
 
 void StaticDataOutput(ofstream &file) {
+    file << "_GLOBAL: .space" << (GlobalCode - GLOBAL_CODE_BASE) * 4 << "\n";
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
@@ -173,27 +174,6 @@ void TextDataOutput(ofstream &file) {
             case 106:
                 //cout << " PLUS ";
                 iter = RuntimeStack.find(func_code);
-                if (pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE && pcode[i].y == 0) {
-                    it_code = CodeFind(pcode[i].z);
-                    if (it_code->second.type == 1) {
-                        RuntimeType.insert(pair<int, int>(pcode[i].z, pcode[i].z));
-                        RuntimeType.insert(pair<int, int>(pcode[i].x, pcode[i].x));
-                    } else {
-                        RuntimeType.erase(pcode[i].x);
-                        RuntimeType.erase(pcode[i].z);
-                    }
-                } else if (pcode[i].z >= MID_CODE_BASE && pcode[i].y == 0) {
-                    it_type = RuntimeType.find(pcode[i].z);
-                    if (it_type != RuntimeType.end()) {
-                        RuntimeType.insert(pair<int, int>(pcode[i].x, pcode[i].x));
-                    } else {
-                        RuntimeType.erase(pcode[i].x);
-                    }
-                } else {
-                    RuntimeType.erase(pcode[i].x);
-                    RuntimeType.erase(pcode[i].y);
-                    RuntimeType.erase(pcode[i].z);
-                }
                 if (pc.y == 0 && pc.z == 0) {
                     file << "add $t1,$0,$0" << "\n";
                 } else if (pc.y == 0) {
@@ -207,6 +187,7 @@ void TextDataOutput(ofstream &file) {
                     file << "lw $t3," << Z_FIND << "($sp)" << "\n";
                     file << "add $t1,$t2,$t3" << "\n";
                 }
+                file << "add $t1,$t2,$t3" << "\n";
                 file << "sw $t1," << X_FIND << "($sp)" << "\n";
                 file << "\n";
                 break;
@@ -506,5 +487,29 @@ void TextDataOutput(ofstream &file) {
                 cout << pc.op << "unknown op" << endl;
                 exit(-1);
         }
+    }
+}
+
+void Mem2Reg(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file) {
+    if (pc.y >= GLOBAL_CODE_BASE && pc.y < LOCAL_CODE_BASE) {
+        file << "la $t2,_GLOBAL";
+        file << "lw $t2," << (pc.y - GLOBAL_CODE_BASE) * 4 << "($t2)";
+    } else {
+        file << "lw $t2," << Y_FIND << "($sp)\n";
+    }
+    if (pc.z >= GLOBAL_CODE_BASE && pc.z < LOCAL_CODE_BASE) {
+        file << "la $t3,_GLOBAL";
+        file << "lw $t3," << (pc.z - GLOBAL_CODE_BASE) * 4 << "($t3)";
+    } else {
+        file << "lw $t3," << Z_FIND << "($sp)\n";
+    }
+}
+
+void Reg2Mem(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file) {
+    if (pc.x >= GLOBAL_CODE_BASE && pc.x < LOCAL_CODE_BASE) {
+        file << "la $t1,_GLOBAL";
+        file << "sw $t1," << (pc.x - GLOBAL_CODE_BASE) * 4 << "($t1)";
+    } else {
+        file << "sw $t1," << X_FIND << "($sp)\n";
     }
 }

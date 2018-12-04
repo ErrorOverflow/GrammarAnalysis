@@ -35,5 +35,9 @@ void StaticDataOutput(ofstream &file);
 
 void TextDataOutput(ofstream &file);
 
+void Mem2Reg(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file);
+
+void Reg2Mem(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file);
+
 
 #endif //COMPILER_MIPSGENERATE_H

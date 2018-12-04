@@ -1,4 +1,5 @@
 .data
+_GLOBAL: .space8
 c: .space 40
 a: .space 40
 f: .space 80
@@ -11,8 +12,8 @@ newLine: .ascii "\n\0"
 
 
 .text
-j jaaaaaab
-daaaaaab:
+j haaaaaab
+baaaaaab:
 #------------------------------
 addi $sp,$sp,-200
 
@@ -80,7 +81,7 @@ lw $t3,4($sp)
 move $3,$t3
 
 sw $ra,200($sp)
-jal daaaaaab
+jal baaaaaab
 nop
 lw $ra,200($sp)
 move $t1,$v0
@@ -108,7 +109,7 @@ lw $t3,4($sp)
 move $3,$t3
 
 sw $ra,200($sp)
-jal daaaaaab
+jal baaaaaab
 nop
 lw $ra,200($sp)
 move $t1,$v0
@@ -133,7 +134,7 @@ addi $sp,$sp,200
 jr $ra
 nop
 
-gaaaaaab:
+eaaaaaab:
 #------------------------------
 addi $sp,$sp,-244
 
@@ -176,7 +177,7 @@ addi $sp,$sp,244
 jr $ra
 nop
 
-jaaaaaab:
+haaaaaab:
 #------------------------------
 addi $sp,$sp,-728
 
@@ -196,6 +197,7 @@ sw $t1,340($sp)
 
 lw $t3,340($sp)
 add $t1,$0,$t3
+add $t1,$t2,$t3
 sw $t1,44($sp)
 
 jaab:
@@ -235,6 +237,7 @@ sw $t1,424($sp)
 
 lw $t3,424($sp)
 add $t1,$0,$t3
+add $t1,$t2,$t3
 sw $t1,44($sp)
 
 la $a0,string1
@@ -249,7 +252,7 @@ lw $t3,52($sp)
 move $3,$t3
 
 sw $ra,728($sp)
-jal gaaaaaab
+jal eaaaaaab
 nop
 lw $ra,728($sp)
 move $t1,$v0
@@ -259,6 +262,7 @@ sw $t1,472($sp)
 
 lw $t2,44($sp)
 lw $t3,472($sp)
+add $t1,$t2,$t3
 add $t1,$t2,$t3
 sw $t1,44($sp)
 
@@ -291,7 +295,7 @@ lw $t3,552($sp)
 move $4,$t3
 
 sw $ra,728($sp)
-jal daaaaaab
+jal baaaaaab
 nop
 lw $ra,728($sp)
 move $t1,$v0
@@ -325,6 +329,7 @@ sw $t1,576($sp)
 
 lw $t3,576($sp)
 add $t1,$0,$t3
+add $t1,$t2,$t3
 sw $t1,32($sp)
 
 addi $t1,$0,5
@@ -395,6 +400,7 @@ sw $t1,708($sp)
 
 lw $t2,696($sp)
 lw $t3,708($sp)
+add $t1,$t2,$t3
 add $t1,$t2,$t3
 sw $t1,696($sp)
 
