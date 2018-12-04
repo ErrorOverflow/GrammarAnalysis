@@ -464,7 +464,7 @@ int MainFunc(char *str) {
 
 int Expression(char *str, int code) {
     char *p = str;
-    int process_len = 0;
+    int process_len = 0, term_num = 0;
     int x = 0, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == '+') {
         p++;
@@ -478,6 +478,7 @@ int Expression(char *str, int code) {
     x = code;
     z = MidCode;
     while ((process_len = Term(p, MidCode++))) {
+        term_num++;
         p += process_len;
         p += JumpSpace(p);
         PCodeInsert(pcode_num++, x, y, op, z);
@@ -490,7 +491,6 @@ int Expression(char *str, int code) {
             p += JumpSpace(p);
         } else {
             p += JumpSpace(p);
-            MidCode = MidCode_buf;
             return (int) ((p - str) / sizeof(char));
         }
         y = x;
@@ -517,7 +517,6 @@ int Term(char *str, int code) {
             p += process_len;
             p += JumpSpace(p);
         } else {
-            MidCode = MidCode_buf;
             return (int) ((p - str) / sizeof(char));
         }
         y = x;
@@ -536,7 +535,6 @@ int Factor(char *str, int code) {
         p += process_len;
         p += JumpSpace(p);
         PCodeInsert(pcode_num++, x, y, op, z);
-        MidCode = MidCode_buf;
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Identifier(p))) {
         for (int i = 0; i < process_len; i++) {
@@ -562,7 +560,6 @@ int Factor(char *str, int code) {
                     PCodeInsert(pcode_num++, MidCode++, array_code, op, offset);
                     op = PLUS;
                     PCodeInsert(pcode_num++, x, 0, op, z);
-                    MidCode = MidCode_buf;
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -571,7 +568,6 @@ int Factor(char *str, int code) {
                 PCodeInsert(pcode_num++, x, 0, ADI, iter->second.value);
             else
                 PCodeInsert(pcode_num++, x, 0, op, array_code);
-            MidCode = MidCode_buf;
             return (int) ((p - str) / sizeof(char));
         }
     } else if ((process_len = Integer(p))) {
@@ -584,7 +580,6 @@ int Factor(char *str, int code) {
         p += JumpSpace(p);
         op = ADI;
         PCodeInsert(pcode_num++, code, 0, op, z);
-        MidCode = MidCode_buf;
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Character(p))) {
         z = *(p + 1);
@@ -592,7 +587,6 @@ int Factor(char *str, int code) {
         p += JumpSpace(p);
         op = ADI;
         PCodeInsert(pcode_num++, x, y, op, z);
-        MidCode = MidCode_buf;
         return (int) ((p - str) / sizeof(char));
     } else if (*p == '(') {
         p++;
@@ -605,7 +599,6 @@ int Factor(char *str, int code) {
                 p++;
                 p += JumpSpace(p);
                 PCodeInsert(pcode_num++, code, 0, op, z);
-                MidCode = MidCode_buf;
                 return (int) ((p - str) / sizeof(char));
             }
         }
@@ -1216,13 +1209,11 @@ int Program(char *str) {
         cout << endl << endl;
     }
     TableNum++;
-    MidCode = MID_CODE_BASE;
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
         cout << "<FuncDefine>" << endl << endl;
         p += process_len;
         p += JumpSpace(p);
         TableNum++;
-        MidCode = MID_CODE_BASE;
     }
     if ((process_len = MainFunc(p))) {
         cout << "<MainFunc>" << endl << endl;

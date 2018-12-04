@@ -426,9 +426,16 @@ void TextDataOutput(ofstream &file) {
                     }
                 } else if (pc.z >= LOCAL_CODE_BASE && pc.z < MID_CODE_BASE) {
                     it_code = CodeFind(pc.z);
-                    file << "la $a0," << it_code->second.label << "\n";
-                    file << "li $v0,4\n";
-                    file << "syscall\n";
+                    if (it_code->second.type == 3) {
+                        file << "la $a0," << it_code->second.label << "\n";
+                        file << "li $v0,4\n";
+                        file << "syscall\n";
+                    } else {
+                        file << "lw $t3," << Z_FIND << "($sp)" << "\n";
+                        file << "move $a0,$t3\n";
+                        file << "li $v0,1\n";
+                        file << "syscall\n";
+                    }
                 }
                 file << "la $a0,newLine\n";
                 file << "li $v0,4\n";
@@ -491,6 +498,9 @@ void TextDataOutput(ofstream &file) {
                 file << "lw $t3," << Z_FIND << "($sp)\n";
                 file << "sll $t3,$t3,2\nadd $t2,$t2,$t3\n";
                 file << "sw $t1,0($t2)\n";
+                break;
+            case 123:
+                //cout << " NOP ";
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;

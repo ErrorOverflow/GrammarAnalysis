@@ -33,6 +33,7 @@ using namespace std;
 #define LDA 120
 #define END 121
 #define SW 122
+#define NOP 123
 
 struct PCode {
     int x;

@@ -18,6 +18,8 @@ int pcode_num;
 
 void OpExchange(int op, ofstream &file);
 
+void PCodeOptimize();
+
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
     pcode[num].y = y;
@@ -26,10 +28,13 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 }
 
 void PCodePrint() {
+    PCodeOptimize();
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
     for (int i = 0; i < pcode_num; i++) {
+        if (pcode[i].op == NOP)
+            continue;
         file << "PCode#" << i << ": ";
         cout << "PCode#" << i << ": ";
         if (pcode[i].x < MID_CODE_BASE && pcode[i].x >= LOCAL_CODE_BASE)
@@ -57,6 +62,25 @@ void PCodePrint() {
         cout << endl;
     }
     file.close();
+}
+
+void PCodeOptimize() {
+    for (int i = 0; i < pcode_num; i++) {
+        if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
+            pcode[i].op = NOP;
+            for (int j = i + 1; j < pcode_num; j++) {
+                if (pcode[j].y == pcode[i].x) {
+                    pcode[j].y = pcode[i].z;
+                }
+                if (pcode[j].z == pcode[i].x) {
+                    pcode[j].z = pcode[i].z;
+                }
+                if (pcode[j].x == pcode[i].x) {
+                    pcode[j].x = pcode[i].z;
+                }
+            }
+        }
+    }
 }
 
 void OpExchange(int op, ofstream &file) {
