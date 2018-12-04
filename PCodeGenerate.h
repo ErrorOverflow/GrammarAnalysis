@@ -42,6 +42,12 @@ struct PCode {
     int z;
 };
 
+struct MidCodeInfo {
+    int code;
+    int type;//1.int 2.char
+    int value;
+};
+
 extern PCode pcode[4096];
 extern int pcode_num;
 

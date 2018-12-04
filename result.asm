@@ -262,10 +262,6 @@ lw $t3,472($sp)
 add $t1,$t2,$t3
 sw $t1,44($sp)
 
-lw $t3,44($sp)
-add $t1,$0,$t3
-sw $t1,44($sp)
-
 addi $t1,$0,5
 sw $t1,504($sp)
 

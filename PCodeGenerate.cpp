@@ -14,6 +14,7 @@
 using namespace std;
 
 PCode pcode[4096];
+unordered_map<int, MidCodeInfo> midcode_info;
 int pcode_num;
 
 void OpExchange(int op, ofstream &file);
@@ -79,6 +80,8 @@ void PCodeOptimize() {
                     pcode[j].x = pcode[i].z;
                 }
             }
+        } else if (pcode[i].x == pcode[i].z && pcode[i].y == 0 && (pcode[i].op == PLUS || pcode[i].op == SUB)) {
+            pcode[i].op = NOP;
         }
     }
 }
