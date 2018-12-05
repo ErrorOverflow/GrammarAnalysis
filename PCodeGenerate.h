@@ -8,6 +8,7 @@
 #include <malloc.h>
 #include <iostream>
 #include <fstream>
+#include <unordered_map>
 
 using namespace std;
 
@@ -42,14 +43,16 @@ struct PCode {
     int z;
 };
 
-struct MidCodeInfo {
+struct RuntimeCodeInfo {
     int code;
     int type;//1.int 2.char
     int value;
+    int address;
 };
 
 extern PCode pcode[4096];
 extern int pcode_num;
+extern unordered_map<int, RuntimeCodeInfo> code_info;
 
 void PCodeInsert(int num, int x, int y, int op, int z);
 

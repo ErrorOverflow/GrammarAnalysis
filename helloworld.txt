@@ -6,9 +6,9 @@ int func(int i ,int PAR){
 		return(PAR);
 	}
 	if(i<=PAR/100*1)
-		return(func(i*100));
+		return(func(i*100,PAR));
 	else
-		return(func(i*10));
+		return(func(i*10,PAR));
 	return(0);
 }
 

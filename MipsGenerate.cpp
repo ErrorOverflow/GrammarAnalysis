@@ -19,7 +19,7 @@ unordered_map<int, int> RuntimeType;
 
 void WriteMipsFile() {
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm\0";
-    FuncRuntimeCheck();
+    //FuncRuntimeCheck();
     ofstream file;
     file.open(MIPSFILE, ios::out);
     file << ".data\n";
@@ -27,62 +27,6 @@ void WriteMipsFile() {
     file << "\n.text\n";
     TextDataOutput(file);
     file.close();
-}
-
-void FuncRuntimeCheck() {
-    int local_code_min = 0;
-    int local_code_max = 0;
-    int mid_code_max = 0;
-    int func_code = 0;
-    for (int i = 0; i < pcode_num; i++) {
-        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE) {
-            if (func_code != 0) {
-                auto iter = CodeFind(func_code);
-                FuncRuntime funcRuntime = {iter->second.name, func_code, local_code_max, local_code_min,
-                                           mid_code_max};
-                RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
-                local_code_max = 0;
-                local_code_min = 0;
-                mid_code_max = 0;
-            }
-            func_code = pcode[i].z;
-        } else {
-            if (pcode[i].x >= LOCAL_CODE_BASE && pcode[i].x < MID_CODE_BASE) {
-                if (pcode[i].x > local_code_max) {
-                    local_code_max = pcode[i].x;
-                }
-                if (pcode[i].x < local_code_min || local_code_min == 0) {
-                    local_code_min = pcode[i].x;
-                }
-            } else if (pcode[i].x >= MID_CODE_BASE && pcode[i].x > mid_code_max) {
-                mid_code_max = pcode[i].x;
-            }
-            if (pcode[i].y >= LOCAL_CODE_BASE && pcode[i].y < MID_CODE_BASE) {
-                if (pcode[i].y > local_code_max) {
-                    local_code_max = pcode[i].y;
-                }
-                if (pcode[i].y < local_code_min || local_code_min == 0) {
-                    local_code_min = pcode[i].y;
-                }
-            } else if (pcode[i].y >= MID_CODE_BASE && pcode[i].y > mid_code_max) {
-                mid_code_max = pcode[i].y;
-            }
-            if (pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE && pcode[i].op != ADI) {
-                if (pcode[i].z > local_code_max) {
-                    local_code_max = pcode[i].z;
-                }
-                if (pcode[i].z < local_code_min || local_code_min == 0) {
-                    local_code_min = pcode[i].z;
-                }
-            } else if (pcode[i].z >= MID_CODE_BASE && pcode[i].z > mid_code_max && pcode[i].op != LABEL) {
-                mid_code_max = pcode[i].z;
-            }
-        }
-    }
-    auto iter = CodeFind(func_code);
-    FuncRuntime funcRuntime = {iter->second.name, func_code, local_code_max, local_code_min,
-                               mid_code_max};
-    RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
 }
 
 void StaticDataOutput(ofstream &file) {
@@ -117,6 +61,8 @@ void TextDataOutput(ofstream &file) {
     unordered_map<string, Sym>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
     unordered_map<int, int>::iterator it_type;
+    unordered_map<int, RuntimeCodeInfo>::iterator it_info;
+    file << "la $gp,_GLOBAL\n";
     it = SymFind("main");
     Num2Char(it->second.code, word);
     file << "j " << word << "\n";
@@ -147,12 +93,10 @@ void TextDataOutput(ofstream &file) {
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.z, word);
                 file << "sw $ra,"
-                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE + 2) * 4 << "($sp)\n";
+                     << (iter->second.space + 1) * 4 << "($sp)\n";
                 file << "jal " << word << "\nnop\n";
                 file << "lw $ra,"
-                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE + 2) * 4 << "($sp)\n";
+                     << (iter->second.space + 1) * 4 << "($sp)\n";
                 file << "move $t1,$v0\n";
                 Reg2Mem(1, pc.x, iter, file);
                 para_reg = 0;
@@ -163,8 +107,7 @@ void TextDataOutput(ofstream &file) {
                 Mem2Reg(3, pc.z, iter, file);
                 file << "move $v0,$t3" << "\n";
                 file << "addi $sp,$sp,"
-                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE + 2) * 4 << "\n";
+                     << (iter->second.space + 2) * 4 << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case 105:
@@ -262,8 +205,7 @@ void TextDataOutput(ofstream &file) {
                     iter = RuntimeStack.find(pc.z);
                     file << "#------------------------------\n";
                     file << "addi $sp,$sp," <<
-                         (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                          MID_CODE_BASE + 2) * -4 << "\n\n";
+                         (iter->second.space + 2) * -4 << "\n\n";
                     func_code = pc.z;
                 }
                 break;
@@ -467,8 +409,7 @@ void TextDataOutput(ofstream &file) {
                 //cout << " END ";
                 iter = RuntimeStack.find(func_code);
                 file << "addi $sp,$sp,"
-                     << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
-                         MID_CODE_BASE + 2) * 4 << "\n";
+                     << (iter->second.space + 2) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
                 break;
             case 122:
@@ -493,8 +434,7 @@ void TextDataOutput(ofstream &file) {
 
 void Mem2Reg(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file) {
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        file << "la $t" << reg << ",_GLOBAL";
-        file << "lw $t" << reg << "," << (code - GLOBAL_CODE_BASE) * 4 << "($t2)";
+        file << "lw $t" << reg << "," << (code - GLOBAL_CODE_BASE) * 4 << "($gp)";
     } else {
         file << "lw $t" << reg << "," << CODE_FIND << "($sp)\n";
     }
@@ -502,9 +442,17 @@ void Mem2Reg(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, 
 
 void Reg2Mem(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file) {
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        file << "la $t1,_GLOBAL";
-        file << "sw $t1," << (code - GLOBAL_CODE_BASE) * 4 << "($t1)";
+        file << "sw $t" << reg << "," << (code - GLOBAL_CODE_BASE) * 4 << "($gp)";
     } else {
         file << "sw $t" << reg << "," << CODE_FIND << "($sp)\n";
+    }
+}
+
+void AddressPrint() {
+    unordered_map<int, RuntimeCodeInfo>::iterator it_info;
+    it_info = code_info.begin();
+    while (it_info != code_info.end()) {
+        cout << it_info->second.code << " " << it_info->second.address << endl;
+        it_info++;
     }
 }

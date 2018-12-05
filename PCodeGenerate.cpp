@@ -5,6 +5,7 @@
 
 #include "PCodeGenerate.h"
 #include "lib.h"
+#include "MipsGenerate.h"
 #include <iostream>
 #include <unordered_map>
 #include <string>
@@ -14,12 +15,14 @@
 using namespace std;
 
 PCode pcode[4096];
-unordered_map<int, MidCodeInfo> midcode_info;
+unordered_map<int, RuntimeCodeInfo> code_info;
 int pcode_num;
 
 void OpExchange(int op, ofstream &file);
 
 void PCodeOptimize();
+
+void AddressAssign();
 
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
@@ -30,6 +33,7 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 
 void PCodePrint() {
     PCodeOptimize();
+    AddressAssign();
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -70,17 +74,14 @@ void PCodeOptimize() {
         if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
-                if (pcode[j].x == pcode[i].x) {
-                    break;
-                }
                 if (pcode[j].y == pcode[i].x) {
                     pcode[j].y = pcode[i].z;
                 }
                 if (pcode[j].z == pcode[i].x) {
                     pcode[j].z = pcode[i].z;
                 }
-                if (pcode[j].x == pcode[i].x) {
-                    pcode[j].x = pcode[i].z;
+                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
+                    break;
                 }
             }
         } else if (pcode[i].x >= MID_CODE_BASE && pcode[i].z == 0 && pcode[i].op == PLUS &&
@@ -93,14 +94,64 @@ void PCodeOptimize() {
                 if (pcode[j].z == pcode[i].x) {
                     pcode[j].z = pcode[i].y;
                 }
-                if (pcode[j].x == pcode[i].x) {
-                    pcode[j].x = pcode[i].y;
+                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
+                    break;
                 }
             }
-        } else if (pcode[i].x == pcode[i].z && pcode[i].y == 0 && (pcode[i].op == PLUS || pcode[i].op == SUB)) {
-            pcode[i].op = NOP;
         }
     }
+}
+
+void AddressAssign() {
+    int mid_code_stack = 0;
+    int space = 0;
+    int func_code = 0;
+    unordered_map<int, RuntimeCodeInfo>::iterator iter;
+    unordered_map<int, FuncRuntime>::iterator it;
+    unordered_map<int, Sym>::iterator it_code;
+    for (int i = 0; i < pcode_num; i++) {
+        if (pcode[i].op == NOP) {
+            continue;
+        }
+        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
+            mid_code_stack = 0;
+            if (func_code != 0) {
+                it_code = CodeFind(func_code);
+                FuncRuntime funcRuntime = {it_code->second.name, func_code, space};
+                RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
+            }
+            func_code = pcode[i].z;
+            space = 0;
+            continue;
+        }
+        if (pcode[i].y >= LOCAL_CODE_BASE) {
+            iter = code_info.find(pcode[i].y);
+            if (iter == code_info.end()) {
+                space++;
+                RuntimeCodeInfo info = {pcode[i].y, 0, 0, mid_code_stack++};
+                code_info.insert(pair<int, RuntimeCodeInfo>{pcode[i].x, info});
+            }
+        }
+        if (pcode[i].x >= LOCAL_CODE_BASE) {
+            iter = code_info.find(pcode[i].x);
+            if (iter == code_info.end()) {
+                space++;
+                RuntimeCodeInfo info = {pcode[i].x, 0, 0, mid_code_stack++};
+                code_info.insert(pair<int, RuntimeCodeInfo>{pcode[i].x, info});
+            }
+        }
+        if (pcode[i].z >= LOCAL_CODE_BASE) {
+            iter = code_info.find(pcode[i].z);
+            if (iter == code_info.end()) {
+                space++;
+                RuntimeCodeInfo info = {pcode[i].z, 0, 0, mid_code_stack++};
+                code_info.insert(pair<int, RuntimeCodeInfo>{pcode[i].z, info});
+            }
+        }
+    }
+    it_code = CodeFind(func_code);
+    FuncRuntime funcRuntime = {it_code->second.name, func_code, space};
+    RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
 }
 
 void OpExchange(int op, ofstream &file) {
