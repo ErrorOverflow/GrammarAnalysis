@@ -1,5 +1,5 @@
 .data
-_GLOBAL: .space8
+_GLOBAL: .space 8
 c: .space 40
 a: .space 40
 f: .space 80
@@ -43,23 +43,23 @@ baab:
 addi $t1,$0,100
 sw $t1,92($sp)
 
-lw $t2,8($sp)
+lw $t2,80($sp)
 lw $t3,92($sp)
 div $t2,$t3
 mflo $t1
-sw $t1,8($sp)
+sw $t1,80($sp)
 
 addi $t1,$0,1
 sw $t1,100($sp)
 
-lw $t2,8($sp)
+lw $t2,80($sp)
 lw $t3,100($sp)
 mult $t2,$t3
 mflo $t1
-sw $t1,8($sp)
+sw $t1,80($sp)
 
 lw $t2,4($sp)
-lw $t3,8($sp)
+lw $t3,80($sp)
 sub $t1,$t2,$t3
 blez $t1,daab
 nop
@@ -71,13 +71,13 @@ daab:
 addi $t1,$0,100
 sw $t1,140($sp)
 
-lw $t2,4($sp)
+lw $t2,128($sp)
 lw $t3,140($sp)
 mult $t2,$t3
 mflo $t1
-sw $t1,4($sp)
+sw $t1,128($sp)
 
-lw $t3,4($sp)
+lw $t3,128($sp)
 move $3,$t3
 
 sw $ra,200($sp)
@@ -99,13 +99,13 @@ eaab:
 addi $t1,$0,10
 sw $t1,180($sp)
 
-lw $t2,4($sp)
+lw $t2,168($sp)
 lw $t3,180($sp)
 mult $t2,$t3
 mflo $t1
-sw $t1,4($sp)
+sw $t1,168($sp)
 
-lw $t3,4($sp)
+lw $t3,168($sp)
 move $3,$t3
 
 sw $ra,200($sp)
@@ -219,7 +219,7 @@ syscall
 sw $v0,40($sp)
 
 la $t2,f
-lw $t1,40($sp)
+lw $t1,396($sp)
 lw $t3,44($sp)
 sll $t3,$t3,2
 add $t2,$t2,$t3
@@ -260,9 +260,14 @@ sw $t1,448($sp)
 addi $t1,$0,1
 sw $t1,472($sp)
 
-lw $t2,44($sp)
+lw $t2,452($sp)
 lw $t3,472($sp)
 add $t1,$t2,$t3
+add $t1,$t2,$t3
+sw $t1,452($sp)
+
+lw $t3,452($sp)
+add $t1,$0,$t3
 add $t1,$t2,$t3
 sw $t1,44($sp)
 
@@ -303,13 +308,13 @@ sw $t1,524($sp)
 addi $t1,$0,11
 sw $t1,560($sp)
 
-lw $t2,524($sp)
+lw $t2,516($sp)
 lw $t3,560($sp)
 mult $t2,$t3
 mflo $t1
-sw $t1,524($sp)
+sw $t1,516($sp)
 
-lw $t3,524($sp)
+lw $t3,516($sp)
 move $a0,$t3
 li $v0,1
 syscall
@@ -339,7 +344,7 @@ addi $t1,$0,7
 sw $t1,612($sp)
 
 la $t2,c
-lw $t1,612($sp)
+lw $t1,600($sp)
 lw $t3,592($sp)
 sll $t3,$t3,2
 add $t2,$t2,$t3
@@ -392,28 +397,28 @@ sw $t1,708($sp)
 addi $t1,$0,3
 sw $t1,716($sp)
 
-lw $t2,708($sp)
+lw $t2,704($sp)
 lw $t3,716($sp)
 mult $t2,$t3
 mflo $t1
-sw $t1,708($sp)
+sw $t1,704($sp)
 
-lw $t2,696($sp)
-lw $t3,708($sp)
+lw $t2,688($sp)
+lw $t3,704($sp)
 add $t1,$t2,$t3
 add $t1,$t2,$t3
-sw $t1,696($sp)
+sw $t1,688($sp)
 
 addi $t1,$0,111
 sw $t1,724($sp)
 
-lw $t2,696($sp)
+lw $t2,676($sp)
 lw $t3,724($sp)
 mult $t2,$t3
 mflo $t1
-sw $t1,696($sp)
+sw $t1,676($sp)
 
-lw $t3,696($sp)
+lw $t3,676($sp)
 move $a0,$t3
 li $v0,1
 syscall

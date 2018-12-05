@@ -86,7 +86,7 @@ void FuncRuntimeCheck() {
 }
 
 void StaticDataOutput(ofstream &file) {
-    file << "_GLOBAL: .space" << (GlobalCode - GLOBAL_CODE_BASE) * 4 << "\n";
+    file << "_GLOBAL: .space " << (GlobalCode - GLOBAL_CODE_BASE) * 4 << "\n";
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
@@ -127,7 +127,8 @@ void TextDataOutput(ofstream &file) {
                 //cout << " PARA ";
                 iter = RuntimeStack.find(func_code);
                 file << "move $t3,$" << PARA_REG_FIND << "\n";
-                file << "sw $t3," << Z_FIND << "($sp)\n\n";
+                Reg2Mem(3, pc.z, iter, file);
+                file << "\n";
                 if (pcode[i + 1].op != PARA)
                     para_reg = 0;
                 else
@@ -137,7 +138,7 @@ void TextDataOutput(ofstream &file) {
             case 102:
                 //cout << " PUSH ";
                 iter = RuntimeStack.find(func_code);
-                file << "lw $t3," << Z_FIND << "($sp)\n";
+                Mem2Reg(3, pc.z, iter, file);
                 file << "move $" << PARA_REG_FIND << ",$t3\n\n";
                 para_reg++;
                 break;
@@ -153,13 +154,13 @@ void TextDataOutput(ofstream &file) {
                      << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
                          MID_CODE_BASE + 2) * 4 << "($sp)\n";
                 file << "move $t1,$v0\n";
-                file << "sw $t1," << X_FIND << "($sp)\n";
+                Reg2Mem(1, pc.x, iter, file);
                 para_reg = 0;
                 break;
             case 104:
                 //cout << " RET ";
                 iter = RuntimeStack.find(func_code);
-                file << "lw $t3," << Z_FIND << "($sp)\n";
+                Mem2Reg(3, pc.z, iter, file);
                 file << "move $v0,$t3" << "\n";
                 file << "addi $sp,$sp,"
                      << (iter->second.local_code_max - iter->second.local_code_min + iter->second.mid_code_max -
@@ -490,26 +491,20 @@ void TextDataOutput(ofstream &file) {
     }
 }
 
-void Mem2Reg(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file) {
-    if (pc.y >= GLOBAL_CODE_BASE && pc.y < LOCAL_CODE_BASE) {
-        file << "la $t2,_GLOBAL";
-        file << "lw $t2," << (pc.y - GLOBAL_CODE_BASE) * 4 << "($t2)";
+void Mem2Reg(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file) {
+    if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
+        file << "la $t" << reg << ",_GLOBAL";
+        file << "lw $t" << reg << "," << (code - GLOBAL_CODE_BASE) * 4 << "($t2)";
     } else {
-        file << "lw $t2," << Y_FIND << "($sp)\n";
-    }
-    if (pc.z >= GLOBAL_CODE_BASE && pc.z < LOCAL_CODE_BASE) {
-        file << "la $t3,_GLOBAL";
-        file << "lw $t3," << (pc.z - GLOBAL_CODE_BASE) * 4 << "($t3)";
-    } else {
-        file << "lw $t3," << Z_FIND << "($sp)\n";
+        file << "lw $t" << reg << "," << CODE_FIND << "($sp)\n";
     }
 }
 
-void Reg2Mem(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file) {
-    if (pc.x >= GLOBAL_CODE_BASE && pc.x < LOCAL_CODE_BASE) {
+void Reg2Mem(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file) {
+    if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
         file << "la $t1,_GLOBAL";
-        file << "sw $t1," << (pc.x - GLOBAL_CODE_BASE) * 4 << "($t1)";
+        file << "sw $t1," << (code - GLOBAL_CODE_BASE) * 4 << "($t1)";
     } else {
-        file << "sw $t1," << X_FIND << "($sp)\n";
+        file << "sw $t" << reg << "," << CODE_FIND << "($sp)\n";
     }
 }

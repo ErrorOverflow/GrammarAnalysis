@@ -70,6 +70,9 @@ void PCodeOptimize() {
         if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
+                if (pcode[j].x == pcode[i].x) {
+                    break;
+                }
                 if (pcode[j].y == pcode[i].x) {
                     pcode[j].y = pcode[i].z;
                 }

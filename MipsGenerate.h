@@ -9,6 +9,7 @@
 #include "PCodeGenerate.h"
 #include <string>
 
+#define CODE_FIND ((code >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + code - MID_CODE_BASE+1) * 4): ((code - iter->second.local_code_min) * 4))
 #define X_FIND ((pc.x >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.x - MID_CODE_BASE+1) * 4): ((pc.x - iter->second.local_code_min) * 4))
 #define Y_FIND ((pc.y >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.y - MID_CODE_BASE+1) * 4): ((pc.y - iter->second.local_code_min) * 4))
 #define Z_FIND ((pc.z >= MID_CODE_BASE) ? ((iter->second.local_code_max - iter->second.local_code_min + pc.z - MID_CODE_BASE+1) * 4): ((pc.z - iter->second.local_code_min) * 4))
@@ -35,9 +36,9 @@ void StaticDataOutput(ofstream &file);
 
 void TextDataOutput(ofstream &file);
 
-void Mem2Reg(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file);
+void Mem2Reg(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file);
 
-void Reg2Mem(unordered_map<int, FuncRuntime>::iterator iter, PCode pc, ofstream &file);
+void Reg2Mem(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file);
 
 
 #endif //COMPILER_MIPSGENERATE_H
