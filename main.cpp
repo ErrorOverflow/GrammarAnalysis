@@ -19,8 +19,8 @@ int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     PCodePrint();
     cout << "-------------------------------" << endl;
     WriteMipsFile();
-    cout << "-------------------------------" << endl;
-    AddressPrint();
+    //cout << "-------------------------------" << endl;
+    //AddressPrint();
     system("pause");
     return 0;
 }
