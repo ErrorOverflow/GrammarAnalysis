@@ -20,6 +20,7 @@ using namespace std;
 
 char func_name[64];
 int func_type;
+int isGlobal = 0;
 
 int ConstDefine(char *str) {
     char *p = str;
@@ -103,7 +104,10 @@ int ConstDefine(char *str) {
             }
             name[identifier_len[i]] = '\0';
             cout << name << endl;
-            SymInsert(name, identifier_type, 0, 0, value);
+            if (isGlobal)
+                SymInsert(name, identifier_type, 0, 0, value);
+            else
+                SymInsert(name, identifier_type, 0, 0, "");
         }
         return (int) ((p - str) / sizeof(char));
     }
@@ -229,7 +233,10 @@ int VarDefine(char *str) {
                             char *mid = p;
                             mid += JumpSpace(mid);
                             if (*mid == ';') {
-                                SymInsert(name, identifier_type, identifier_dim[i], 1);
+                                if (isGlobal)
+                                    SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
+                                else
+                                    SymInsert(name, identifier_type, identifier_dim[i], 1);
                             }
                         }
                         return (int) ((p - str) / sizeof(char));
@@ -1198,6 +1205,7 @@ int Program(char *str) {
     char *p = str;
     int process_len = 0;
     p += JumpSpace(p);
+    isGlobal = 1;
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
@@ -1209,6 +1217,7 @@ int Program(char *str) {
         cout << endl << endl;
     }
     TableNum++;
+    isGlobal = 0;
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
         cout << "<FuncDefine>" << endl << endl;
         p += process_len;

@@ -42,7 +42,7 @@ void PCodePrint() {
             continue;
         file << "PCode#" << i << ": ";
         cout << "PCode#" << i << ": ";
-        if (pcode[i].x < MID_CODE_BASE && pcode[i].x >= LOCAL_CODE_BASE)
+        if (pcode[i].x < MID_CODE_BASE && pcode[i].x >= GLOBAL_CODE_BASE)
             ZExchange(pcode[i].x, file);
         else {
             file << pcode[i].x;
@@ -50,14 +50,14 @@ void PCodePrint() {
         }
         file << " ";
         cout << " ";
-        if (pcode[i].y < MID_CODE_BASE && pcode[i].y >= LOCAL_CODE_BASE)
+        if (pcode[i].y < MID_CODE_BASE && pcode[i].y >= GLOBAL_CODE_BASE)
             ZExchange(pcode[i].y, file);
         else {
             file << pcode[i].y;
             cout << pcode[i].y;
         }
         OpExchange(pcode[i].op, file);
-        if (pcode[i].z < MID_CODE_BASE && pcode[i].z >= LOCAL_CODE_BASE) {
+        if (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE) {
             ZExchange(pcode[i].z, file);
         } else {
             file << pcode[i].z;

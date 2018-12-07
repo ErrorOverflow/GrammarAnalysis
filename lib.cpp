@@ -35,23 +35,23 @@ int JumpSpace(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
-int SymInsert(string name, int type, int dimension, int read, string label) {
-    Sym sym = {LocalCode++, name, type, dimension, read, 0, label};
+int SymInsert(string name, int type, int dimension, int kind, string label) {
+    Sym sym = {LocalCode++, name, type, dimension, kind, 0, label};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
 }
 
-int SymInsert(string name, int type, int dimension, int read, int value) {
-    Sym sym = {GlobalCode++, name, type, dimension, read, value, ""};
+int SymInsert(string name, int type, int dimension, int kind, int value) {
+    Sym sym = {GlobalCode++, name, type, dimension, kind, value, ""};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
 }
 
 
-int SymInsert(string name, int type, int dimension, int read) {
-    Sym sym = {LocalCode++, name, type, dimension, read, 0, ""};
+int SymInsert(string name, int type, int dimension, int kind) {
+    Sym sym = {LocalCode++, name, type, dimension, kind, 0, ""};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;

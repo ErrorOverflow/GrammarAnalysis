@@ -36,9 +36,9 @@ void StaticDataOutput(ofstream &file);
 
 void TextDataOutput(ofstream &file);
 
-void Mem2Reg(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file);
+void Mem2Reg(int reg, int code, ofstream &file);
 
-void Reg2Mem(int reg, int code, unordered_map<int, FuncRuntime>::iterator iter, ofstream &file);
+void Reg2Mem(int reg, int code, ofstream &file);
 
 void AddressPrint();
 
