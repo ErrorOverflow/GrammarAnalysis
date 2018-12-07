@@ -1,5 +1,6 @@
 .data
-_GLOBAL: .space 12
+_GLOBAL: .space 48
+Variable: .space 40
 c: .space 40
 a: .space 40
 f: .space 80
@@ -79,10 +80,10 @@ mflo $9
 sw $9,24($sp)
 
 lw $11,24($sp)
-move $4,$11
+move $6,$11
 
 lw $11,4($sp)
-move $5,$11
+move $7,$11
 
 sw $ra,56($sp)
 jal aaaaaaab
@@ -143,22 +144,27 @@ nop
 
 daaaaaab:
 #------------------------------
-addi $sp,$sp,-24
+addi $sp,$sp,-28
 
 move $11,$4
 sw $3,0($sp)
 
-addi $9,$0,10
+addi $9,$0,8
 sw $9,4($sp)
 
-lw $11,4($sp)
-add $9,$0,$11
-sw $9,8($gp)
-
-addi $9,$0,72
+addi $9,$0,10
 sw $9,8($sp)
 
-lw $11,8($sp)
+addi $10,$gp,8
+lw $9,8($sp)
+lw $11,4($sp)
+sll $11,$11,2
+add $10,$10,$11
+sw $9,0($10)
+addi $9,$0,72
+sw $9,12($sp)
+
+lw $11,12($sp)
 lw $10,0($sp)
 beq $10,$11,gaab
 nop
@@ -187,13 +193,13 @@ li $v0,4
 syscall
 
 iaab:
-addi $sp,$sp,24
+addi $sp,$sp,28
 jr $ra
 nop
 
 gaaaaaab:
 #------------------------------
-addi $sp,$sp,-156
+addi $sp,$sp,-160
 
 addi $9,$0,5
 sw $9,0($sp)
@@ -231,7 +237,7 @@ li $v0,5
 syscall
 sw $2,16($sp)
 la $10,f
-lw $9,20($sp)
+lw $9,16($sp)
 lw $11,8($sp)
 sll $11,$11,2
 add $10,$10,$11
@@ -260,12 +266,12 @@ syscall
 
 dbab:
 lw $11,32($sp)
-move $4,$11
+move $5,$11
 
-sw $ra,152($sp)
+sw $ra,156($sp)
 jal daaaaaab
 nop
-lw $ra,152($sp)
+lw $ra,156($sp)
 move $9,$v0
 sw $9,36($sp)
 addi $9,$0,1
@@ -308,10 +314,10 @@ sw $9,60($sp)
 lw $11,60($sp)
 move $5,$11
 
-sw $ra,152($sp)
+sw $ra,156($sp)
 jal aaaaaaab
 nop
-lw $ra,152($sp)
+lw $ra,156($sp)
 move $9,$v0
 sw $9,64($sp)
 addi $9,$0,11
@@ -352,7 +358,7 @@ addi $9,$0,7
 sw $9,92($sp)
 
 la $10,c
-lw $9,96($sp)
+lw $9,92($sp)
 lw $11,88($sp)
 sll $11,$11,2
 add $10,$10,$11
@@ -432,11 +438,16 @@ la $a0,newLine
 li $v0,4
 syscall
 
-lw $11,8($gp)
-add $9,$0,$11
+addi $9,$0,8
 sw $9,144($sp)
 
+addi $10,$gp,8
 lw $11,144($sp)
+sll $11,$11,2
+add $10,$10,$11
+lw $9,0($10)
+sw $9,148($sp)
+lw $11,148($sp)
 move $a0,$11
 li $v0,1
 syscall

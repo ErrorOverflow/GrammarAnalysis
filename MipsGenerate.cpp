@@ -30,7 +30,16 @@ void WriteMipsFile() {
 }
 
 void StaticDataOutput(ofstream &file) {
-    file << "_GLOBAL: .space " << (GlobalCode - GLOBAL_CODE_BASE) * 4 << "\n";
+    int space = 0;
+    for (int i = GLOBAL_CODE_BASE; i < GlobalCode; i++) {
+        auto iter = CodeFind(i);
+        if (iter->second.dimension == 0) {
+            space++;
+        } else {
+            space += iter->second.dimension;
+        }
+    }
+    file << "_GLOBAL: .space " << space * 4 << "\n";
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
@@ -55,8 +64,7 @@ void StaticDataOutput(ofstream &file) {
 
 void TextDataOutput(ofstream &file) {
     char word[64];
-    int func_code = 0;
-    int para_reg = 0;
+    int func_code = 0, round = 0, i = 0, para_reg = 0;
     unordered_map<int, FuncRuntime>::iterator iter;
     unordered_map<string, Sym>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
@@ -65,8 +73,8 @@ void TextDataOutput(ofstream &file) {
     it = SymFind("main");
     Num2Char(it->second.code, word);
     file << "j " << word << "\n";
-    for (int i = 0; i < pcode_num; i++) {
-        PCode pc = pcode[i];
+    for (round = 0; round < pcode_num; round++) {
+        PCode pc = pcode[round];
         switch (pc.op) {
             case 101: {
                 //cout << " PARA ";
@@ -377,8 +385,20 @@ void TextDataOutput(ofstream &file) {
                 break;
             case 120: {
                 //cout << " LDA ";
-                it_code = CodeFind(pc.y);
-                file << "la $10," << it_code->second.name << "\n";
+                int loc = 0;
+                if (pc.y >= LOCAL_CODE_BASE) {
+                    it_code = CodeFind(pc.y);
+                    file << "la $10," << it_code->second.name << "\n";
+                } else {
+                    for (i = GLOBAL_CODE_BASE; i < GlobalCode - 1; i++) {
+                        it_code = CodeFind(i);
+                        if (it_code->second.dimension == 0)
+                            loc++;
+                        else
+                            loc += it_code->second.dimension;
+                    }
+                    file << "addi $10,$gp," << loc * 4 << "\n";
+                }
                 Mem2Reg(11, pc.z, file);
                 file << "sll $11,$11,2\nadd $10,$10,$11\n";
                 file << "lw $9,0($10)\n";
@@ -392,15 +412,28 @@ void TextDataOutput(ofstream &file) {
                      << (iter->second.space + 2) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
                 break;
-            case 122:
+            case 122: {
                 //cout << " SW ";
-                it_code = CodeFind(pc.y);
-                file << "la $10," << it_code->second.name << "\n";
+                int loc = 0;
+                if (pc.y >= LOCAL_CODE_BASE) {
+                    it_code = CodeFind(pc.y);
+                    file << "la $10," << it_code->second.name << "\n";
+                } else {
+                    for (i = GLOBAL_CODE_BASE; i < GlobalCode - 1; i++) {
+                        it_code = CodeFind(i);
+                        if (it_code->second.dimension == 0)
+                            loc++;
+                        else
+                            loc += it_code->second.dimension;
+                    }
+                    file << "addi $10,$gp," << loc * 4 << "\n";
+                }
                 Mem2Reg(9, pc.x, file);
                 Mem2Reg(11, pc.z, file);
                 file << "sll $11,$11,2\nadd $10,$10,$11\n";
                 file << "sw $9,0($10)\n";
                 break;
+            }
             case 123:
                 //cout << " NOP ";
                 break;
@@ -412,16 +445,32 @@ void TextDataOutput(ofstream &file) {
 }
 
 void Mem2Reg(int reg, int code, ofstream &file) {
+    int loc = 0;
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        file << "lw $" << reg << "," << (code - GLOBAL_CODE_BASE) * 4 << "($gp)\n";
+        for (int i = GLOBAL_CODE_BASE; i < GlobalCode; i++) {
+            auto iter = CodeFind(i);
+            if (iter->second.dimension == 0)
+                loc++;
+            else
+                loc += iter->second.dimension;
+        }
+        file << "lw $" << reg << "," << loc * 4 << "($gp)\n";
     } else {
         file << "lw $" << reg << "," << CODE_FIND << "($sp)\n";
     }
 }
 
 void Reg2Mem(int reg, int code, ofstream &file) {
+    int loc = 0;
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        file << "sw $" << reg << "," << (code - GLOBAL_CODE_BASE) * 4 << "($gp)\n";
+        for (int i = GLOBAL_CODE_BASE; i < GlobalCode; i++) {
+            auto iter = CodeFind(i);
+            if (iter->second.dimension == 0)
+                loc++;
+            else
+                loc += iter->second.dimension;
+        }
+        file << "sw $" << reg << "," << loc * 4 << "($gp)\n";
     } else {
         file << "sw $" << reg << "," << CODE_FIND << "($sp)\n";
     }

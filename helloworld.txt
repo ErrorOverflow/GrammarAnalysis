@@ -1,5 +1,5 @@
 const int MAX=5;const int INTMAX=100000;
-int Variable;
+int Variable[10];
 
 int func(int i ,int PAR){
 	if(i >= PAR){
@@ -13,7 +13,7 @@ int func(int i ,int PAR){
 }
 
 void NoReturnFunc(char k){
-    Variable =10;
+    Variable[8] =10;
     if(k == 'H')
         printf(k);
 	else
@@ -47,5 +47,5 @@ void main(){
 	else
 		printf("b is not bigger than c[5]");
 	printf((1+2*3)*111);
-	printf(Variable);
+	printf(Variable[8]);
 }

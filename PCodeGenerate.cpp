@@ -80,6 +80,9 @@ void PCodeOptimize() {
                 if (pcode[j].z == pcode[i].x) {
                     pcode[j].z = pcode[i].z;
                 }
+                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
+                    pcode[j].x = pcode[i].z;
+                }
                 if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
                     break;
                 }
@@ -93,6 +96,9 @@ void PCodeOptimize() {
                 }
                 if (pcode[j].z == pcode[i].x) {
                     pcode[j].z = pcode[i].y;
+                }
+                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
+                    pcode[j].x = pcode[i].x;
                 }
                 if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
                     break;
