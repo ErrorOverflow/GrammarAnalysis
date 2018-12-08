@@ -475,12 +475,3 @@ void Reg2Mem(int reg, int code, ofstream &file) {
         file << "sw $" << reg << "," << CODE_FIND << "($sp)\n";
     }
 }
-
-void AddressPrint() {
-    unordered_map<int, RuntimeCodeInfo>::iterator it_info;
-    it_info = code_info.begin();
-    while (it_info != code_info.end()) {
-        cout << it_info->second.code << " " << it_info->second.address << endl;
-        it_info++;
-    }
-}
