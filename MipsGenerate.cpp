@@ -78,10 +78,9 @@ void TextDataOutput(ofstream &file) {
         switch (pc.op) {
             case 101: {
                 //cout << " PARA ";
-                file << "move $11,$" << PARA_REG_FIND << "\n";
-                Reg2Mem(3, pc.z, file);
+                Reg2Mem(PARA_REG_FIND, pc.z, file);
                 file << "\n";
-                if (pcode[i + 1].op != PARA)
+                if (pcode[round + 1].op != PARA)
                     para_reg = 0;
                 else
                     para_reg++;
@@ -97,7 +96,6 @@ void TextDataOutput(ofstream &file) {
                 //cout << " CALL ";
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.z, word);
-                //file << "233233\n233\n233\n233\n";
                 file << "sw $ra,"
                      << (iter->second.space + 1) * 4 << "($sp)\n";
                 file << "jal " << word << "\nnop\n";
@@ -126,9 +124,19 @@ void TextDataOutput(ofstream &file) {
                 if (pc.y == 0 && pc.z == 0) {
                     file << "add $9,$0,$0" << "\n";
                 } else if (pc.y == 0) {
+                    if (pc.z >= GLOBAL_CODE_BASE && pc.z < MID_CODE_BASE && CodeFind(pc.z)->second.type == 1) {
+                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
+                    } else if (pc.z >= MID_CODE_BASE && RuntimeType.find(pc.z) != RuntimeType.end()) {
+                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
+                    }
                     Mem2Reg(11, pc.z, file);
                     file << "add $9,$0,$11" << "\n";
                 } else if (pc.z == 0) {
+                    if (pc.y >= GLOBAL_CODE_BASE && pc.y < MID_CODE_BASE && CodeFind(pc.y)->second.type == 1) {
+                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
+                    } else if (pc.y >= MID_CODE_BASE && RuntimeType.find(pc.y) != RuntimeType.end()) {
+                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
+                    }
                     Mem2Reg(10, pc.y, file);
                     file << "add $9,$10,$0" << "\n";
                 } else {
@@ -345,10 +353,14 @@ void TextDataOutput(ofstream &file) {
                     if (it_code->second.type == 3) {
                         file << "la $a0," << it_code->second.label << "\n";
                         file << "li $v0,4\n";
-                    } else {
+                    } else if (it_code->second.type == 0) {
                         Mem2Reg(11, pc.z, file);
                         file << "move $a0,$11\n";
                         file << "li $v0,1\n";
+                    } else if (it_code->second.type == 1) {
+                        Mem2Reg(11, pc.z, file);
+                        file << "move $a0,$11\n";
+                        file << "li $v0,11\n";
                     }
                     file << "syscall\n";
                 }

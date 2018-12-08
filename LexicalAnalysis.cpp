@@ -104,6 +104,8 @@ int ConstDefine(char *str) {
             }
             name[identifier_len[i]] = '\0';
             cout << name << endl;
+            if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
+                cout << "Exception: Repeat name:" << name << endl;
             if (isGlobal)
                 SymInsert(name, identifier_type, 0, 0, value);
             else
@@ -233,6 +235,8 @@ int VarDefine(char *str) {
                             char *mid = p;
                             mid += JumpSpace(mid);
                             if (*mid == ';') {
+                                if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
+                                    cout << "Exception: Repeat name:" << name << endl;
                                 if (isGlobal)
                                     SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
                                 else

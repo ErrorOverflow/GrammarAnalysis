@@ -19,11 +19,9 @@ aaaaaaab:
 #------------------------------
 addi $sp,$sp,-60
 
-move $11,$4
-sw $3,0($sp)
+sw $4,0($sp)
 
-move $11,$5
-sw $3,4($sp)
+sw $5,4($sp)
 
 lw $11,4($sp)
 lw $10,0($sp)
@@ -80,10 +78,10 @@ mflo $9
 sw $9,24($sp)
 
 lw $11,24($sp)
-move $6,$11
+move $4,$11
 
 lw $11,4($sp)
-move $7,$11
+move $5,$11
 
 sw $ra,56($sp)
 jal aaaaaaab
@@ -146,8 +144,7 @@ daaaaaab:
 #------------------------------
 addi $sp,$sp,-28
 
-move $11,$4
-sw $3,0($sp)
+sw $4,0($sp)
 
 addi $9,$0,8
 sw $9,4($sp)
@@ -175,7 +172,7 @@ nop
 gaab:
 lw $11,0($sp)
 move $a0,$11
-li $v0,1
+li $v0,11
 syscall
 la $a0,newLine
 li $v0,4
@@ -266,7 +263,7 @@ syscall
 
 dbab:
 lw $11,32($sp)
-move $5,$11
+move $4,$11
 
 sw $ra,156($sp)
 jal daaaaaab
