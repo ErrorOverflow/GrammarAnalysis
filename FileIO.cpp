@@ -13,14 +13,14 @@ using namespace std;
 
 int ReadFromFile() {
     FILE *fp;
-    char str[1000];
-    char mid[255];
+    char str[100000];
+    char mid[512];
     char path[64];
     int i = 0;//home/wml/CLionProjects/GrammarAnalysis/helloworld.txt
     cout << "Input file path: ";//C:\Users\WML\CLionProjects\GrammarAnalysis\helloworld.txt
     cin >> path;
     fp = fopen(path, "r");
-    while (fgets(mid, 255, fp)) {
+    while (fgets(mid, 511, fp)) {
         strcpy(str + i * sizeof(char), mid);
         i += strlen(mid);
     }

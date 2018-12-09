@@ -25,11 +25,9 @@ int isGlobal = 0;
 int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0, value = 0;
-    int isConstDefine = 0;
-    char *identifier[64], word[16];
-    int identifier_len[64];
+    int isConstDefine = 0, i = 0;
+    char iden[16], word[16];
     int identifier_type = 0;
-    int identifier_num = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         identifier_type = 0;
         p += 3;
@@ -39,8 +37,10 @@ int ConstDefine(char *str) {
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
-            identifier[identifier_num] = p;
-            identifier_len[identifier_num] = process_len;
+            for (i = 0; i < process_len; i++) {
+                iden[i] = *(p + i);
+            }
+            iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
             if (*p == '=') {
@@ -54,10 +54,15 @@ int ConstDefine(char *str) {
                     sscanf(word, "%d", &value);
                     p += process_len;
                     p += JumpSpace(p);
+                    if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
+                        cout << "Exception: Repeat name:" << iden << endl;
+                    if (isGlobal)
+                        SymInsert(iden, identifier_type, 0, 0, value);
+                    else
+                        SymInsert(iden, identifier_type, 0, 0, "");
                     if (*p == ',') {
                         p++;
                         p += JumpSpace(p);
-                        identifier_num++;
                         continue;
                     } else {
                         isConstDefine = 1;
@@ -75,6 +80,10 @@ int ConstDefine(char *str) {
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
+            for (i = 0; i < process_len; i++) {
+                iden[i] = *(p + i);
+            }
+            iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
             if (*p == '=') {
@@ -84,6 +93,12 @@ int ConstDefine(char *str) {
                     value = *(p + 1);
                     p += process_len;
                     p += JumpSpace(p);
+                    if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
+                        cout << "Exception: Repeat name:" << iden << endl;
+                    if (isGlobal)
+                        SymInsert(iden, identifier_type, 0, 0, value);
+                    else
+                        SymInsert(iden, identifier_type, 0, 0, "");
                     if (*p == ',') {
                         p++;
                         p += JumpSpace(p);
@@ -96,23 +111,8 @@ int ConstDefine(char *str) {
             }
         }
     }
-    if (isConstDefine) {
-        for (int i = 0; i <= identifier_num; i++) {
-            char name[64];
-            for (int j = 0; j < identifier_len[i]; j++) {
-                name[j] = *(identifier[i] + j);
-            }
-            name[identifier_len[i]] = '\0';
-            cout << name << endl;
-            if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
-                cout << "Exception: Repeat name:" << name << endl;
-            if (isGlobal)
-                SymInsert(name, identifier_type, 0, 0, value);
-            else
-                SymInsert(name, identifier_type, 0, 0, "");
-        }
+    if (isConstDefine)
         return (int) ((p - str) / sizeof(char));
-    }
     return 0;
 }
 

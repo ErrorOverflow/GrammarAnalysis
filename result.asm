@@ -1,5 +1,5 @@
 .data
-_GLOBAL: .space 48
+_GLOBAL: .space 64
 Variable: .space 40
 c: .space 40
 a: .space 40
@@ -152,7 +152,7 @@ sw $9,4($sp)
 addi $9,$0,10
 sw $9,8($sp)
 
-addi $10,$gp,8
+addi $10,$gp,24
 lw $9,8($sp)
 lw $11,4($sp)
 sll $11,$11,2
@@ -438,7 +438,7 @@ syscall
 addi $9,$0,8
 sw $9,144($sp)
 
-addi $10,$gp,8
+addi $10,$gp,24
 lw $11,144($sp)
 sll $11,$11,2
 add $10,$10,$11
