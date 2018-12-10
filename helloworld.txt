@@ -30,7 +30,7 @@ void main(){
 	printf(ch);
 	printf(ch*2);
 	printf(MAX);
-    for(i=0;i<MAX;i+1){
+    for(i=0;i<MAX;i=i+1){
         scanf(e);
 		f[i] = e;
 	}

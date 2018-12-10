@@ -13,7 +13,7 @@ using namespace std;
 
 int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     pcode_num = 0;//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\try.txt
-    ReadFromFile();
+    ReadFromFile();//C:\Users\WML\Desktop\16061187_test.txt
     SymPrint();
     cout << "-------------------------------" << endl;
     PCodePrint();

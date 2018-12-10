@@ -884,32 +884,46 @@ int LoopSentence(char *str) {
                                         x = iter->second.code;
                                         p += process_len;
                                         p += JumpSpace(p);
-                                        if (*p == '+' || *p == '-') {
+                                        if (*p == '=') {
                                             p++;
                                             p += JumpSpace(p);
-                                            if ((process_len = Step(p))) {
+                                            if ((process_len = Identifier(p))) {
                                                 for (int i = 0; i < process_len; i++) {
-                                                    step[i] = *(p + i);
+                                                    par[i] = *(p + i);
                                                 }
-                                                step[process_len] = '\0';
-                                                sscanf(step, "%d", &z);
+                                                par[process_len] = '\0';
+                                                iter = SymFind(ini);
+                                                y = iter->second.code;
                                                 p += process_len;
                                                 p += JumpSpace(p);
-                                                if (*p == ')') {
+                                                if (*p == '+' || *p == '-') {
                                                     p++;
                                                     p += JumpSpace(p);
-                                                    PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
-                                                    PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
-                                                    if ((process_len = Sentence(p))) {
+                                                    if ((process_len = Step(p))) {
+                                                        for (int i = 0; i < process_len; i++) {
+                                                            step[i] = *(p + i);
+                                                        }
+                                                        step[process_len] = '\0';
+                                                        sscanf(step, "%d", &z);
                                                         p += process_len;
                                                         p += JumpSpace(p);
-                                                        op = ADI;
-                                                        PCodeInsert(pcode_num++, x, x, op, z);
-                                                        PCodeInsert(pcode_num++, 0, 0, GOTO, label);
-                                                        LabelCode++;
-                                                        PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
-                                                        cout << "<For>" << endl;
-                                                        return (int) ((p - str) / sizeof(char));
+                                                        if (*p == ')') {
+                                                            p++;
+                                                            p += JumpSpace(p);
+                                                            PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
+                                                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
+                                                            if ((process_len = Sentence(p))) {
+                                                                p += process_len;
+                                                                p += JumpSpace(p);
+                                                                op = ADI;
+                                                                PCodeInsert(pcode_num++, x, y, op, z);
+                                                                PCodeInsert(pcode_num++, 0, 0, GOTO, label);
+                                                                LabelCode++;
+                                                                PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
+                                                                cout << "<For>" << endl;
+                                                                return (int) ((p - str) / sizeof(char));
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
