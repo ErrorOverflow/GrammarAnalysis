@@ -398,6 +398,9 @@ void TextDataOutput(ofstream &file) {
             case 120: {
                 //cout << " LDA ";
                 int loc = 0;
+                if (pc.y >= GLOBAL_CODE_BASE && pc.y < MID_CODE_BASE && CodeFind(pc.y)->second.type == 1) {
+                    RuntimeType.insert(pair<int, int>{pc.x, pc.x});
+                }
                 if (pc.y >= LOCAL_CODE_BASE) {
                     it_code = CodeFind(pc.y);
                     file << "la $10," << it_code->second.name << "\n";
