@@ -405,7 +405,7 @@ void TextDataOutput(ofstream &file) {
                     it_code = CodeFind(pc.y);
                     file << "la $10," << it_code->second.name << "\n";
                 } else {
-                    for (i = GLOBAL_CODE_BASE; i < GlobalCode - 1; i++) {
+                    for (i = GLOBAL_CODE_BASE; i < pc.y; i++) {
                         it_code = CodeFind(i);
                         if (it_code->second.dimension == 0)
                             loc++;
@@ -434,7 +434,7 @@ void TextDataOutput(ofstream &file) {
                     it_code = CodeFind(pc.y);
                     file << "la $10," << it_code->second.name << "\n";
                 } else {
-                    for (i = GLOBAL_CODE_BASE; i < GlobalCode - 1; i++) {
+                    for (i = GLOBAL_CODE_BASE; i < pc.y; i++) {
                         it_code = CodeFind(i);
                         if (it_code->second.dimension == 0)
                             loc++;

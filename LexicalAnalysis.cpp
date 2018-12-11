@@ -20,7 +20,6 @@ using namespace std;
 
 char func_name[64];
 int func_type;
-int isGlobal = 0;
 
 int ConstDefine(char *str) {
     char *p = str;
@@ -56,10 +55,7 @@ int ConstDefine(char *str) {
                     p += JumpSpace(p);
                     if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
                         cout << "Exception: Repeat name:" << iden << endl;
-                    if (isGlobal)
-                        SymInsert(iden, identifier_type, 0, 0, value);
-                    else
-                        SymInsert(iden, identifier_type, 0, 0, "");
+                    SymInsert(iden, identifier_type, 0, 0, value);
                     if (*p == ',') {
                         p++;
                         p += JumpSpace(p);
@@ -95,10 +91,7 @@ int ConstDefine(char *str) {
                     p += JumpSpace(p);
                     if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
                         cout << "Exception: Repeat name:" << iden << endl;
-                    if (isGlobal)
-                        SymInsert(iden, identifier_type, 0, 0, value);
-                    else
-                        SymInsert(iden, identifier_type, 0, 0, "");
+                    SymInsert(iden, identifier_type, 0, 0, value);
                     if (*p == ',') {
                         p++;
                         p += JumpSpace(p);
@@ -237,10 +230,7 @@ int VarDefine(char *str) {
                             if (*mid == ';') {
                                 if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
                                     cout << "Exception: Repeat name:" << name << endl;
-                                if (isGlobal)
-                                    SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
-                                else
-                                    SymInsert(name, identifier_type, identifier_dim[i], 1);
+                                SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
                             }
                         }
                         return (int) ((p - str) / sizeof(char));
@@ -1217,6 +1207,7 @@ int ReturnSentence(char *str) {
             }
         } else {
             cout << "<ReturnSen>";
+            PCodeInsert(pcode_num++, 0, 0, END, 0);
             return (int) ((p - str) / sizeof(char));
         }
     }
@@ -1229,7 +1220,6 @@ int Program(char *str) {
     char *p = str;
     int process_len = 0;
     p += JumpSpace(p);
-    isGlobal = 1;
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
@@ -1241,7 +1231,6 @@ int Program(char *str) {
         cout << endl << endl;
     }
     TableNum++;
-    isGlobal = 0;
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
         cout << "<FuncDefine>" << endl << endl;
         p += process_len;

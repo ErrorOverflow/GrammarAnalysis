@@ -43,7 +43,11 @@ int SymInsert(string name, int type, int dimension, int kind, string label) {
 }
 
 int SymInsert(string name, int type, int dimension, int kind, int value) {
-    Sym sym = {GlobalCode++, name, type, dimension, kind, value, ""};
+    Sym sym;
+    if (!TableNum)
+        sym = {GlobalCode++, name, type, dimension, kind, value, ""};
+    else
+        sym = {LocalCode++, name, type, dimension, kind, value, ""};
     SymTable[TableNum].insert(pair<string, Sym>(name, sym));
     CodeIndex[TableNum].insert(pair<int, Sym>(sym.code, sym));
     return 1;
