@@ -897,6 +897,10 @@ int LoopSentence(char *str) {
                                                 p += process_len;
                                                 p += JumpSpace(p);
                                                 if (*p == '+' || *p == '-') {
+                                                    if (*p == '+')
+                                                        op = PLUS;
+                                                    else
+                                                        op = SUB;
                                                     p++;
                                                     p += JumpSpace(p);
                                                     if ((process_len = Step(p))) {
@@ -905,6 +909,8 @@ int LoopSentence(char *str) {
                                                         }
                                                         step[process_len] = '\0';
                                                         sscanf(step, "%d", &z);
+                                                        if (op == SUB)
+                                                            z = -z;
                                                         p += process_len;
                                                         p += JumpSpace(p);
                                                         if (*p == ')') {

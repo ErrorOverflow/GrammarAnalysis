@@ -459,7 +459,7 @@ void TextDataOutput(ofstream &file) {
 void Mem2Reg(int reg, int code, ofstream &file) {
     int loc = 0;
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        for (int i = GLOBAL_CODE_BASE; i < GlobalCode; i++) {
+        for (int i = GLOBAL_CODE_BASE; i < code; i++) {
             auto iter = CodeFind(i);
             if (iter->second.dimension == 0)
                 loc++;
@@ -475,7 +475,7 @@ void Mem2Reg(int reg, int code, ofstream &file) {
 void Reg2Mem(int reg, int code, ofstream &file) {
     int loc = 0;
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        for (int i = GLOBAL_CODE_BASE; i < GlobalCode; i++) {
+        for (int i = GLOBAL_CODE_BASE; i < code; i++) {
             auto iter = CodeFind(i);
             if (iter->second.dimension == 0)
                 loc++;
