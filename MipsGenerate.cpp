@@ -76,7 +76,7 @@ void TextDataOutput(ofstream &file) {
     for (round = 0; round < pcode_num; round++) {
         PCode pc = pcode[round];
         switch (pc.op) {
-            case 101: {
+            case PARA: {
                 //cout << " PARA ";
                 Reg2Mem(PARA_REG_FIND, pc.z, file);
                 file << "\n";
@@ -86,13 +86,13 @@ void TextDataOutput(ofstream &file) {
                     para_reg++;
                 break;
             }
-            case 102:
+            case PUSH:
                 //cout << " PUSH ";
                 Mem2Reg(11, pc.z, file);
                 file << "move $" << PARA_REG_FIND << ",$11\n\n";
                 para_reg++;
                 break;
-            case 103:
+            case CALL:
                 //cout << " CALL ";
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.z, word);
@@ -105,7 +105,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 para_reg = 0;
                 break;
-            case 104:
+            case RET:
                 //cout << " RET ";
                 iter = RuntimeStack.find(func_code);
                 Mem2Reg(11, pc.z, file);
@@ -114,12 +114,12 @@ void TextDataOutput(ofstream &file) {
                      << (iter->second.space + 2) * 4 << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
-            case 105:
+            case GOTO:
                 //cout << " GOTO ";
                 Num2Char(pc.z, word);
                 file << "j " << word << "\nnop\n\n";
                 break;
-            case 106:
+            case PLUS:
                 //cout << " PLUS ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "add $9,$0,$0" << "\n";
@@ -147,7 +147,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
-            case 107:
+            case SUB:
                 //cout << " SUB ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "sub $9,$0,$0" << "\n";
@@ -165,7 +165,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
-            case 108:
+            case MULTI:
                 //cout << " MULTI ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "mult $0,$0" << "\n";
@@ -184,7 +184,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
-            case 109:
+            case DIV:
                 //cout << " DIV ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "div $0,$0" << "\n";
@@ -203,7 +203,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
-            case 110: {
+            case LABEL: {
                 //cout << " --- LABEL --- ";
                 if (pc.z > 0 && pc.z <= MID_CODE_BASE) {
                     char label_name[16];
@@ -222,7 +222,7 @@ void TextDataOutput(ofstream &file) {
                 }
                 break;
             }
-            case 111:
+            case BEQ:
                 //cout << " BEQ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
@@ -241,7 +241,7 @@ void TextDataOutput(ofstream &file) {
                 file << "nop\n";
                 file << "\n";
                 break;
-            case 112:
+            case BNE:
                 //cout << " BNE ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
@@ -259,7 +259,7 @@ void TextDataOutput(ofstream &file) {
                 file << "nop\n";
                 file << "\n";
                 break;
-            case 113:
+            case BLEZ:
                 //cout << " BLEZ <=";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
@@ -279,8 +279,8 @@ void TextDataOutput(ofstream &file) {
                 file << "nop\n";
                 file << "\n";
                 break;
-            case 114:
-                //cout << " BGTZ >";
+            case BGTZ:
+                //cout << " BGTZ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                 } else if (pc.y == 0) {
@@ -298,7 +298,7 @@ void TextDataOutput(ofstream &file) {
                 file << "nop\n";
                 file << "\n";
                 break;
-            case 115:
+            case BLTZ:
                 //cout << " BLTZ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
@@ -317,7 +317,7 @@ void TextDataOutput(ofstream &file) {
                 file << "nop\n";
                 file << "\n";
                 break;
-            case 116:
+            case BGEZ:
                 //cout << " BGEZ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
@@ -337,7 +337,7 @@ void TextDataOutput(ofstream &file) {
                 file << "nop\n";
                 file << "\n";
                 break;
-            case 117:
+            case WRITE:
                 //cout << " WRITE ";
                 if (pc.z >= MID_CODE_BASE) {
                     it_type = RuntimeType.find(pc.z);
@@ -368,7 +368,7 @@ void TextDataOutput(ofstream &file) {
                 file << "li $v0,4\n";
                 file << "syscall\n\n";
                 break;
-            case 118:
+            case READ:
                 //cout << " READ ";
                 it_code = CodeFind(pc.z);
                 if (it_code->second.type == 0) {
@@ -384,7 +384,7 @@ void TextDataOutput(ofstream &file) {
                     file << "syscall\n";
                 }
                 break;
-            case 119:
+            case ADI:
                 //cout << " ADI ";
                 if (pc.y == 0) {
                     file << "addi $9,$0," << pc.z << "\n";
@@ -395,7 +395,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
-            case 120: {
+            case LDA: {
                 //cout << " LDA ";
                 int loc = 0;
                 if (pc.y >= GLOBAL_CODE_BASE && pc.y < MID_CODE_BASE && CodeFind(pc.y)->second.type == 1) {
@@ -420,14 +420,14 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 break;
             }
-            case 121:
+            case END:
                 //cout << " END ";
                 iter = RuntimeStack.find(func_code);
                 file << "addi $sp,$sp,"
                      << (iter->second.space + 2) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
                 break;
-            case 122: {
+            case SW: {
                 //cout << " SW ";
                 int loc = 0;
                 if (pc.y >= LOCAL_CODE_BASE) {
@@ -449,7 +449,7 @@ void TextDataOutput(ofstream &file) {
                 file << "sw $9,0($10)\n";
                 break;
             }
-            case 123:
+            case NOP:
                 //cout << " NOP ";
                 break;
             default:
