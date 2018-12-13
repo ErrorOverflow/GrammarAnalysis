@@ -19,7 +19,6 @@ unordered_map<int, int> RuntimeType;
 
 void WriteMipsFile() {
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm\0";
-    //FuncRuntimeCheck();
     ofstream file;
     file.open(MIPSFILE, ios::out);
     file << ".data\n";
@@ -77,7 +76,6 @@ void TextDataOutput(ofstream &file) {
         PCode pc = pcode[round];
         switch (pc.op) {
             case PARA: {
-                //cout << " PARA ";
                 Reg2Mem(PARA_REG_FIND, pc.z, file);
                 file << "\n";
                 if (pcode[round + 1].op != PARA)
@@ -87,13 +85,11 @@ void TextDataOutput(ofstream &file) {
                 break;
             }
             case PUSH:
-                //cout << " PUSH ";
                 Mem2Reg(11, pc.z, file);
                 file << "move $" << PARA_REG_FIND << ",$11\n\n";
                 para_reg++;
                 break;
             case CALL:
-                //cout << " CALL ";
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.z, word);
                 file << "sw $ra,"
@@ -106,7 +102,6 @@ void TextDataOutput(ofstream &file) {
                 para_reg = 0;
                 break;
             case RET:
-                //cout << " RET ";
                 iter = RuntimeStack.find(func_code);
                 Mem2Reg(11, pc.z, file);
                 file << "move $v0,$11" << "\n";
@@ -115,12 +110,10 @@ void TextDataOutput(ofstream &file) {
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case GOTO:
-                //cout << " GOTO ";
                 Num2Char(pc.z, word);
                 file << "j " << word << "\nnop\n\n";
                 break;
             case PLUS:
-                //cout << " PLUS ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "add $9,$0,$0" << "\n";
                 } else if (pc.y == 0) {
@@ -148,7 +141,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case SUB:
-                //cout << " SUB ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "sub $9,$0,$0" << "\n";
                 } else if (pc.y == 0) {
@@ -166,7 +158,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case MULTI:
-                //cout << " MULTI ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "mult $0,$0" << "\n";
                 } else if (pc.y == 0) {
@@ -185,7 +176,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case DIV:
-                //cout << " DIV ";
                 if (pc.y == 0 && pc.z == 0) {
                     file << "div $0,$0" << "\n";
                 } else if (pc.y == 0) {
@@ -204,7 +194,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case LABEL: {
-                //cout << " --- LABEL --- ";
                 if (pc.z > 0 && pc.z <= MID_CODE_BASE) {
                     char label_name[16];
                     Num2Char(pc.z, label_name);
@@ -223,7 +212,6 @@ void TextDataOutput(ofstream &file) {
                 break;
             }
             case BEQ:
-                //cout << " BEQ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                     file << "j " << word << "\n";
@@ -242,7 +230,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case BNE:
-                //cout << " BNE ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                 } else if (pc.y == 0) {
@@ -260,7 +247,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case BLEZ:
-                //cout << " BLEZ <=";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                     file << "j " << word << "\n";
@@ -280,7 +266,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case BGTZ:
-                //cout << " BGTZ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                 } else if (pc.y == 0) {
@@ -299,7 +284,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case BLTZ:
-                //cout << " BLTZ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                 } else if (pc.y == 0) {
@@ -318,7 +302,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case BGEZ:
-                //cout << " BGEZ ";
                 Num2Char(pc.x, word);
                 if (pc.y == 0 && pc.z == 0) {
                     file << "j " << word << "\n";
@@ -338,7 +321,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case WRITE:
-                //cout << " WRITE ";
                 if (pc.z >= MID_CODE_BASE) {
                     it_type = RuntimeType.find(pc.z);
                     Mem2Reg(11, pc.z, file);
@@ -369,7 +351,6 @@ void TextDataOutput(ofstream &file) {
                 file << "syscall\n\n";
                 break;
             case READ:
-                //cout << " READ ";
                 it_code = CodeFind(pc.z);
                 if (it_code->second.type == 0) {
                     file << "li $v0,5\n";
@@ -385,7 +366,6 @@ void TextDataOutput(ofstream &file) {
                 }
                 break;
             case ADI:
-                //cout << " ADI ";
                 if (pc.y == 0) {
                     file << "addi $9,$0," << pc.z << "\n";
                 } else {
@@ -396,7 +376,6 @@ void TextDataOutput(ofstream &file) {
                 file << "\n";
                 break;
             case LDA: {
-                //cout << " LDA ";
                 int loc = 0;
                 if (pc.y >= GLOBAL_CODE_BASE && pc.y < MID_CODE_BASE && CodeFind(pc.y)->second.type == 1) {
                     RuntimeType.insert(pair<int, int>{pc.x, pc.x});
@@ -421,14 +400,12 @@ void TextDataOutput(ofstream &file) {
                 break;
             }
             case END:
-                //cout << " END ";
                 iter = RuntimeStack.find(func_code);
                 file << "addi $sp,$sp,"
                      << (iter->second.space + 2) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
                 break;
             case SW: {
-                //cout << " SW ";
                 int loc = 0;
                 if (pc.y >= LOCAL_CODE_BASE) {
                     it_code = CodeFind(pc.y);
@@ -450,7 +427,6 @@ void TextDataOutput(ofstream &file) {
                 break;
             }
             case NOP:
-                //cout << " NOP ";
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;
