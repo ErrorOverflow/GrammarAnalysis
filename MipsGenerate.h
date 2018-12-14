@@ -9,7 +9,7 @@
 #include "PCodeGenerate.h"
 #include <string>
 
-#define CODE_FIND (code_info.find(code)->second.address)*4
+#define CODE_FIND (code_info.find(code)->second.address+sp_extra_space)*4
 #define PARA_REG_FIND ((para_reg <= 4) ? (para_reg+4) : (para_reg+8))
 
 using namespace std;

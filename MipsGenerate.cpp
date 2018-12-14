@@ -17,6 +17,10 @@ using namespace std;
 unordered_map<int, FuncRuntime> RuntimeStack;
 unordered_map<int, int> RuntimeType;
 
+int para_stack[64];
+int para_stack_num = 0;
+int sp_extra_space=0;
+
 void WriteMipsFile() {
     const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm\0";
     ofstream file;
@@ -63,7 +67,7 @@ void StaticDataOutput(ofstream &file) {
 
 void TextDataOutput(ofstream &file) {
     char word[64];
-    int func_code = 0, round = 0, i = 0, para_reg = 0, sp_extra_space = 0;
+    int func_code = 0, round = 0, i = 0, para_reg = 0;
     unordered_map<int, FuncRuntime>::iterator iter;
     unordered_map<string, Sym>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
@@ -90,19 +94,12 @@ void TextDataOutput(ofstream &file) {
                 para_reg++;
                 break;
             case CALL:
-                if (para_reg){
-                    sp_extra_space += para_reg;
-                    for (i = 0; i < para_reg; i++) {
-
-                    }
-                }
-                iter = RuntimeStack.find(func_code);
                 Num2Char(pc.z, word);
-                file << "sw $ra,"
-                     << (iter->second.space + 1) * 4 << "($sp)\n";
+                file << "addi $sp,$sp," << -4 << "\n";
+                file << "sw $ra,0($sp)\n";
                 file << "jal " << word << "\nnop\n";
-                file << "lw $ra,"
-                     << (iter->second.space + 1) * 4 << "($sp)\n";
+                file << "lw $ra,0($sp)\n";
+                file << "addi $sp,$sp," << 1 * 4 << "\n";
                 file << "move $9,$v0\n";
                 Reg2Mem(9, pc.x, file);
                 para_reg = 0;
@@ -112,7 +109,7 @@ void TextDataOutput(ofstream &file) {
                 Mem2Reg(11, pc.z, file);
                 file << "move $v0,$11" << "\n";
                 file << "addi $sp,$sp,"
-                     << (iter->second.space + 2) * 4 << "\n";
+                     << (iter->second.space + 1) * 4 << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
             case GOTO:
@@ -212,7 +209,7 @@ void TextDataOutput(ofstream &file) {
                     iter = RuntimeStack.find(pc.z);
                     file << "#------------------------------\n";
                     file << "addi $sp,$sp," <<
-                         (iter->second.space + 2) * -4 << "\n\n";
+                         (iter->second.space + 1) * -4 << "\n\n";
                     func_code = pc.z;
                 }
                 break;
@@ -408,7 +405,7 @@ void TextDataOutput(ofstream &file) {
             case END:
                 iter = RuntimeStack.find(func_code);
                 file << "addi $sp,$sp,"
-                     << (iter->second.space + 2) * 4 << "\n";
+                     << (iter->second.space + 1) * 4 << "\n";
                 file << "jr $ra\nnop\n\n";
                 break;
             case SW: {
@@ -434,6 +431,25 @@ void TextDataOutput(ofstream &file) {
             }
             case NOP:
                 break;
+            case BEGIN:
+                para_stack[para_stack_num++] = para_reg;
+                if (para_reg) {
+                    file << "addi $sp,$sp," << para_reg * -4 << "\n";
+                    for (i = 0; i < para_reg; i++)
+                        file << "sw $" << ((i <= 4) ? (i + 4) : (i + 8)) << "," << i * 4 << "($sp)\n";
+                    sp_extra_space += para_reg;
+                }
+                para_reg = 0;
+                break;
+            case OVER:
+                para_reg = para_stack[--para_stack_num];
+                if (para_reg) {
+                    for (i = 0; i < para_reg; i++)
+                        file << "lw $" << ((i <= 4) ? (i + 4) : (i + 8)) << "," << i * 4 << "($sp)\n";
+                    file << "addi $sp,$sp," << para_reg * 4 << "\n";
+                    sp_extra_space -= para_reg;
+                }
+                break;
             default:
                 cout << pc.op << "unknown op" << endl;
                 exit(-1);
@@ -451,7 +467,7 @@ void Mem2Reg(int reg, int code, ofstream &file) {
             else
                 loc += iter->second.dimension;
         }
-        file << "lw $" << reg << "," << loc * 4 << "($gp)\n";
+        file << "lw $" << reg << "," << (loc+ sp_extra_space)* 4 << "($gp)\n";
     } else {
         file << "lw $" << reg << "," << CODE_FIND << "($sp)\n";
     }
@@ -467,7 +483,7 @@ void Reg2Mem(int reg, int code, ofstream &file) {
             else
                 loc += iter->second.dimension;
         }
-        file << "sw $" << reg << "," << loc * 4 << "($gp)\n";
+        file << "sw $" << reg << "," << (loc+ sp_extra_space) * 4 << "($gp)\n";
     } else {
         file << "sw $" << reg << "," << CODE_FIND << "($sp)\n";
     }

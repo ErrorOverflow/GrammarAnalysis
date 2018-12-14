@@ -35,6 +35,8 @@ using namespace std;
 #define END 121
 #define SW 122
 #define NOP 123
+#define BEGIN 124
+#define OVER 125
 
 struct PCode {
     int x;

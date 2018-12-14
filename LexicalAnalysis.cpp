@@ -964,6 +964,7 @@ int ReturnFuncCall(char *str, int code) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            PCodeInsert(pcode_num++, 0, 0, BEGIN, 0);
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -974,6 +975,7 @@ int ReturnFuncCall(char *str, int code) {
                     auto iter = SymFind(word);
                     z = iter->second.code;
                     PCodeInsert(pcode_num++, code, 0, CALL, z);
+                    PCodeInsert(pcode_num++, 0, 0, OVER, 0);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -997,6 +999,7 @@ int ReturnFuncCall(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            PCodeInsert(pcode_num++, 0, 0, BEGIN, 0);
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -1006,6 +1009,7 @@ int ReturnFuncCall(char *str) {
                     cout << "<ReturnFuncCall>";
                     auto iter = SymFind(word);
                     PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
+                    PCodeInsert(pcode_num++, 0, 0, OVER, 0);
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -1027,6 +1031,7 @@ int NoReturnFuncCall(char *str) {
         if (*p == '(') {
             p++;
             p += JumpSpace(p);
+            PCodeInsert(pcode_num++, 0, 0, BEGIN, 0);
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
@@ -1036,6 +1041,7 @@ int NoReturnFuncCall(char *str) {
                     cout << "<NoReturnFuncCall>";
                     auto iter = SymFind(word);
                     PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
+                    PCodeInsert(pcode_num++, 0, 0, OVER, 0);
                     return (int) ((p - str) / sizeof(char));
                 }
             }

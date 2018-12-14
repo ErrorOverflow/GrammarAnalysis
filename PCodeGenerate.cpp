@@ -250,6 +250,14 @@ void OpExchange(int op, ofstream &file) {
             file << " SW ";
             cout << " SW ";
             break;
+        case BEGIN:
+            file << " BEGIN ";
+            cout << " BEGIN ";
+            break;
+        case OVER:
+            file << " OVER ";
+            cout << " OVER ";
+            break;
         default:
             file << " " << op << " ";
             cout << " " << op << " ";

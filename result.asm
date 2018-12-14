@@ -13,7 +13,7 @@ la $gp,_GLOBAL
 j jbaaaaab
 aaaaaaab:
 #------------------------------
-addi $sp,$sp,-28
+addi $sp,$sp,-24
 
 sw $4,0($sp)
 
@@ -42,17 +42,17 @@ sw $9,16($sp)
 
 lw $11,16($sp)
 move $v0,$11
-addi $sp,$sp,28
+addi $sp,$sp,24
 jr $ra
 nop
 
-addi $sp,$sp,28
+addi $sp,$sp,24
 jr $ra
 nop
 
 caaaaaab:
 #------------------------------
-addi $sp,$sp,-36
+addi $sp,$sp,-32
 
 sw $4,0($sp)
 
@@ -103,7 +103,7 @@ nop
 gaab:
 lw $11,0($sp)
 move $v0,$11
-addi $sp,$sp,36
+addi $sp,$sp,32
 jr $ra
 nop
 
@@ -135,17 +135,17 @@ sw $9,0($sp)
 iaab:
 lw $11,0($sp)
 move $v0,$11
-addi $sp,$sp,36
+addi $sp,$sp,32
 jr $ra
 nop
 
-addi $sp,$sp,36
+addi $sp,$sp,32
 jr $ra
 nop
 
 faaaaaab:
 #------------------------------
-addi $sp,$sp,-28
+addi $sp,$sp,-24
 
 lw $11,72($gp)
 add $9,$0,$11
@@ -161,10 +161,12 @@ sw $9,4($sp)
 lw $11,4($sp)
 move $5,$11
 
-sw $ra,24($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,24($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,8($sp)
 addi $10,$gp,96
@@ -177,23 +179,25 @@ lw $11,16($sp)
 add $9,$0,$11
 sw $9,92($gp)
 
-addi $sp,$sp,28
+addi $sp,$sp,24
 jr $ra
 nop
 
 gaaaaaab:
 #------------------------------
-addi $sp,$sp,-132
+addi $sp,$sp,-128
 
 sw $4,0($sp)
 
 lw $11,0($sp)
 move $4,$11
 
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal aaaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,4($sp)
 lw $11,4($sp)
@@ -250,24 +254,28 @@ sw $9,20($sp)
 lw $11,20($sp)
 move $4,$11
 
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,32($sp)
 lw $11,32($sp)
 move $4,$11
 
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal aaaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,40($sp)
 lw $11,40($sp)
 move $v0,$11
-addi $sp,$sp,132
+addi $sp,$sp,128
 jr $ra
 nop
 
@@ -285,10 +293,12 @@ j gbab
 nop
 
 fbab:
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal faaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,48($sp)
 gbab:
@@ -338,15 +348,17 @@ bcab:
 lw $11,0($sp)
 move $4,$11
 
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal aaaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,80($sp)
 lw $11,80($sp)
 move $v0,$11
-addi $sp,$sp,132
+addi $sp,$sp,128
 jr $ra
 nop
 
@@ -385,10 +397,12 @@ sw $9,100($sp)
 lw $11,100($sp)
 move $5,$11
 
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,108($sp)
 addi $9,$0,32
@@ -402,25 +416,27 @@ sw $9,116($sp)
 lw $11,116($sp)
 move $4,$11
 
-sw $ra,128($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal aaaaaaab
 nop
-lw $ra,128($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,120($sp)
 lw $11,120($sp)
 move $v0,$11
-addi $sp,$sp,132
+addi $sp,$sp,128
 jr $ra
 nop
 
-addi $sp,$sp,132
+addi $sp,$sp,128
 jr $ra
 nop
 
 iaaaaaab:
 #------------------------------
-addi $sp,$sp,-36
+addi $sp,$sp,-32
 
 sw $4,0($sp)
 
@@ -433,10 +449,12 @@ sw $9,4($sp)
 lw $11,4($sp)
 move $5,$11
 
-sw $ra,32($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,32($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,8($sp)
 lw $11,0($sp)
@@ -448,10 +466,12 @@ sw $9,12($sp)
 lw $11,12($sp)
 move $5,$11
 
-sw $ra,32($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,32($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,16($sp)
 addi $10,$gp,76
@@ -471,13 +491,13 @@ lw $11,8($sp)
 sll $11,$11,2
 add $10,$10,$11
 sw $9,0($10)
-addi $sp,$sp,36
+addi $sp,$sp,32
 jr $ra
 nop
 
 abaaaaab:
 #------------------------------
-addi $sp,$sp,-76
+addi $sp,$sp,-72
 
 sw $4,0($sp)
 
@@ -494,10 +514,12 @@ sw $9,12($sp)
 lw $11,12($sp)
 move $4,$11
 
-sw $ra,72($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,72($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,16($sp)
 lw $11,16($sp)
@@ -507,10 +529,12 @@ sw $9,20($sp)
 lw $11,20($sp)
 move $4,$11
 
-sw $ra,72($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal iaaaaaab
 nop
-lw $ra,72($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,24($sp)
 addi $9,$0,13
@@ -553,25 +577,27 @@ sw $9,60($sp)
 lw $11,60($sp)
 move $5,$11
 
-sw $ra,72($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,72($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,64($sp)
 lw $11,64($sp)
 move $v0,$11
-addi $sp,$sp,76
+addi $sp,$sp,72
 jr $ra
 nop
 
-addi $sp,$sp,76
+addi $sp,$sp,72
 jr $ra
 nop
 
 gbaaaaab:
 #------------------------------
-addi $sp,$sp,-48
+addi $sp,$sp,-44
 
 sw $4,0($sp)
 
@@ -592,7 +618,7 @@ j fcab
 nop
 
 ecab:
-addi $sp,$sp,48
+addi $sp,$sp,44
 jr $ra
 nop
 
@@ -639,10 +665,12 @@ sw $9,28($sp)
 lw $11,28($sp)
 move $5,$11
 
-sw $ra,44($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal abaaaaab
 nop
-lw $ra,44($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,32($sp)
 lw $11,32($sp)
@@ -657,13 +685,13 @@ j hcab
 nop
 
 jcab:
-addi $sp,$sp,48
+addi $sp,$sp,44
 jr $ra
 nop
 
 jbaaaaab:
 #------------------------------
-addi $sp,$sp,-220
+addi $sp,$sp,-216
 
 addi $9,$0,0
 sw $9,0($sp)
@@ -678,10 +706,12 @@ sw $9,4($sp)
 lw $11,4($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gbaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,8($sp)
 li $v0,5
@@ -745,10 +775,12 @@ sw $9,40($sp)
 lw $11,40($sp)
 move $5,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,44($sp)
 lw $11,44($sp)
@@ -767,10 +799,12 @@ sw $9,52($sp)
 lw $11,52($sp)
 move $5,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,56($sp)
 lw $11,56($sp)
@@ -789,10 +823,12 @@ sw $9,64($sp)
 lw $11,64($sp)
 move $5,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal caaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,68($sp)
 lw $11,68($sp)
@@ -805,10 +841,12 @@ sw $9,72($sp)
 lw $11,72($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,76($sp)
 lw $11,76($sp)
@@ -830,10 +868,12 @@ sw $9,92($sp)
 lw $11,92($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,96($sp)
 lw $11,96($sp)
@@ -854,10 +894,12 @@ sw $9,108($sp)
 lw $11,108($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,112($sp)
 lw $11,112($sp)
@@ -878,10 +920,12 @@ sw $9,124($sp)
 lw $11,124($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,128($sp)
 lw $11,128($sp)
@@ -975,10 +1019,12 @@ sw $9,164($sp)
 lw $11,164($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gbaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,168($sp)
 la $a0,string1
@@ -1015,10 +1061,12 @@ sw $9,188($sp)
 lw $11,188($sp)
 move $4,$11
 
-sw $ra,216($sp)
+addi $sp,$sp,-4
+sw $ra,0($sp)
 jal gaaaaaab
 nop
-lw $ra,216($sp)
+lw $ra,0($sp)
+addi $sp,$sp,4
 move $9,$v0
 sw $9,192($sp)
 lw $11,192($sp)
