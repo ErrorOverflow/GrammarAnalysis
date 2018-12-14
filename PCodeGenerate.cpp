@@ -176,7 +176,7 @@ void OpExchange(int op, ofstream &file) {
             file << " SUB ";
             cout << " SUB ";
             break;
-        case MULTI:
+        case MUL:
             file << " MULTI ";
             cout << " MULTI ";
             break;

@@ -512,7 +512,7 @@ int Term(char *str, int code) {
         PCodeInsert(pcode_num++, x, y, op, z);
         if ((process_len = Multi(*p))) {
             if (*p == '*')
-                op = MULTI;
+                op = MUL;
             else
                 op = DIV;
             p += process_len;

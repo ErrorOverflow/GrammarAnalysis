@@ -160,7 +160,7 @@ void TextDataOutput(ofstream &file) {
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
-            case MULTI:
+            case MUL:
                 if (pc.y == 0 && pc.z == 0) {
                     file << "mult $0,$0" << "\n";
                 } else if (pc.y == 0) {

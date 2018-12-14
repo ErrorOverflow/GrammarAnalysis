@@ -19,7 +19,7 @@ using namespace std;
 #define GOTO 105
 #define PLUS 106
 #define SUB 107
-#define MULTI 108
+#define MUL 108
 #define DIV 109
 #define LABEL 110
 #define BEQ 111
