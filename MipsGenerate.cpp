@@ -63,7 +63,7 @@ void StaticDataOutput(ofstream &file) {
 
 void TextDataOutput(ofstream &file) {
     char word[64];
-    int func_code = 0, round = 0, i = 0, para_reg = 0;
+    int func_code = 0, round = 0, i = 0, para_reg = 0, sp_extra_space = 0;
     unordered_map<int, FuncRuntime>::iterator iter;
     unordered_map<string, Sym>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
@@ -90,6 +90,12 @@ void TextDataOutput(ofstream &file) {
                 para_reg++;
                 break;
             case CALL:
+                if (para_reg){
+                    sp_extra_space += para_reg;
+                    for (i = 0; i < para_reg; i++) {
+
+                    }
+                }
                 iter = RuntimeStack.find(func_code);
                 Num2Char(pc.z, word);
                 file << "sw $ra,"
