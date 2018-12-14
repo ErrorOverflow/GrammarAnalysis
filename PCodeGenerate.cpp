@@ -148,91 +148,91 @@ void AddressAssign() {
 
 void OpExchange(int op, ofstream &file) {
     switch (op) {
-        case 101:
+        case PARA:
             file << " PARA ";
             cout << " PARA ";
             break;
-        case 102:
+        case PUSH:
             file << " PUSH ";
             cout << " PUSH ";
             break;
-        case 103:
+        case CALL:
             file << " CALL ";
             cout << " CALL ";
             break;
-        case 104:
+        case RET:
             file << " RET ";
             cout << " RET ";
             break;
-        case 105:
+        case GOTO:
             file << " GOTO ";
             cout << " GOTO ";
             break;
-        case 106:
+        case PLUS:
             file << " PLUS ";
             cout << " PLUS ";
             break;
-        case 107:
+        case SUB:
             file << " SUB ";
             cout << " SUB ";
             break;
-        case 108:
+        case MULTI:
             file << " MULTI ";
             cout << " MULTI ";
             break;
-        case 109:
+        case DIV:
             file << " DIV ";
             cout << " DIV ";
             break;
-        case 110:
+        case LABEL:
             file << " --- LABEL --- ";
             cout << " --- LABEL --- ";
             break;
-        case 111:
+        case BEQ:
             file << " BEQ ";
             cout << " BEQ ";
             break;
-        case 112:
+        case BNE:
             file << " BNE ";
             cout << " BNE ";
             break;
-        case 113:
+        case BLEZ:
             file << " BLEZ ";
             cout << " BLEZ ";
             break;
-        case 114:
+        case BGTZ:
             file << " BGTZ ";
             cout << " BGTZ ";
             break;
-        case 115:
+        case BLTZ:
             file << " BLTZ ";
             cout << " BLTZ ";
             break;
-        case 116:
+        case BGEZ:
             file << " BGEZ ";
             cout << " BGEZ ";
             break;
-        case 117:
+        case WRITE:
             file << " WRITE ";
             cout << " WRITE ";
             break;
-        case 118:
+        case READ:
             file << " READ ";
             cout << " READ ";
             break;
-        case 119:
+        case ADI:
             file << " ADI ";
             cout << " ADI ";
             break;
-        case 120:
+        case LDA:
             file << " LDA ";
             cout << " LDA ";
             break;
-        case 121:
+        case END:
             file << " END ";
             cout << " END ";
             break;
-        case 122:
+        case SW:
             file << " SW ";
             cout << " SW ";
             break;
