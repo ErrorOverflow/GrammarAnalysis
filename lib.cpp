@@ -69,7 +69,7 @@ int SymInsert(string name, int type) {
 }
 
 void SymPrint() {
-    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\SymTable.txt\0";
+    const char MIPSFILE[64] = "SymTable.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
     for (int i = 0; i <= TableNum; i++) {
@@ -89,7 +89,7 @@ void SymPrint() {
     file.close();
 }
 
-unordered_map<string, Sym>::iterator SymFind(string name) {//unordered_map<string,Sym>::iterator
+unordered_map<string, Sym>::iterator SymFind(string name) {
     auto iter = SymTable[TableNum].find(name);
     if (iter != SymTable[TableNum].end()) {
         return iter;
@@ -102,7 +102,7 @@ unordered_map<string, Sym>::iterator SymFind(string name) {//unordered_map<strin
     exit(-1);
 }
 
-unordered_map<int, Sym>::iterator CodeFind(int code) {//unordered_map<string,Sym>::iterator
+unordered_map<int, Sym>::iterator CodeFind(int code) {
     for (int i = 0; i <= TableNum; i++) {
         auto iter = CodeIndex[i].find(code);
         if (iter != CodeIndex[i].end()) {

@@ -34,7 +34,7 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 void PCodePrint() {
     PCodeOptimize();
     AddressAssign();
-    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\PCode.txt\0";
+    const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
     for (int i = 0; i < pcode_num; i++) {
@@ -71,7 +71,7 @@ void PCodePrint() {
 
 void PCodeOptimize() {
     for (int i = 0; i < pcode_num; i++) {
-        if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
+        if (pcode[i].x >= LOCAL_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
                 if (pcode[j].y == pcode[i].x) {
@@ -83,28 +83,14 @@ void PCodeOptimize() {
                 if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
                     pcode[j].x = pcode[i].z;
                 }
-                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
+                if (pcode[j].x == pcode[i].x || (pcode[j].op == LABEL && pcode[j].z >= LOCAL_CODE_BASE)) {
                     break;
                 }
             }
-        } else if (pcode[i].x >= MID_CODE_BASE && pcode[i].z == 0 && pcode[i].op == PLUS &&
-                   pcode[i].y >= LOCAL_CODE_BASE) {
+        } /*else if (pcode[i].op == ADI && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
             pcode[i].op = NOP;
-            for (int j = i + 1; j < pcode_num; j++) {
-                if (pcode[j].y == pcode[i].x) {
-                    pcode[j].y = pcode[i].y;
-                }
-                if (pcode[j].z == pcode[i].x) {
-                    pcode[j].z = pcode[i].y;
-                }
-                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
-                    pcode[j].x = pcode[i].x;
-                }
-                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
-                    break;
-                }
-            }
-        }
+            CodeFind(pcode[i].x)->second.value = pcode[i].z;
+        }*/
     }
 }
 

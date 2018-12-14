@@ -22,7 +22,7 @@ int para_stack_num = 0;
 int sp_extra_space=0;
 
 void WriteMipsFile() {
-    const char MIPSFILE[64] = "C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\result.asm\0";
+    const char MIPSFILE[64] = "result.asm\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
     file << ".data\n";
