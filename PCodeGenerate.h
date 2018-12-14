@@ -17,23 +17,27 @@ using namespace std;
 #define CALL 103
 #define RET 104
 #define GOTO 105
-#define PLUS 106
-#define SUB 107
-#define MUL 108
-#define DIV 109
 #define LABEL 110
+#define WRITE 117
+#define READ 118
+
+#define LDA 120
+#define SW 122
+
 #define BEQ 111
 #define BNE 112
 #define BLEZ 113
 #define BGTZ 114
 #define BLTZ 115
 #define BGEZ 116
-#define WRITE 117
-#define READ 118
+
+#define PLUS 106
+#define SUB 107
+#define MUL 108
+#define DIV 109
 #define ADI 119
-#define LDA 120
+
 #define END 121
-#define SW 122
 #define NOP 123
 #define BEGIN 124
 #define OVER 125
@@ -48,7 +52,7 @@ struct PCode {
 struct RuntimeCodeInfo {
     int code;
     int type;//1.int 2.char
-    int value;
+    int isValue;
     int address;
 };
 

@@ -90,6 +90,7 @@ void PCodeOptimize() {
         } /*else if (pcode[i].op == ADI && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
             pcode[i].op = NOP;
             CodeFind(pcode[i].x)->second.value = pcode[i].z;
+            code_info.find(pcode[i].x)->second.isValue = 1;
         }*/
     }
 }
