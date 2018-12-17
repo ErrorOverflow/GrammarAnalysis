@@ -19,7 +19,7 @@ unordered_map<int, int> RuntimeType;
 
 int para_stack[64];
 int para_stack_num = 0;
-int sp_extra_space=0;
+int sp_extra_space = 0;
 
 void WriteMipsFile() {
     const char MIPSFILE[64] = "result.asm\0";
@@ -139,6 +139,12 @@ void TextDataOutput(ofstream &file) {
                     Mem2Reg(11, pc.z, file);
                     Mem2Reg(10, pc.y, file);
                     file << "add $9,$10,$11" << "\n";
+                }
+                if (pc.x < MID_CODE_BASE && CodeFind(pc.x)->second.type == 1 &&
+                    ((pc.z >= MID_CODE_BASE && RuntimeType.find(pc.z) == RuntimeType.end()) ||
+                     (pc.z < MID_CODE_BASE && CodeFind(pc.z)->second.type != 1))) {
+                    cout << "illegal value pass" << endl;
+                    system("pause");
                 }
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
@@ -375,6 +381,10 @@ void TextDataOutput(ofstream &file) {
                     Mem2Reg(10, pc.y, file);
                     file << "addi $9,$10," << pc.z << "\n";
                 }
+                if (pc.x < MID_CODE_BASE && CodeFind(pc.x)->second.type == 1) {
+                    cout << "illegal value pass" << endl;
+                    system("pause");
+                }
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
                 break;
@@ -467,7 +477,7 @@ void Mem2Reg(int reg, int code, ofstream &file) {
             else
                 loc += iter->second.dimension;
         }
-        file << "lw $" << reg << "," << (loc+ sp_extra_space)* 4 << "($gp)\n";
+        file << "lw $" << reg << "," << (loc + sp_extra_space) * 4 << "($gp)\n";
     } else {
         file << "lw $" << reg << "," << CODE_FIND << "($sp)\n";
     }
@@ -483,7 +493,7 @@ void Reg2Mem(int reg, int code, ofstream &file) {
             else
                 loc += iter->second.dimension;
         }
-        file << "sw $" << reg << "," << (loc+ sp_extra_space) * 4 << "($gp)\n";
+        file << "sw $" << reg << "," << (loc + sp_extra_space) * 4 << "($gp)\n";
     } else {
         file << "sw $" << reg << "," << CODE_FIND << "($sp)\n";
     }
