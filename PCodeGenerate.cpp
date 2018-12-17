@@ -70,8 +70,9 @@ void PCodePrint() {
 }
 
 void PCodeOptimize() {
+    int mid = 0;
     for (int i = 0; i < pcode_num; i++) {
-        if (pcode[i].x >= LOCAL_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
+        if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
                 if (pcode[j].y == pcode[i].x) {
@@ -83,7 +84,24 @@ void PCodeOptimize() {
                 if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
                     pcode[j].x = pcode[i].z;
                 }
-                if (pcode[j].x == pcode[i].x || (pcode[j].op == LABEL && pcode[j].z >= LOCAL_CODE_BASE)) {
+                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
+                    break;
+                }
+            }
+        } else if (pcode[i].x >= MID_CODE_BASE && pcode[i].z == 0 && pcode[i].op == PLUS &&
+                   pcode[i].y >= LOCAL_CODE_BASE) {
+            pcode[i].op = NOP;
+            for (int j = i + 1; j < pcode_num; j++) {
+                if (pcode[j].y == pcode[i].x) {
+                    pcode[j].y = pcode[i].y;
+                }
+                if (pcode[j].z == pcode[i].x) {
+                    pcode[j].z = pcode[i].y;
+                }
+                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
+                    pcode[j].x = pcode[i].x;
+                }
+                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
                     break;
                 }
             }
@@ -91,6 +109,31 @@ void PCodeOptimize() {
             pcode[i].op = NOP;
             CodeFind(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
+            for (int j = i + 1; j < pcode_num; j++) {
+                if (pcode[j].y == pcode[i].x) {
+                    pcode[j].y = pcode[i].z;
+                }
+                if (pcode[j].z == pcode[i].x) {
+                    pcode[j].z = pcode[i].z;
+                }
+                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
+                    pcode[j].x = pcode[i].z;
+                }
+            }
+        } else if (code_info.find(pcode[i].y)->second.isValue && code_info.find(pcode[i].z)->second.isValue) {
+            if (pcode[i].op == PLUS)
+                mid = CodeFind(pcode[i].y)->second.value + CodeFind(pcode[i].z)->second.value;
+            else if (pcode[i].op == SUB)
+                mid = CodeFind(pcode[i].y)->second.value - CodeFind(pcode[i].z)->second.value;
+            else if (pcode[i].op == MUL)
+                mid = CodeFind(pcode[i].y)->second.value * CodeFind(pcode[i].z)->second.value;
+            else if (pcode[i].op == DIV)
+                mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
+            else if (pcode[i].op == ADI)
+                mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
+            else
+                continue;
+
         }*/
     }
 }

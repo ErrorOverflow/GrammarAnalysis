@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <windows.h>
 
 using namespace std;
 
@@ -99,7 +100,7 @@ unordered_map<string, Sym>::iterator SymFind(string name) {
         return iter;
     }
     cout << name << " is not in SymTable" << endl;
-    exit(-1);
+    system("pause");
 }
 
 unordered_map<int, Sym>::iterator CodeFind(int code) {
@@ -110,7 +111,7 @@ unordered_map<int, Sym>::iterator CodeFind(int code) {
         }
     }
     cout << code << " is not LocalCode" << endl;
-    exit(-2);
+    system("pause");
 }
 
 void Num2Char(int num, char *str) {

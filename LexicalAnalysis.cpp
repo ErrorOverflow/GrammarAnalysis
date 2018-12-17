@@ -200,6 +200,10 @@ int VarDefine(char *str) {
                         }
                         word[process_len] = '\0';
                         sscanf(word, "%d", &identifier_dim[identifier_num]);
+                        if (identifier_dim[identifier_num] <= 0) {
+                            cout << "array illegal:" << identifier_dim[identifier_num];
+                            system("pause");
+                        }
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ']') {
