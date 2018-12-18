@@ -15,9 +15,7 @@ int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     pcode_num = 0;//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\try.txt
     ReadFromFile();//C:\Users\WML\Desktop\16061187_test.txt
     SymPrint();//C:\Users\WML\Desktop\233.txt
-    cout << "-------------------------------" << endl;
     PCodePrint();
-    cout << "-------------------------------" << endl;
     WriteMipsFile();
     system("pause");
     return 0;
