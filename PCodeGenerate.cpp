@@ -6,11 +6,12 @@
 #include "PCodeGenerate.h"
 #include "lib.h"
 #include "MipsGenerate.h"
+#include "Exception.h"
 #include <iostream>
 #include <unordered_map>
 #include <string>
 #include <fstream>
-
+#include <malloc.h>
 
 using namespace std;
 
@@ -107,35 +108,7 @@ void PCodeOptimize() {
                     break;
                 }
             }
-        } /*else if (pcode[i].op == ADI && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
-            pcode[i].op = NOP;
-            CodeFind(pcode[i].x)->second.value = pcode[i].z;
-            code_info.find(pcode[i].x)->second.isValue = 1;
-            for (int j = i + 1; j < pcode_num; j++) {
-                if (pcode[j].y == pcode[i].x) {
-                    pcode[j].y = pcode[i].z;
-                }
-                if (pcode[j].z == pcode[i].x) {
-                    pcode[j].z = pcode[i].z;
-                }
-                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
-                    pcode[j].x = pcode[i].z;
-                }
-            }
-        } else if (code_info.find(pcode[i].y)->second.isValue && code_info.find(pcode[i].z)->second.isValue) {
-            if (pcode[i].op == PLUS)
-                mid = CodeFind(pcode[i].y)->second.value + CodeFind(pcode[i].z)->second.value;
-            else if (pcode[i].op == SUB)
-                mid = CodeFind(pcode[i].y)->second.value - CodeFind(pcode[i].z)->second.value;
-            else if (pcode[i].op == MUL)
-                mid = CodeFind(pcode[i].y)->second.value * CodeFind(pcode[i].z)->second.value;
-            else if (pcode[i].op == DIV)
-                mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
-            else if (pcode[i].op == ADI)
-                mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
-            else
-                continue;
-        }*/
+        }
     }
 }
 
@@ -158,7 +131,6 @@ void PCodePreProcess() {
     int mid_code_stack = 0;
     int space = 0;
     int func_code = 0;
-    unordered_map<int, RuntimeCodeInfo>::iterator iter;
     unordered_map<int, FuncRuntime>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
     for (int i = 0; i < pcode_num; i++) {

@@ -11,4 +11,6 @@ int Exception(char *str);
 
 int JumpExp(char *str);
 
+int ValuePassExp(int x, int y);
+
 #endif //COMPILER_EXCEPTION_H

@@ -6,6 +6,7 @@
 #include "Exception.h"
 #include "lib.h"
 #include <iostream>
+#include <windows.h>
 
 using namespace std;
 
@@ -28,4 +29,9 @@ int JumpExp(char *str) {
     while (*p != '\n')
         p++;
     return (int) ((p - str) / sizeof(char));
+}
+
+int ValuePassExp(int x, int y) {
+    cout << "illegal value pass: From" << y << " to " << x << endl;
+    system("pause");
 }
