@@ -5,6 +5,7 @@
 
 #include "MipsGenerate.h"
 #include "PCodeGenerate.h"
+#include "lib.h"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
@@ -15,7 +16,7 @@
 using namespace std;
 
 unordered_map<int, FuncRuntime> RuntimeStack;
-unordered_map<int, int> RuntimeType;
+
 
 int para_stack[64];
 int para_stack_num = 0;
@@ -120,31 +121,15 @@ void TextDataOutput(ofstream &file) {
                 if (pc.y == 0 && pc.z == 0) {
                     file << "add $9,$0,$0" << "\n";
                 } else if (pc.y == 0) {
-                    if (pc.z >= GLOBAL_CODE_BASE && pc.z < MID_CODE_BASE && CodeFind(pc.z)->second.type == 1) {
-                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
-                    } else if (pc.z >= MID_CODE_BASE && RuntimeType.find(pc.z) != RuntimeType.end()) {
-                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
-                    }
                     Mem2Reg(11, pc.z, file);
                     file << "add $9,$0,$11" << "\n";
                 } else if (pc.z == 0) {
-                    if (pc.y >= GLOBAL_CODE_BASE && pc.y < MID_CODE_BASE && CodeFind(pc.y)->second.type == 1) {
-                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
-                    } else if (pc.y >= MID_CODE_BASE && RuntimeType.find(pc.y) != RuntimeType.end()) {
-                        RuntimeType.insert(pair<int, int>{pc.x, pc.x});
-                    }
                     Mem2Reg(10, pc.y, file);
                     file << "add $9,$10,$0" << "\n";
                 } else {
                     Mem2Reg(11, pc.z, file);
                     Mem2Reg(10, pc.y, file);
                     file << "add $9,$10,$11" << "\n";
-                }
-                if (pc.x < MID_CODE_BASE && CodeFind(pc.x)->second.type == 1 &&
-                    ((pc.z >= MID_CODE_BASE && RuntimeType.find(pc.z) == RuntimeType.end()) ||
-                     (pc.z < MID_CODE_BASE && CodeFind(pc.z)->second.type != 1))) {
-                    cout << "illegal value pass" << endl;
-                    system("pause");
                 }
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
@@ -331,10 +316,9 @@ void TextDataOutput(ofstream &file) {
                 break;
             case WRITE:
                 if (pc.z >= MID_CODE_BASE) {
-                    it_type = RuntimeType.find(pc.z);
                     Mem2Reg(11, pc.z, file);
                     file << "move $a0,$11\n";
-                    if (it_type != RuntimeType.end())
+                    if (code_info.find(pc.z)->second.type)
                         file << "li $v0,11\n";
                     else
                         file << "li $v0,1\n";
@@ -390,9 +374,6 @@ void TextDataOutput(ofstream &file) {
                 break;
             case LDA: {
                 int loc = 0;
-                if (pc.y >= GLOBAL_CODE_BASE && pc.y < MID_CODE_BASE && CodeFind(pc.y)->second.type == 1) {
-                    RuntimeType.insert(pair<int, int>{pc.x, pc.x});
-                }
                 if (pc.y >= LOCAL_CODE_BASE) {
                     it_code = CodeFind(pc.y);
                     file << "la $10," << it_code->second.name << "\n";
@@ -462,7 +443,7 @@ void TextDataOutput(ofstream &file) {
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;
-                exit(-1);
+                system("pause");
         }
     }
 }

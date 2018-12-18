@@ -22,7 +22,9 @@ void OpExchange(int op, ofstream &file);
 
 void PCodeOptimize();
 
-void AddressAssign();
+void PCodePreProcess();
+
+void AddressAssign(int code, int *space, int *mid_code_stack);
 
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
@@ -33,7 +35,7 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 
 void PCodePrint() {
     PCodeOptimize();
-    AddressAssign();
+    PCodePreProcess();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -70,7 +72,7 @@ void PCodePrint() {
 }
 
 void PCodeOptimize() {
-    int mid = 0;
+    //int mid = 0;
     for (int i = 0; i < pcode_num; i++) {
         if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
@@ -133,12 +135,26 @@ void PCodeOptimize() {
                 mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
             else
                 continue;
-
         }*/
     }
 }
 
-void AddressAssign() {
+void AddressAssign(int code, int *space, int *mid_code_stack) {
+    RuntimeCodeInfo info;
+    if (code >= LOCAL_CODE_BASE) {
+        if (code_info.find(code) == code_info.end()) {
+            *space += 1;
+            if (code < MID_CODE_BASE && CodeFind(code)->second.type == 1)
+                info = {code, 1, 0, *mid_code_stack};
+            else
+                info = {code, 0, 0, *mid_code_stack};
+            *mid_code_stack += 1;
+            code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
+        }
+    }
+}
+
+void PCodePreProcess() {
     int mid_code_stack = 0;
     int space = 0;
     int func_code = 0;
@@ -149,7 +165,7 @@ void AddressAssign() {
         if (pcode[i].op == NOP) {
             continue;
         }
-        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
+        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z <= MID_CODE_BASE) {
             mid_code_stack = 0;
             if (func_code != 0) {
                 it_code = CodeFind(func_code);
@@ -160,30 +176,16 @@ void AddressAssign() {
             space = 0;
             continue;
         }
-        if (pcode[i].y >= LOCAL_CODE_BASE) {
-            iter = code_info.find(pcode[i].y);
-            if (iter == code_info.end()) {
-                space++;
-                RuntimeCodeInfo info = {pcode[i].y, 0, 0, mid_code_stack++};
-                code_info.insert(pair<int, RuntimeCodeInfo>{pcode[i].x, info});
-            }
-        }
-        if (pcode[i].x >= LOCAL_CODE_BASE) {
-            iter = code_info.find(pcode[i].x);
-            if (iter == code_info.end()) {
-                space++;
-                RuntimeCodeInfo info = {pcode[i].x, 0, 0, mid_code_stack++};
-                code_info.insert(pair<int, RuntimeCodeInfo>{pcode[i].x, info});
-            }
-        }
-        if (pcode[i].z >= LOCAL_CODE_BASE) {
-            iter = code_info.find(pcode[i].z);
-            if (iter == code_info.end()) {
-                space++;
-                RuntimeCodeInfo info = {pcode[i].z, 0, 0, mid_code_stack++};
-                code_info.insert(pair<int, RuntimeCodeInfo>{pcode[i].z, info});
-            }
-        }
+        AddressAssign(pcode[i].x, &space, &mid_code_stack);
+        AddressAssign(pcode[i].y, &space, &mid_code_stack);
+        AddressAssign(pcode[i].z, &space, &mid_code_stack);
+        if (pcode[i].op == LDA && CodeFind(pcode[i].y)->second.type == 1 && pcode[i].x >= MID_CODE_BASE)
+            code_info.find(pcode[i].x)->second.type = 1;
+        else if (pcode[i].op == PLUS && pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 &&
+                 ((pcode[i].z >= MID_CODE_BASE && code_info.find(pcode[i].z)->second.type == 1) ||
+                  (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE &&
+                   CodeFind(pcode[i].z)->second.type == 1)))
+            code_info.find(pcode[i].x)->second.type = 1;
     }
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};

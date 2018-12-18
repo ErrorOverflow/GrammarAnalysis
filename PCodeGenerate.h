@@ -51,7 +51,7 @@ struct PCode {
 
 struct RuntimeCodeInfo {
     int code;
-    int type;//1.int 2.char
+    int type;//0.int 1.char
     int isValue;
     int address;
 };
