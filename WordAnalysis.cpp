@@ -91,7 +91,7 @@ int Character(char *str) {
 
 int String(char *str) {
     char *p = str;
-    char word[64];
+    char word[256];
     int i = 0;
     if (*p == '"') {
         p++;
@@ -154,7 +154,7 @@ int Integer(char *str) {
 
 int Identifier(char *str) {
     char *p = str;
-    char word[63];
+    char word[256];
     int i = 0;
     if (Letter(*p)) {
         word[i++] = *p;

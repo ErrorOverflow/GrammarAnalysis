@@ -25,7 +25,7 @@ int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0, value = 0;
     int isConstDefine = 0, i = 0;
-    char iden[16], word[16];
+    char iden[64], word[64];
     int identifier_type = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         identifier_type = 0;
