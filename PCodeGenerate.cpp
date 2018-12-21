@@ -27,6 +27,8 @@ void PCodePreProcess();
 
 void AddressAssign(int code, int *space, int *mid_code_stack);
 
+void CodeInfoInit(int code);
+
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
     pcode[num].y = y;
@@ -69,6 +71,9 @@ void PCodePrint() {
 void PCodeOptimize() {
     int mid = 0;
     for (int i = 0; i < pcode_num; i++) {
+        CodeInfoInit(pcode[i].x);
+        CodeInfoInit(pcode[i].y);
+        CodeInfoInit(pcode[i].z);
         if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
@@ -81,7 +86,7 @@ void PCodeOptimize() {
                 if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
                     pcode[j].x = pcode[i].z;
                 }
-                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
+                if (pcode[j].x == pcode[i].x) {
                     break;
                 }
             }
@@ -98,89 +103,50 @@ void PCodeOptimize() {
                 if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
                     pcode[j].x = pcode[i].x;
                 }
-                if (pcode[j].x == pcode[i].x || pcode[j].op == LABEL) {
+                if (pcode[j].x == pcode[i].x) {
                     break;
                 }
             }
         } else if (pcode[i].op == ADI && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
-            pcode[i].op = NOP;
-            CodeFind(pcode[i].x)->second.value = pcode[i].z;
+            code_info.find(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
-            for (int j = i + 1; j < pcode_num; j++) {
-                if (pcode[j].y == pcode[i].x) {
-                    pcode[j].y = pcode[i].z;
-                }
-                if (pcode[j].z == pcode[i].x) {
-                    pcode[j].z = pcode[i].z;
-                }
-                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
-                    pcode[j].x = pcode[i].z;
-                }
-                if (pcode[j].x == pcode[i].x) {
-                    break;
-                }
-            }
-        } else if (pcode[i].x >= MID_CODE_BASE && code_info.find(pcode[i].y)->second.isValue &&
-                   code_info.find(pcode[i].z)->second.isValue) {
+        }
+        if (pcode[i].x >= MID_CODE_BASE && pcode[i].y >= MID_CODE_BASE && code_info.find(pcode[i].y)->second.isValue &&
+            pcode[i].z >= MID_CODE_BASE && code_info.find(pcode[i].z)->second.isValue) {
             if (pcode[i].op == PLUS)
-                mid = CodeFind(pcode[i].y)->second.value + CodeFind(pcode[i].z)->second.value;
+                mid = code_info.find(pcode[i].y)->second.value + code_info.find(pcode[i].z)->second.value;
             else if (pcode[i].op == SUB)
-                mid = CodeFind(pcode[i].y)->second.value - CodeFind(pcode[i].z)->second.value;
+                mid = code_info.find(pcode[i].y)->second.value - code_info.find(pcode[i].z)->second.value;
             else if (pcode[i].op == MUL)
-                mid = CodeFind(pcode[i].y)->second.value * CodeFind(pcode[i].z)->second.value;
+                mid = code_info.find(pcode[i].y)->second.value * code_info.find(pcode[i].z)->second.value;
             else if (pcode[i].op == DIV)
-                mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
+                mid = code_info.find(pcode[i].y)->second.value / code_info.find(pcode[i].z)->second.value;
             else if (pcode[i].op == ADI)
-                mid = CodeFind(pcode[i].y)->second.value / CodeFind(pcode[i].z)->second.value;
+                mid = code_info.find(pcode[i].y)->second.value + code_info.find(pcode[i].z)->second.value;
             else
                 continue;
+            code_info.find(pcode[i].x)->second.value = mid;
             code_info.find(pcode[i].x)->second.isValue = 1;
-            for (int j = i + 1; j < pcode_num; j++) {
-                if (pcode[j].y == pcode[i].x) {
-                    pcode[j].y = pcode[i].z;
-                }
-                if (pcode[j].z == pcode[i].x) {
-                    pcode[j].z = pcode[i].z;
-                }
-                if (pcode[j].op == SW && pcode[j].x == pcode[i].x) {
-                    pcode[j].x = pcode[i].z;
-                }
-                if (pcode[j].x == pcode[i].x) {
-                    break;
-                }
-            }
         }
     }
 }
 
-void AddressAssign(int code, int *space, int *mid_code_stack) {
-    RuntimeCodeInfo info;
-    if (code_info.find(code) != code_info.end())
+void CodeInfoInit(int code) {
+    if (code_info.find(code) != code_info.end() || code < GLOBAL_CODE_BASE)
         return;
-    if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
-        if (CodeFind(code)->second.type == 1)
-            info = {code, 1, 0, 0};
-        else
-            info = {code, 0, 0, 0};
-        code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
-        if (CodeFind(code)->second.kind == 0)
-            code_info.find(code)->second.isValue = 1;
-    } else if (code >= LOCAL_CODE_BASE && code < MID_CODE_BASE) {
-        *space += 1;
-        if (CodeFind(code)->second.type == 1)
-            info = {code, 1, 0, *mid_code_stack};
-        else
-            info = {code, 0, 0, *mid_code_stack};
-        *mid_code_stack += 1;
-        code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
-        if (CodeFind(code)->second.kind == 0)
-            code_info.find(code)->second.isValue = 1;
-    } else if (code >= MID_CODE_BASE) {
-        *space += 1;
-        info = {code, 0, 0, *mid_code_stack};
-        *mid_code_stack += 1;
-        code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
-    }
+    RuntimeCodeInfo info = {code, 0, 0, 0, 0};
+    if (code >= GLOBAL_CODE_BASE && code < MID_CODE_BASE)
+        info = {code, CodeFind(code)->second.type, (CodeFind(code)->second.kind == 0 ? 1 : 0),
+                (CodeFind(code)->second.kind == 0 ? CodeFind(code)->second.value : 0), 0};
+    code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
+}
+
+void AddressAssign(int code, int *space, int *mid_code_stack) {
+    if (code < LOCAL_CODE_BASE)
+        return;
+    *space += 1;
+    code_info.find(code)->second.address = *mid_code_stack;
+    *mid_code_stack += 1;
 }
 
 void PCodePreProcess() {

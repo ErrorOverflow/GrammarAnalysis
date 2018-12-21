@@ -76,10 +76,6 @@ void SymPrint() {
     for (int i = 0; i <= TableNum; i++) {
         auto iter = SymTable[i].begin();
         while (iter != SymTable[i].end()) {
-            cout << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
-                 << ","
-                 << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << ","
-                 << iter->second.label << endl;
             file << "TABLE#" << i << ": " << iter->second.code << "," << iter->second.name << "," << iter->second.type
                  << ","
                  << iter->second.dimension << "," << iter->second.kind << "," << iter->second.value << ","
@@ -110,7 +106,7 @@ unordered_map<int, Sym>::iterator CodeFind(int code) {
             return iter;
         }
     }
-    cout << code << " is not LocalCode" << endl;
+    cout << code << " is not LocalCode or GlobalCode" << endl;
     system("pause");
 }
 

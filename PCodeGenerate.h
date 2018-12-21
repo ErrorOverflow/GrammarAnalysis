@@ -53,6 +53,7 @@ struct RuntimeCodeInfo {
     int code;
     int type;//0.int 1.char
     int isValue;
+    int value;
     int address;
 };
 
