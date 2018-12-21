@@ -170,12 +170,12 @@ void PCodePreProcess() {
                   (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE &&
                    CodeFind(pcode[i].z)->second.type == 1)))
             code_info.find(pcode[i].x)->second.type = 1;
-        /*if (pcode[i].op == LDA && code_info.find(pcode[i].z)->second.isValue &&
+        if (pcode[i].op == LDA && code_info.find(pcode[i].z)->second.isValue &&
             CodeFind(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension)
             ArrayOverflowExp(pcode[i].y, pcode[i].z);
         else if (pcode[i].op == PLUS && pcode[i].y == 0 &&
                  code_info.find(pcode[i].x)->second.type != code_info.find(pcode[i].z)->second.type)
-            ValuePassExp(pcode[i].x, pcode[i].z);*/
+            ValuePassExp(pcode[i].x, pcode[i].z);
     }
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};
