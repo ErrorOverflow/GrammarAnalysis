@@ -102,22 +102,40 @@ void PCodeOptimize() {
                     break;
                 }
             }
-        }
+        } /*else if (pcode[i].op == ADI && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
+            CodeFind(pcode[i].x)->second.value = pcode[i].z;
+            code_info.find(pcode[i].x)->second.isValue = 1;
+        }*/
     }
 }
 
 void AddressAssign(int code, int *space, int *mid_code_stack) {
     RuntimeCodeInfo info;
-    if (code >= LOCAL_CODE_BASE) {
-        if (code_info.find(code) == code_info.end()) {
-            *space += 1;
-            if (code < MID_CODE_BASE && CodeFind(code)->second.type == 1)
-                info = {code, 1, 0, *mid_code_stack};
-            else
-                info = {code, 0, 0, *mid_code_stack};
-            *mid_code_stack += 1;
-            code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
-        }
+    if (code_info.find(code) != code_info.end())
+        return;
+    if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
+        if (CodeFind(code)->second.type == 1)
+            info = {code, 1, 0, 0};
+        else
+            info = {code, 0, 0, 0};
+        code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
+        if (CodeFind(code)->second.kind == 0)
+            code_info.find(code)->second.isValue = 1;
+    } else if (code >= LOCAL_CODE_BASE && code < MID_CODE_BASE) {
+        *space += 1;
+        if (CodeFind(code)->second.type == 1)
+            info = {code, 1, 0, *mid_code_stack};
+        else
+            info = {code, 0, 0, *mid_code_stack};
+        *mid_code_stack += 1;
+        code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
+        if (CodeFind(code)->second.kind == 0)
+            code_info.find(code)->second.isValue = 1;
+    } else if (code >= MID_CODE_BASE) {
+        *space += 1;
+        info = {code, 0, 0, *mid_code_stack};
+        *mid_code_stack += 1;
+        code_info.insert(pair<int, RuntimeCodeInfo>{code, info});
     }
 }
 
@@ -131,7 +149,7 @@ void PCodePreProcess() {
         if (pcode[i].op == NOP) {
             continue;
         }
-        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z <= MID_CODE_BASE) {
+        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE) {
             mid_code_stack = 0;
             if (func_code != 0) {
                 it_code = CodeFind(func_code);
@@ -152,6 +170,12 @@ void PCodePreProcess() {
                   (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE &&
                    CodeFind(pcode[i].z)->second.type == 1)))
             code_info.find(pcode[i].x)->second.type = 1;
+        /*if (pcode[i].op == LDA && code_info.find(pcode[i].z)->second.isValue &&
+            CodeFind(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension)
+            ArrayOverflowExp(pcode[i].y, pcode[i].z);
+        else if (pcode[i].op == PLUS && pcode[i].y == 0 &&
+                 code_info.find(pcode[i].x)->second.type != code_info.find(pcode[i].z)->second.type)
+            ValuePassExp(pcode[i].x, pcode[i].z);*/
     }
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};

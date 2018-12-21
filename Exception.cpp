@@ -35,3 +35,8 @@ int ValuePassExp(int x, int y) {
     cout << "illegal value pass: From" << y << " to " << x << endl;
     system("pause");
 }
+
+int ArrayOverflowExp(int x, int y) {
+    cout << "array overflow: #array:" << x << " loc:" << y << endl;
+    system("pause");
+}

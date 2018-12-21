@@ -13,4 +13,6 @@ int JumpExp(char *str);
 
 int ValuePassExp(int x, int y);
 
+int ArrayOverflowExp(int x, int y);
+
 #endif //COMPILER_EXCEPTION_H
