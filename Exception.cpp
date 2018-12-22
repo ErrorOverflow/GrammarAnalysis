@@ -52,3 +52,7 @@ void ValueParaListError(int line, int x, int y) {
 void ValueParaListWarn(int line, int x, int y) {
     cout << "Type is not match in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
 }
+
+void ValueCompareExp(int line, int x, int y) {
+    cout << "illegal value type compare in line " << line << ": From " << y << " to " << x << endl;
+}

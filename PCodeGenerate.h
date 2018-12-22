@@ -41,6 +41,7 @@ using namespace std;
 #define NOP 123
 #define BEGIN 124
 #define OVER 125
+#define LCH 126
 
 struct PCode {
     int x;

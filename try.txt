@@ -12,11 +12,12 @@ int a(int x,int y){
 
 void main(){
     int x,y,z,k;
+    char ch;
     x=1;
     y=2;
     z=3;
     k=4;
-    x=(;
+    ch='a';
+    if(ch)
     printf(a(x,b(y,z)));
-    x=)));
 }

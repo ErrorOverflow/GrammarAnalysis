@@ -358,16 +358,13 @@ void TextDataOutput(ofstream &file) {
                     file << "syscall\n";
                 }
                 break;
+            case LCH:
             case ADI:
                 if (pc.y == 0) {
                     file << "addi $9,$0," << pc.z << "\n";
                 } else {
                     Mem2Reg(10, pc.y, file);
                     file << "addi $9,$10," << pc.z << "\n";
-                }
-                if (pc.x < MID_CODE_BASE && CodeFind(pc.x)->second.type == 1) {
-                    cout << "illegal value pass" << endl;
-                    system("pause");
                 }
                 Reg2Mem(9, pc.x, file);
                 file << "\n";
@@ -443,7 +440,6 @@ void TextDataOutput(ofstream &file) {
                 break;
             default:
                 cout << pc.op << "unknown op" << endl;
-                system("pause");
         }
     }
 }

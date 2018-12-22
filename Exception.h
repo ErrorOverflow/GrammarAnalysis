@@ -21,4 +21,6 @@ void ValueParaListError(int line, int x, int y);
 
 void ValueParaListWarn(int line, int x, int y);
 
+void ValueCompareExp(int line, int x, int y);
+
 #endif //COMPILER_EXCEPTION_H

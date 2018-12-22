@@ -109,7 +109,7 @@ void PCodeOptimize() {
                     break;
                 }
             }
-        } else if (pcode[i].op == ADI && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
+        } else if ((pcode[i].op == ADI || pcode[i].op == LCH) && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
             code_info.find(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
         }
@@ -183,13 +183,15 @@ void PCodePreProcess() {
             code_info.find(pcode[i].x)->second.type = 1;
         else if (pcode[i].op == CALL && pcode[i].x != 0)
             code_info.find(pcode[i].x)->second.type = CodeFind(pcode[i].z)->second.type;
+        else if (pcode[i].op == LCH && pcode[i].x >= MID_CODE_BASE)
+            code_info.find(pcode[i].x)->second.type = 1;
         if ((pcode[i].op == LDA || pcode[i].op == SW) && code_info.find(pcode[i].z)->second.isValue &&
             (code_info.find(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension ||
              code_info.find(pcode[i].z)->second.value < 0))
-            ArrayOverflowExp(i,pcode[i].y, pcode[i].z);
+            ArrayOverflowExp(i, pcode[i].y, pcode[i].z);
         else if (pcode[i].op == PLUS && pcode[i].y == 0 &&
                  code_info.find(pcode[i].x)->second.type != code_info.find(pcode[i].z)->second.type)
-            ValuePassExp(i,pcode[i].x, pcode[i].z);
+            ValuePassExp(i, pcode[i].x, pcode[i].z);
         else if (pcode[i].op == CALL) {
             int call_start = i, begin_num = 0, call = 0, func_define = 0, isPara = 1;
             while (begin_num != 1) {
@@ -210,15 +212,19 @@ void PCodePreProcess() {
                 if (begin_num == 1 && pcode[call].op == PUSH) {
                     func_define++;
                     if (pcode[func_define].op == PARA) {
-                        if(code_info.find(pcode[func_define].z)->second.type != code_info.find(pcode[call].z)->second.type){
-                            ValueParaListWarn(i,pcode[i].z, pcode[call].z);
+                        if (code_info.find(pcode[func_define].z)->second.type !=
+                            code_info.find(pcode[call].z)->second.type) {
+                            ValueParaListWarn(i, pcode[i].z, pcode[call].z);
                         }
                     } else {
-                        ValueParaListError(i,pcode[i].z, pcode[call].z);
+                        ValueParaListError(i, pcode[i].z, pcode[call].z);
                     }
                 }
             }
-        }
+        } else if ((pcode[i].op == BLEZ || pcode[i].op == BLTZ || pcode[i].op == BGEZ || pcode[i].op == BGTZ ||
+                    pcode[i].op == BNE || pcode[i].op == BEQ) &&
+                   (code_info.find(pcode[i].y)->second.type == 1 || code_info.find(pcode[i].z)->second.type == 1))
+            ValueCompareExp(i, pcode[i].y, pcode[i].z);
     }
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};
@@ -298,6 +304,9 @@ void OpExchange(int op, ofstream &file) {
             break;
         case OVER:
             file << " OVER ";
+            break;
+        case LCH:
+            file << " LCH ";
             break;
         default:
             file << " " << op << " ";

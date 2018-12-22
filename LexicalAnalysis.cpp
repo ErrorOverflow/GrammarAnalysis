@@ -588,7 +588,7 @@ int Factor(char *str, int code) {
         z = *(p + 1);
         p += process_len;
         p += JumpSpace(p);
-        op = ADI;
+        op = LCH;
         PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if (*p == '(') {
@@ -601,7 +601,8 @@ int Factor(char *str, int code) {
             if (*p == ')') {
                 p++;
                 p += JumpSpace(p);
-                PCodeInsert(pcode_num++, code, 0, op, z);
+                PCodeInsert(pcode_num++, MidCode++, 0, ADI, 0);
+                PCodeInsert(pcode_num++, code, MidCode - 1, PLUS, z);
                 return (int) ((p - str) / sizeof(char));
             }
         }
