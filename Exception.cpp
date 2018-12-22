@@ -32,7 +32,7 @@ int JumpExp(char *str) {
 }
 
 int ValuePassExp(int x, int y) {
-    cout << "illegal value pass: From" << y << " to " << x << endl;
+    cout << "illegal value pass: From " << y << " to " << x << endl;
     system("pause");
 }
 

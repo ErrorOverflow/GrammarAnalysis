@@ -469,7 +469,7 @@ int MainFunc(char *str) {
 
 int Expression(char *str, int code) {
     char *p = str;
-    int process_len = 0, term_num = 0;
+    int process_len = 0;
     int x = 0, y = 0, z = 0, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == '+') {
         p++;
@@ -483,7 +483,6 @@ int Expression(char *str, int code) {
     x = code;
     z = MidCode;
     while ((process_len = Term(p, MidCode++))) {
-        term_num++;
         p += process_len;
         p += JumpSpace(p);
         PCodeInsert(pcode_num++, x, y, op, z);

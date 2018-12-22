@@ -37,6 +37,8 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 }
 
 void PCodePrint() {
+    RuntimeCodeInfo info = {0, 0, 1, 0, 0};
+    code_info.insert(pair<int, RuntimeCodeInfo>{0, info});
     PCodeOptimize();
     PCodePreProcess();
     const char MIPSFILE[64] = "PCode.txt\0";
@@ -111,8 +113,9 @@ void PCodeOptimize() {
             code_info.find(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
         }
-        if (pcode[i].x >= MID_CODE_BASE && pcode[i].y >= MID_CODE_BASE && code_info.find(pcode[i].y)->second.isValue &&
-            pcode[i].z >= MID_CODE_BASE && code_info.find(pcode[i].z)->second.isValue) {
+        if ((pcode[i].y == 0 || pcode[i].y >= GLOBAL_CODE_BASE) &&
+            (pcode[i].z == 0 || pcode[i].z >= GLOBAL_CODE_BASE) && code_info.find(pcode[i].y)->second.isValue &&
+            code_info.find(pcode[i].z)->second.isValue) {
             if (pcode[i].op == PLUS)
                 mid = code_info.find(pcode[i].y)->second.value + code_info.find(pcode[i].z)->second.value;
             else if (pcode[i].op == SUB)
@@ -180,8 +183,9 @@ void PCodePreProcess() {
                   (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE &&
                    CodeFind(pcode[i].z)->second.type == 1)))
             code_info.find(pcode[i].x)->second.type = 1;
-        if (pcode[i].op == LDA && code_info.find(pcode[i].z)->second.isValue &&
-            CodeFind(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension)
+        if ((pcode[i].op == LDA || pcode[i].op == SW) && code_info.find(pcode[i].z)->second.isValue &&
+            (code_info.find(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension ||
+                    code_info.find(pcode[i].z)->second.value < 0))
             ArrayOverflowExp(pcode[i].y, pcode[i].z);
         else if (pcode[i].op == PLUS && pcode[i].y == 0 &&
                  code_info.find(pcode[i].x)->second.type != code_info.find(pcode[i].z)->second.type)
