@@ -31,18 +31,18 @@ int JumpExp(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
-int ValuePassExp(int x, int y) {
+int ValuePassExp(int line, int x, int y) {
     cout << "illegal value pass: From " << y << " to " << x << endl;
 }
 
-int ArrayOverflowExp(int x, int y) {
+int ArrayOverflowExp(int line, int x, int y) {
     cout << "array overflow: #array:" << x << " loc:" << y << endl;
 }
 
-int ValueParaListError(int x, int y) {
+int ValueParaListError(int line, int x, int y) {
     cout << "eror occurs in ValueParaList: #Func Call:" << x << " Para:" << y << endl;
 }
 
-int ValueParaListWarn(int x, int y) {
+int ValueParaListWarn(int line, int x, int y) {
     cout << "Type is not match in ValueParaList: #Func Call:" << x << " Para:" << y << endl;
 }

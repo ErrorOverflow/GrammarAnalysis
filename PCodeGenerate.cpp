@@ -186,10 +186,10 @@ void PCodePreProcess() {
         if ((pcode[i].op == LDA || pcode[i].op == SW) && code_info.find(pcode[i].z)->second.isValue &&
             (code_info.find(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension ||
              code_info.find(pcode[i].z)->second.value < 0))
-            ArrayOverflowExp(pcode[i].y, pcode[i].z);
+            ArrayOverflowExp(i,pcode[i].y, pcode[i].z);
         else if (pcode[i].op == PLUS && pcode[i].y == 0 &&
                  code_info.find(pcode[i].x)->second.type != code_info.find(pcode[i].z)->second.type)
-            ValuePassExp(pcode[i].x, pcode[i].z);
+            ValuePassExp(i,pcode[i].x, pcode[i].z);
         else if (pcode[i].op == CALL) {
             int call_start = i, begin_num = 0, call = 0, func_define = 0, isPara = 1;
             while (begin_num != 1) {
@@ -211,10 +211,10 @@ void PCodePreProcess() {
                     func_define++;
                     if (pcode[func_define].op == PARA) {
                         if(code_info.find(pcode[func_define].z)->second.type != code_info.find(pcode[call].z)->second.type){
-                            ValueParaListWarn(pcode[i].z, pcode[call].z);
+                            ValueParaListWarn(i,pcode[i].z, pcode[call].z);
                         }
                     } else {
-                        ValueParaListError(pcode[i].z, pcode[call].z);
+                        ValueParaListError(i,pcode[i].z, pcode[call].z);
                     }
                 }
             }
