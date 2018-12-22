@@ -11,12 +11,12 @@ int Exception(char *str);
 
 int JumpExp(char *str);
 
-int ValuePassExp(int line,int x, int y);
+void ValuePassExp(int line,int x, int y);
 
-int ArrayOverflowExp(int line,int x, int y);
+void ArrayOverflowExp(int line,int x, int y);
 
-int ValueParaListError(int line,int x, int y);
+void ValueParaListError(int line,int x, int y);
 
-int ValueParaListWarn(int line,int x, int y);
+void ValueParaListWarn(int line,int x, int y);
 
 #endif //COMPILER_EXCEPTION_H
