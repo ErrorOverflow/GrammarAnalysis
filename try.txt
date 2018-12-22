@@ -2,7 +2,7 @@ int c(int x,int y){
     return (x-y);
 }
 
-int b(int x,int y){
+char b(int x,int y){
     return (x*y);
 }
 

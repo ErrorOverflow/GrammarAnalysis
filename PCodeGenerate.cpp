@@ -153,9 +153,7 @@ void AddressAssign(int code, int *space, int *mid_code_stack) {
 }
 
 void PCodePreProcess() {
-    int mid_code_stack = 0;
-    int space = 0;
-    int func_code = 0;
+    int mid_code_stack = 0, space = 0, func_code = 0;
     unordered_map<int, FuncRuntime>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
     for (int i = 0; i < pcode_num; i++) {
@@ -183,13 +181,44 @@ void PCodePreProcess() {
                   (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE &&
                    CodeFind(pcode[i].z)->second.type == 1)))
             code_info.find(pcode[i].x)->second.type = 1;
+        else if (pcode[i].op == CALL && pcode[i].x != 0)
+            code_info.find(pcode[i].x)->second.type = CodeFind(pcode[i].z)->second.type;
         if ((pcode[i].op == LDA || pcode[i].op == SW) && code_info.find(pcode[i].z)->second.isValue &&
             (code_info.find(pcode[i].z)->second.value >= CodeFind(pcode[i].y)->second.dimension ||
-                    code_info.find(pcode[i].z)->second.value < 0))
+             code_info.find(pcode[i].z)->second.value < 0))
             ArrayOverflowExp(pcode[i].y, pcode[i].z);
         else if (pcode[i].op == PLUS && pcode[i].y == 0 &&
                  code_info.find(pcode[i].x)->second.type != code_info.find(pcode[i].z)->second.type)
             ValuePassExp(pcode[i].x, pcode[i].z);
+        else if (pcode[i].op == CALL) {
+            int call_start = i, begin_num = 0, call = 0, func_define = 0, isPara = 1;
+            while (begin_num != 1) {
+                if (pcode[call_start].op == OVER)
+                    begin_num--;
+                else if (pcode[call_start].op == BEGIN)
+                    begin_num++;
+                call_start--;
+            }
+            while (!(pcode[func_define].op == LABEL && pcode[func_define].z == pcode[i].z)) {
+                func_define++;
+            }
+            for (call = call_start + 1, begin_num = 0; call < i; call++) {
+                if (pcode[call].op == BEGIN)
+                    begin_num++;
+                else if (pcode[call].op == OVER)
+                    begin_num--;
+                if (begin_num == 1 && pcode[call].op == PUSH) {
+                    func_define++;
+                    if (pcode[func_define].op == PARA) {
+                        if(code_info.find(pcode[func_define].z)->second.type != code_info.find(pcode[call].z)->second.type){
+                            ValueParaListWarn(pcode[i].z, pcode[call].z);
+                        }
+                    } else {
+                        ValueParaListError(pcode[i].z, pcode[call].z);
+                    }
+                }
+            }
+        }
     }
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};

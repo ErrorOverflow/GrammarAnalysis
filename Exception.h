@@ -15,4 +15,8 @@ int ValuePassExp(int x, int y);
 
 int ArrayOverflowExp(int x, int y);
 
+int ValueParaListError(int x, int y);
+
+int ValueParaListWarn(int x, int y);
+
 #endif //COMPILER_EXCEPTION_H

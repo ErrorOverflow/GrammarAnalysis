@@ -17,6 +17,6 @@ int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     SymPrint();//C:\Users\WML\Desktop\233.txt
     PCodePrint();
     WriteMipsFile();
-    system("pause");
+    getchar();
     return 0;
 }
