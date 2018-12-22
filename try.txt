@@ -2,7 +2,7 @@ int c(int x,int y){
     return (x-y);
 }
 
-char b(int x,int y){
+int b(int x,int y){
     return (x*y);
 }
 
@@ -16,5 +16,7 @@ void main(){
     y=2;
     z=3;
     k=4;
+    x=(;
     printf(a(x,b(y,z)));
+    x=)));
 }

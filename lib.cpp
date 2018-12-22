@@ -96,7 +96,8 @@ unordered_map<string, Sym>::iterator SymFind(string name) {
         return iter;
     }
     cout << name << " is not in SymTable" << endl;
-    system("pause");
+    iter = SymTable[0].find("error");
+    return iter;
 }
 
 unordered_map<int, Sym>::iterator CodeFind(int code) {
@@ -107,7 +108,8 @@ unordered_map<int, Sym>::iterator CodeFind(int code) {
         }
     }
     cout << code << " is not LocalCode or GlobalCode" << endl;
-    system("pause");
+    auto iter = CodeIndex[0].find(SymTable[0].find("error")->second.code);
+    return iter;
 }
 
 void Num2Char(int num, char *str) {

@@ -9,14 +9,16 @@ extern char *excep;
 
 int Exception(char *str);
 
+void ExpInit();
+
 int JumpExp(char *str);
 
-void ValuePassExp(int line,int x, int y);
+void ValuePassExp(int line, int x, int y);
 
-void ArrayOverflowExp(int line,int x, int y);
+void ArrayOverflowExp(int line, int x, int y);
 
-void ValueParaListError(int line,int x, int y);
+void ValueParaListError(int line, int x, int y);
 
-void ValueParaListWarn(int line,int x, int y);
+void ValueParaListWarn(int line, int x, int y);
 
 #endif //COMPILER_EXCEPTION_H
