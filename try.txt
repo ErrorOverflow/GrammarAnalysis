@@ -18,6 +18,6 @@ void main(){
     z=3;
     k=4;
     ch='a';
-    if(ch)
     printf(a(x,b(y,z)));
+    printf("diuweqhfdiuwehdfnojkqiweidohnqjkwedhnqiuwdhqw");
 }

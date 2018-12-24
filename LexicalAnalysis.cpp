@@ -25,7 +25,7 @@ int ConstDefine(char *str) {
     char *p = str;
     int process_len = 0, value = 0;
     int isConstDefine = 0, i = 0;
-    char iden[64], word[64];
+    char iden[256], word[256];
     int identifier_type = 0;
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         identifier_type = 0;
@@ -954,7 +954,7 @@ int Step(char *str) {
 }
 
 int ReturnFuncCall(char *str, int code) {
-    char *p = str, word[64];
+    char *p = str, word[256];
     int process_len = 0;
     int z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = Identifier(p))) {
@@ -990,7 +990,7 @@ int ReturnFuncCall(char *str, int code) {
 }
 
 int ReturnFuncCall(char *str) {
-    char *p = str, word[64];
+    char *p = str, word[256];
     int process_len = 0;
     if ((process_len = Identifier(p))) {
         for (int i = 0; i < process_len; i++) {
@@ -1022,7 +1022,7 @@ int ReturnFuncCall(char *str) {
 }
 
 int NoReturnFuncCall(char *str) {
-    char *p = str, word[64];
+    char *p = str, word[256];
     int process_len = 0;
     if ((process_len = Identifier(p))) {
         for (int i = 0; i < process_len; i++) {
@@ -1091,7 +1091,7 @@ int SentenceColumn(char *str) {
 }
 
 int ReadSentence(char *str) {
-    char *p = str, word[64];
+    char *p = str, word[256];
     int process_len = 0;
     int isRight = 0;
     int z = 0, op = READ, MidCode_buf = MidCode, pcode_buf = pcode_num;
@@ -1136,7 +1136,7 @@ int ReadSentence(char *str) {
 }
 
 int WriteSentence(char *str) {
-    char *p = str, word[54];
+    char *p = str, word[256];
     int process_len = 0;
     int z = MidCode, op = WRITE, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 'p' && *(p + 1) == 'r' && *(p + 2) == 'i' && *(p + 3) == 'n' && *(p + 4) == 't' && *(p + 5) == 'f') {
