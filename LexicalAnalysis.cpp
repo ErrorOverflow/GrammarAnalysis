@@ -106,6 +106,7 @@ int ConstDefine(char *str) {
     }
     if (isConstDefine)
         return (int) ((p - str) / sizeof(char));
+    cout << endl << "ERROR: illegal const define" << endl;
     return 0;
 }
 
@@ -662,8 +663,6 @@ int Sentence(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
-    if (*p != '}')
-        Exception(p);
     return 0;
 }
 
@@ -1252,6 +1251,5 @@ int Program(char *str) {
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
-    Exception(p);
     return 0;
 }
