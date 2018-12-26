@@ -19,5 +19,4 @@ void main(){
     k=4;
     ch='a';
     printf(a(x,b(y,z)));
-    printf("diuweqhfdiuwehdfnojkqiweidohnqjkwedhnqiuwdhqw");
 }

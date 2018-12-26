@@ -113,6 +113,7 @@ int String(char *str) {
                     SymInsert(word, 3, 0, 0, label);
                     return (int) ((p - str) / sizeof(char));
                 } else {
+                    cout << endl << "ERROR: string loss right quotation marks" << endl;
                     return 0;
                 }
             }

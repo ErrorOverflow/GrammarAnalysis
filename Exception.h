@@ -7,8 +7,6 @@
 
 extern char *excep;
 
-int Exception(char *str);
-
 void ExpInit();
 
 int JumpExp(char *str);
