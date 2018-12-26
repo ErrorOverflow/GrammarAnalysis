@@ -1094,7 +1094,7 @@ int ReadSentence(char *str) {
     char *p = str, word[256];
     int process_len = 0;
     int isRight = 0;
-    int z = 0, op = READ, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if (*p == 's' && *(p + 1) == 'c' && *(p + 2) == 'a' && *(p + 3) == 'n' && *(p + 4) == 'f') {
         p += 5;
         p += JumpSpace(p);
@@ -1114,6 +1114,7 @@ int ReadSentence(char *str) {
                 isRight = 1;
                 if (*p == ',') {
                     p++;
+                    p += JumpSpace(p);
                 } else {
                     break;
                 }

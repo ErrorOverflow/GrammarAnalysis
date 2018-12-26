@@ -339,9 +339,6 @@ void TextDataOutput(ofstream &file) {
                     }
                     file << "syscall\n";
                 }
-                file << "la $a0,newLine\n";
-                file << "li $v0,4\n";
-                file << "syscall\n\n";
                 break;
             case READ:
                 it_code = CodeFind(pc.z);
