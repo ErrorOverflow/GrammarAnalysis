@@ -194,14 +194,12 @@ int VarDefine(char *str) {
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = NoSignNum(p))) {
-                        for (int i = 0; i < process_len; i++) {
+                        for (int i = 0; i < process_len; i++)
                             word[i] = *(p + i);
-                        }
                         word[process_len] = '\0';
                         sscanf(word, "%d", &identifier_dim[identifier_num]);
-                        if (identifier_dim[identifier_num] <= 0) {
+                        if (identifier_dim[identifier_num] <= 0)
                             cout << "array illegal:" << identifier_dim[identifier_num];
-                        }
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ']') {
@@ -223,9 +221,8 @@ int VarDefine(char *str) {
                     } else {
                         for (int i = 0; i <= identifier_num; i++) {
                             char name[64];
-                            for (int j = 0; j < identifier_len[i]; j++) {
+                            for (int j = 0; j < identifier_len[i]; j++)
                                 name[j] = *(identifier[i] + j);
-                            }
                             name[identifier_len[i]] = '\0';
                             char *mid = p;
                             mid += JumpSpace(mid);
@@ -237,9 +234,8 @@ int VarDefine(char *str) {
                         }
                         return (int) ((p - str) / sizeof(char));
                     }
-                } else {
+                } else
                     return 0;
-                }
             }
         }
     }
@@ -265,9 +261,8 @@ int VarDeclare(char *str) {
         p += JumpSpace(p);
         cout << "<VarDeclare>";
         return (int) ((p - str) / sizeof(char));
-    } else {
+    } else
         return 0;
-    }
 }
 
 int ReturnFuncDefine(char *str) {
@@ -321,9 +316,8 @@ int NoReturnFuncDefine(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
-                for (int i = 0; i < process_len; i++) {
+                for (int i = 0; i < process_len; i++)
                     func_name[i] = *(p + i);
-                }
                 func_name[process_len] = '\0';
                 p += process_len;
                 p += JumpSpace(p);
@@ -416,9 +410,9 @@ int ParameterList(char *str) {
             }
         }
     }
-    if (isRight) {
+    if (isRight)
         return (int) ((p - str) / sizeof(char));
-    } else {
+    else {
         MidCode = MidCode_buf;
         pcode_num = pcode_buf;
         return 0;
@@ -518,9 +512,8 @@ int Term(char *str, int code) {
                 op = DIV;
             p += process_len;
             p += JumpSpace(p);
-        } else {
+        } else
             return (int) ((p - str) / sizeof(char));
-        }
         y = x;
         z = MidCode;
     }
@@ -539,9 +532,8 @@ int Factor(char *str, int code) {
         PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         auto iter = SymFind(word);
         array_code = iter->second.code;
@@ -573,9 +565,8 @@ int Factor(char *str, int code) {
             return (int) ((p - str) / sizeof(char));
         }
     } else if ((process_len = Integer(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         sscanf(word, "%d", &z);
         p += process_len;
@@ -614,23 +605,23 @@ int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
-    if ((process_len = ConditionSentence(p))) {
+    if ((process_len = ConditionSentence(p)))
         isRight = 2;
-    } else if ((process_len = LoopSentence(p))) {
+    else if ((process_len = LoopSentence(p)))
         isRight = 2;
-    } else if ((process_len = ReadSentence(p))) {
+    else if ((process_len = ReadSentence(p)))
         isRight = 1;
-    } else if ((process_len = WriteSentence(p))) {
+    else if ((process_len = WriteSentence(p)))
         isRight = 1;
-    } else if ((process_len = AssignSentence(p))) {
+    else if ((process_len = AssignSentence(p)))
         isRight = 1;
-    } else if ((process_len = ReturnFuncCall(p))) {
+    else if ((process_len = ReturnFuncCall(p)))
         isRight = 1;
-    } else if ((process_len = NoReturnFuncCall(p))) {
+    else if ((process_len = NoReturnFuncCall(p)))
         isRight = 1;
-    } else if ((process_len = ReturnSentence(p))) {
+    else if ((process_len = ReturnSentence(p)))
         isRight = 1;
-    } else if (*p == '{') {
+    else if (*p == '{') {
         p++;
         p += JumpSpace(p);
         if ((process_len = SentenceColumn(p))) {
@@ -668,9 +659,8 @@ int AssignSentence(char *str) {
     char *p = str, word[64];
     int process_len = 0, x = 0, z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num, array_code = 0, offset = 0;
     if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         auto iter = SymFind(word);
         array_code = iter->second.code;
@@ -878,9 +868,8 @@ int LoopSentence(char *str) {
                                             p++;
                                             p += JumpSpace(p);
                                             if ((process_len = Identifier(p))) {
-                                                for (int i = 0; i < process_len; i++) {
+                                                for (int i = 0; i < process_len; i++)
                                                     par[i] = *(p + i);
-                                                }
                                                 par[process_len] = '\0';
                                                 iter = SymFind(ini);
                                                 y = iter->second.code;
@@ -1099,9 +1088,8 @@ int ReadSentence(char *str) {
             p++;
             p += JumpSpace(p);
             while ((process_len = Identifier(p))) {
-                for (int i = 0; i < process_len; i++) {
+                for (int i = 0; i < process_len; i++)
                     word[i] = *(p + i);
-                }
                 word[process_len] = '\0';
                 auto iter = SymFind(word);
                 z = iter->second.code;
@@ -1109,11 +1097,10 @@ int ReadSentence(char *str) {
                 p += process_len;
                 p += JumpSpace(p);
                 isRight = 1;
-                if (*p == ',') {
+                if (*p == ',')
                     p++;
-                } else {
+                else
                     break;
-                }
             }
             if (isRight) {
                 if (*p == ')') {
@@ -1121,9 +1108,8 @@ int ReadSentence(char *str) {
                     p += JumpSpace(p);
                     cout << "<ReadSentence>";
                     return (int) ((p - str) / sizeof(char));
-                } else {
+                } else
                     return 0;
-                }
             }
         }
     }
@@ -1143,9 +1129,8 @@ int WriteSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = String(p))) {
-                for (int i = 1; i < process_len - 1; i++) {
+                for (int i = 1; i < process_len - 1; i++)
                     word[i - 1] = *(p + i);
-                }
                 word[process_len - 2] = '\0';
                 auto iter = SymFind(word);
                 z = iter->second.code;
