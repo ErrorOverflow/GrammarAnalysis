@@ -54,7 +54,7 @@ int ConstDefine(char *str) {
                     p += process_len;
                     p += JumpSpace(p);
                     if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
-                        cout << "Exception: Repeat name:" << iden << endl;
+                        cout << "WARNING: Repeat name:" << iden << endl;
                     SymInsert(iden, identifier_type, 0, 0, value);
                     if (*p == ',') {
                         p++;
@@ -76,9 +76,8 @@ int ConstDefine(char *str) {
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
-            for (i = 0; i < process_len; i++) {
+            for (i = 0; i < process_len; i++)
                 iden[i] = *(p + i);
-            }
             iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
@@ -90,7 +89,7 @@ int ConstDefine(char *str) {
                     p += process_len;
                     p += JumpSpace(p);
                     if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
-                        cout << "Exception: Repeat name:" << iden << endl;
+                        cout << "WARNING: Repeat name:" << iden << endl;
                     SymInsert(iden, identifier_type, 0, 0, value);
                     if (*p == ',') {
                         p++;
@@ -106,7 +105,7 @@ int ConstDefine(char *str) {
     }
     if (isConstDefine)
         return (int) ((p - str) / sizeof(char));
-    cout << endl << "ERROR: illegal const define" << endl;
+    cout << endl << "ERROR: illegal const define in line:" << *excep << endl;
     return 0;
 }
 
@@ -164,11 +163,10 @@ int DeclareHead(char *str) {
 }
 
 int TypeIdentifier(char *str) {
-    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ') {
+    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ')
         return 3;
-    } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ') {
+    else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ')
         return 4;
-    }
     return 0;
 }
 
