@@ -38,21 +38,21 @@ int JumpExp(char *str) {
 }
 
 void ValuePassExp(int line, int x, int y) {
-    cout << "illegal value pass in line " << line << ": From " << y << " to " << x << endl;
+    cout << "WARNING: illegal value pass in line " << line << ": From " << y << " to " << x << endl;
 }
 
 void ArrayOverflowExp(int line, int x, int y) {
-    cout << "array overflow in line " << line << ": #array:" << x << " loc:" << y << endl;
+    cout << "WARNING: array overflow in line " << line << ": #array:" << x << " loc:" << y << endl;
 }
 
 void ValueParaListError(int line, int x, int y) {
-    cout << "eror occurs in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
+    cout << "WARNING: ValueParaList's para miss or overflow in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
 }
 
 void ValueParaListWarn(int line, int x, int y) {
-    cout << "Type is not match in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
+    cout << "WARNING: Type is not match in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
 }
 
 void ValueCompareExp(int line, int x, int y) {
-    cout << "illegal value type compare in line " << line << ": From " << y << " to " << x << endl;
+    cout << "WARNING: illegal value type compare in line " << line << ": From " << y << " to " << x << endl;
 }
