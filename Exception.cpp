@@ -37,6 +37,10 @@ int JumpExp(char *str) {
     return (int) ((p - str) / sizeof(char));
 }
 
+void ConstructionLoss(char colon) {
+    cout << "ERROR: \"" << colon << "\"loss in line:" << line << endl;
+}
+
 void ValuePassExp(int line, int x, int y) {
     cout << "WARNING: illegal value pass in line " << line << ": From " << y << " to " << x << endl;
 }
@@ -46,11 +50,13 @@ void ArrayOverflowExp(int line, int x, int y) {
 }
 
 void ValueParaListError(int line, int x, int y) {
-    cout << "WARNING: ValueParaList's para miss or overflow in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
+    cout << "WARNING: ValueParaList's para miss or overflow in line " << line << ": #Func Call:" << x << " Para:" << y
+         << endl;
 }
 
 void ValueParaListWarn(int line, int x, int y) {
-    cout << "WARNING: Type is not match in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y << endl;
+    cout << "WARNING: Type is not match in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y
+         << endl;
 }
 
 void ValueCompareExp(int line, int x, int y) {

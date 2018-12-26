@@ -20,6 +20,7 @@ using namespace std;
 
 char func_name[64];
 int func_type;
+ofstream structure_file;
 
 int ConstDefine(char *str) {
     char *p = str;
@@ -125,13 +126,13 @@ int ConstDeclare(char *str) {
                 isRight = 1;
                 continue;
             } else {
-                isRight = 0;
-                break;
+                ConstructionLoss(';');
+                continue;
             }
         }
     }
     if (isRight) {
-        cout << "<ConstDeclare>";
+        structure_file << "<ConstDeclare>";
         return (int) ((p - str) / sizeof(char));
     }
     return 0;
@@ -264,7 +265,7 @@ int VarDeclare(char *str) {
     }
     if (isVarDeclare) {
         p += JumpSpace(p);
-        cout << "<VarDeclare>";
+        structure_file << "<VarDeclare>";
         return (int) ((p - str) / sizeof(char));
     } else {
         return 0;
@@ -646,7 +647,7 @@ int Sentence(char *str) {
     } else if (*p == ';') {
         p++;
         p += JumpSpace(p);
-        cout << "<EmptySentence>" << endl;
+        structure_file << "<EmptySentence>" << endl;
         return (int) ((p - str) / sizeof(char));
     }
     if (isRight == 1) {
@@ -687,7 +688,7 @@ int AssignSentence(char *str) {
                 p += process_len;
                 p += JumpSpace(p);
                 PCodeInsert(pcode_num++, array_code, 0, PLUS, z);
-                cout << "<AssignSentence>";
+                structure_file << "<AssignSentence>";
                 return (int) ((p - str) / sizeof(char));
             }
         } else if (*p == '[') {
@@ -708,7 +709,7 @@ int AssignSentence(char *str) {
                         if ((process_len = Expression(p, MidCode++))) {
                             p += process_len;
                             p += JumpSpace(p);
-                            cout << "<AssignSentence>";
+                            structure_file << "<AssignSentence>";
                             PCodeInsert(pcode_num++, x, 0, PLUS, z);
                             PCodeInsert(pcode_num++, x, array_code, SW, offset);
                             return (int) ((p - str) / sizeof(char));
@@ -753,12 +754,12 @@ int ConditionSentence(char *str) {
                                 p += process_len;
                                 p += JumpSpace(p);
                                 PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
-                                cout << "<IF>" << endl;
+                                structure_file << "<IF>" << endl;
                                 return (int) ((p - str) / sizeof(char));
                             }
                         } else {
                             PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
-                            cout << "<IF>" << endl;
+                            structure_file << "<IF>" << endl;
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -824,7 +825,7 @@ int LoopSentence(char *str) {
                         if (*p == ')') {
                             p++;
                             p += JumpSpace(p);
-                            cout << "<DoWhile>" << endl;
+                            structure_file << "<DoWhile>" << endl;
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
@@ -919,7 +920,7 @@ int LoopSentence(char *str) {
                                                                 PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                                                                 LabelCode++;
                                                                 PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
-                                                                cout << "<For>" << endl;
+                                                                structure_file << "<For>" << endl;
                                                                 return (int) ((p - str) / sizeof(char));
                                                             }
                                                         }
@@ -974,7 +975,7 @@ int ReturnFuncCall(char *str, int code) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    cout << "<ReturnFuncCall>";
+                    structure_file << "<ReturnFuncCall>";
                     auto iter = SymFind(word);
                     z = iter->second.code;
                     PCodeInsert(pcode_num++, code, 0, CALL, z);
@@ -1009,7 +1010,7 @@ int ReturnFuncCall(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    cout << "<ReturnFuncCall>";
+                    structure_file << "<ReturnFuncCall>";
                     auto iter = SymFind(word);
                     PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
                     PCodeInsert(pcode_num++, 0, 0, OVER, 0);
@@ -1041,7 +1042,7 @@ int NoReturnFuncCall(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    cout << "<NoReturnFuncCall>";
+                    structure_file << "<NoReturnFuncCall>";
                     auto iter = SymFind(word);
                     PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
                     PCodeInsert(pcode_num++, 0, 0, OVER, 0);
@@ -1123,7 +1124,7 @@ int ReadSentence(char *str) {
                 if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    cout << "<ReadSentence>";
+                    structure_file << "<ReadSentence>";
                     return (int) ((p - str) / sizeof(char));
                 } else {
                     return 0;
@@ -1167,14 +1168,14 @@ int WriteSentence(char *str) {
                             p++;
                             p += JumpSpace(p);
                             PCodeInsert(pcode_num++, 0, 0, op, z);
-                            cout << "<WriteSentence>";
+                            structure_file << "<WriteSentence>";
                             return (int) ((p - str) / sizeof(char));
                         }
                     }
                 } else if (*p == ')') {
                     p++;
                     p += JumpSpace(p);
-                    cout << "<WriteSentence>";
+                    structure_file << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
             } else if ((process_len = Expression(p, MidCode++))) {
@@ -1184,7 +1185,7 @@ int WriteSentence(char *str) {
                     p++;
                     p += JumpSpace(p);
                     PCodeInsert(pcode_num++, 0, 0, op, z);
-                    cout << "<WriteSentence>";
+                    structure_file << "<WriteSentence>";
                     return (int) ((p - str) / sizeof(char));
                 }
             }
@@ -1210,13 +1211,13 @@ int ReturnSentence(char *str) {
                 p += JumpSpace(p);
                 if (*p == ')') {
                     p++;
-                    cout << "<ReturnSen>";
+                    structure_file << "<ReturnSen>";
                     PCodeInsert(pcode_num++, x, y, op, z);
                     return (int) ((p - str) / sizeof(char));;
                 }
             }
         } else {
-            cout << "<ReturnSen>";
+            structure_file << "<ReturnSen>";
             PCodeInsert(pcode_num++, 0, 0, END, 0);
             return (int) ((p - str) / sizeof(char));
         }
@@ -1230,29 +1231,32 @@ int Program(char *str) {
     char *p = str;
     int process_len = 0;
     p += JumpSpace(p);
+    const char STRUCTURE[64] = "Structure.txt\0";
+    structure_file.open(STRUCTURE, ios::out);
     if ((process_len = ConstDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        cout << endl << endl;
+        structure_file << endl << endl;
     }
     if ((process_len = VarDeclare(p))) {
         p += process_len;
         p += JumpSpace(p);
-        cout << endl << endl;
+        structure_file << endl << endl;
     }
     TableNum++;
     while ((process_len = ReturnFuncDefine(p)) || (process_len = NoReturnFuncDefine(p))) {
-        cout << "<FuncDefine>" << endl << endl;
+        structure_file << "<FuncDefine>" << endl << endl;
         p += process_len;
         p += JumpSpace(p);
         TableNum++;
     }
     if ((process_len = MainFunc(p))) {
-        cout << "<MainFunc>" << endl << endl;
+        structure_file << "<MainFunc>" << endl << endl;
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
     Exception(p);
+    structure_file.close();
     return 0;
 }

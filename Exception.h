@@ -13,6 +13,8 @@ int JumpExp(char *str);
 
 int Exception(char *str);
 
+void ConstructionLoss(char colon);
+
 void ValuePassExp(int line, int x, int y);
 
 void ArrayOverflowExp(int line, int x, int y);
