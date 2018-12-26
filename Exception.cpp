@@ -12,6 +12,18 @@ using namespace std;
 
 char *excep;
 
+int Exception(char *str) {
+    int process_len = JumpExp(str);
+    char errormsg[255];
+    for (int i = 0; i < process_len; i++) {
+        errormsg[i] = *(str + i);
+    }
+    errormsg[process_len] = '\0';
+    cout << endl << "ERROR: illegal character found: " << errormsg << endl;
+    cout << "this error occurs in line " << line << endl;
+    return process_len;
+}
+
 void ExpInit() {
     Sym sym = {MidCode++, "error", 0, 0, 0, 0, ""};
     SymTable[0].insert(pair<string, Sym>("error", sym));

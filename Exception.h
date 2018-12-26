@@ -11,6 +11,8 @@ void ExpInit();
 
 int JumpExp(char *str);
 
+int Exception(char *str);
+
 void ValuePassExp(int line, int x, int y);
 
 void ArrayOverflowExp(int line, int x, int y);
