@@ -231,12 +231,11 @@ int VarDefine(char *str) {
                             name[identifier_len[i]] = '\0';
                             char *mid = p;
                             mid += JumpSpace(mid);
-                            if (*mid != ';') {
-                                ConstructionLoss(';');
+                            if (*mid == ';') {
+                                if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
+                                    cout << "Exception: Repeat name:" << name << endl;
+                                SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
                             }
-                            if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
-                                cout << "Exception: Repeat name:" << name << endl;
-                            SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
                         }
                         return (int) ((p - str) / sizeof(char));
                     }
