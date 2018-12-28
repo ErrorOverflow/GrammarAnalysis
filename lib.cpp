@@ -88,27 +88,24 @@ void SymPrint() {
 
 unordered_map<string, Sym>::iterator SymFind(string name) {
     auto iter = SymTable[TableNum].find(name);
-    if (iter != SymTable[TableNum].end()) {
+    if (iter != SymTable[TableNum].end())
         return iter;
-    }
     iter = SymTable[0].find(name);
-    if (iter != SymTable[0].end()) {
+    if (iter != SymTable[0].end())
         return iter;
-    }
     cout << name << " is not in SymTable" << endl;
-    iter = SymTable[0].find("error");
+    iter = SymTable[0].find("ErRor");
     return iter;
 }
 
 unordered_map<int, Sym>::iterator CodeFind(int code) {
     for (int i = 0; i <= TableNum; i++) {
         auto iter = CodeIndex[i].find(code);
-        if (iter != CodeIndex[i].end()) {
+        if (iter != CodeIndex[i].end())
             return iter;
-        }
     }
     cout << code << " is not LocalCode or GlobalCode" << endl;
-    auto iter = CodeIndex[0].find(SymTable[0].find("error")->second.code);
+    auto iter = CodeIndex[0].find(SymTable[0].find("ErRor")->second.code);
     return iter;
 }
 

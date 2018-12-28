@@ -157,9 +157,8 @@ void PCodePreProcess() {
     unordered_map<int, FuncRuntime>::iterator it;
     unordered_map<int, Sym>::iterator it_code;
     for (int i = 0; i < pcode_num; i++) {
-        if (pcode[i].op == NOP) {
+        if (pcode[i].op == NOP)
             continue;
-        }
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE && pcode[i].z < MID_CODE_BASE) {
             mid_code_stack = 0;
             if (func_code != 0) {

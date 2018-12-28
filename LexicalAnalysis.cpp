@@ -261,9 +261,8 @@ int VarDeclare(char *str) {
         p += JumpSpace(p);
         structure_file << "<VarDeclare>";
         return (int) ((p - str) / sizeof(char));
-    } else {
+    } else
         return 0;
-    }
 }
 
 int ReturnFuncDefine(char *str) {
@@ -1249,6 +1248,8 @@ int Program(char *str) {
     char *p = str;
     int process_len = 0;
     p += JumpSpace(p);
+    Sym sym = {LocalCode++, "ErRor", 1, 0, 1, 0, ""};
+    SymTable[0].insert(pair<string, Sym>("ErRor", sym));
     const char STRUCTURE[64] = "Structure.txt\0";
     structure_file.open(STRUCTURE, ios::out);
     if ((process_len = ConstDeclare(p))) {
