@@ -718,7 +718,6 @@ int AssignSentence(char *str) {
                         return (int) ((p - str) / sizeof(char));
                     }
                 }
-
             }
         }
     }

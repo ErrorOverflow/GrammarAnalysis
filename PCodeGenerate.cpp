@@ -34,6 +34,7 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].y = y;
     pcode[num].z = z;
     pcode[num].op = op;
+    pcode[num].address = line;
 }
 
 void PCodePrint() {

@@ -5,6 +5,7 @@
 
 #include "Exception.h"
 #include "lib.h"
+#include "PCodeGenerate.h"
 #include <iostream>
 #include <windows.h>
 
@@ -53,29 +54,32 @@ void IllegalArraySpace(int space) {
     cout << "ERROR: illegal array space define \"" << space << "\" in line" << *excep << endl;
 }
 
-void ValuePassExp(int line, int x, int y) {
+void ValuePassExp(int num, int x, int y) {
     warn_num++;
-    cout << "WARNING: illegal value pass in line " << line << ": From " << y << " to " << x << endl;
+    cout << "WARNING: illegal value pass in line " << pcode[num].address << ": From " << y << " to " << x << endl;
 }
 
-void ArrayOverflowExp(int line, int x, int y) {
+void ArrayOverflowExp(int num, int x, int y) {
     warn_num++;
-    cout << "WARNING: array overflow in line " << line << ": #array:" << x << " loc:" << y << endl;
+    cout << "WARNING: array overflow in line " << pcode[num].address << ": #array:" << x << " loc:" << y << endl;
 }
 
-void ValueParaListError(int line, int x, int y) {
+void ValueParaListError(int num, int x, int y) {
     warn_num++;
-    cout << "WARNING: ValueParaList's para miss or overflow in line " << line << ": #Func Call:" << x << " Para:" << y
+    cout << "WARNING: ValueParaList's para miss or overflow in line " << pcode[num].address << ": #Func Call:" << x
+         << " Para:" << y
          << endl;
 }
 
-void ValueParaListWarn(int line, int x, int y) {
+void ValueParaListWarn(int num, int x, int y) {
     warn_num++;
-    cout << "WARNING: Type is not match in ValueParaList in line " << line << ": #Func Call:" << x << " Para:" << y
+    cout << "WARNING: Type is not match in ValueParaList in line " << pcode[num].address << ": #Func Call:" << x
+         << " Para:" << y
          << endl;
 }
 
-void ValueCompareExp(int line, int x, int y) {
+void ValueCompareExp(int num, int x, int y) {
     warn_num++;
-    cout << "WARNING: illegal value type compare in line " << line << ": From " << y << " to " << x << endl;
+    cout << "WARNING: illegal value type compare in line " << pcode[num].address << ": From " << y << " to " << x
+         << endl;
 }

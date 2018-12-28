@@ -22,14 +22,14 @@ void RepeatDefine(char *name);
 
 void IllegalArraySpace(int space);
 
-void ValuePassExp(int line, int x, int y);
+void ValuePassExp(int num, int x, int y);
 
-void ArrayOverflowExp(int line, int x, int y);
+void ArrayOverflowExp(int num, int x, int y);
 
-void ValueParaListError(int line, int x, int y);
+void ValueParaListError(int num, int x, int y);
 
-void ValueParaListWarn(int line, int x, int y);
+void ValueParaListWarn(int num, int x, int y);
 
-void ValueCompareExp(int line, int x, int y);
+void ValueCompareExp(int num, int x, int y);
 
 #endif //COMPILER_EXCEPTION_H
