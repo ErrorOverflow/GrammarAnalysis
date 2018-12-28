@@ -31,15 +31,13 @@ int ConstDefine(char *str) {
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         identifier_type = 0;
         p += 3;
-        if (*p != ' ') {
+        if (*p != ' ')
             return 0;
-        }
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
-            for (i = 0; i < process_len; i++) {
+            for (i = 0; i < process_len; i++)
                 iden[i] = *(p + i);
-            }
             iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
@@ -47,9 +45,8 @@ int ConstDefine(char *str) {
                 p++;
                 p += JumpSpace(p);
                 if ((process_len = Integer(p))) {
-                    for (int i = 0; i < process_len; i++) {
+                    for (int i = 0; i < process_len; i++)
                         word[i] = *(p + i);
-                    }
                     word[process_len] = '\0';
                     sscanf(word, "%d", &value);
                     p += process_len;
@@ -77,9 +74,8 @@ int ConstDefine(char *str) {
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
-            for (i = 0; i < process_len; i++) {
+            for (i = 0; i < process_len; i++)
                 iden[i] = *(p + i);
-            }
             iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
@@ -164,11 +160,10 @@ int DeclareHead(char *str) {
 }
 
 int TypeIdentifier(char *str) {
-    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ') {
+    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ')
         return 3;
-    } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ') {
+    else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ')
         return 4;
-    }
     return 0;
 }
 
@@ -204,10 +199,12 @@ int VarDefine(char *str) {
                             IllegalArraySpace(identifier_dim[identifier_num]);
                         p += process_len;
                         p += JumpSpace(p);
-                        if (*p == ']') {
+                        if (*p == ']')
                             p++;
-                            isVarDefine = 1;
-                        }
+                        else
+                            ConstructionLoss(']');
+                        p += JumpSpace(p);
+                        isVarDefine = 1;
                     }
                 } else {
                     isVarDefine = 1;
@@ -237,9 +234,8 @@ int VarDefine(char *str) {
                         }
                         return (int) ((p - str) / sizeof(char));
                     }
-                } else {
+                } else
                     return 0;
-                }
             }
         }
     }
@@ -622,23 +618,23 @@ int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
-    if ((process_len = ConditionSentence(p))) {
+    if ((process_len = ConditionSentence(p)))
         isRight = 2;
-    } else if ((process_len = LoopSentence(p))) {
+    else if ((process_len = LoopSentence(p)))
         isRight = 2;
-    } else if ((process_len = ReadSentence(p))) {
+    else if ((process_len = ReadSentence(p)))
         isRight = 1;
-    } else if ((process_len = WriteSentence(p))) {
+    else if ((process_len = WriteSentence(p)))
         isRight = 1;
-    } else if ((process_len = AssignSentence(p))) {
+    else if ((process_len = AssignSentence(p)))
         isRight = 1;
-    } else if ((process_len = ReturnFuncCall(p))) {
+    else if ((process_len = ReturnFuncCall(p)))
         isRight = 1;
-    } else if ((process_len = NoReturnFuncCall(p))) {
+    else if ((process_len = NoReturnFuncCall(p)))
         isRight = 1;
-    } else if ((process_len = ReturnSentence(p))) {
+    else if ((process_len = ReturnSentence(p)))
         isRight = 1;
-    } else if (*p == '{') {
+    else if (*p == '{') {
         p++;
         p += JumpSpace(p);
         if ((process_len = SentenceColumn(p))) {
@@ -660,18 +656,17 @@ int Sentence(char *str) {
     if (isRight == 1) {
         p += process_len;
         p += JumpSpace(p);
-        if (*p == ';') {
+        if (*p == ';')
             p++;
-            p += JumpSpace(p);
-            return (int) ((p - str) / sizeof(char));
-        }
+        else
+            ConstructionLoss(';');
+        p += JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
     } else if (isRight == 2) {
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
-    if (*p != '}')
-        Exception(p);
     return 0;
 }
 
