@@ -1160,9 +1160,8 @@ int WriteSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = String(p))) {
-                for (int i = 1; i < process_len - 1; i++) {
+                for (int i = 1; i < process_len - 1; i++)
                     word[i - 1] = *(p + i);
-                }
                 word[process_len - 2] = '\0';
                 auto iter = SymFind(word);
                 z = iter->second.code;
