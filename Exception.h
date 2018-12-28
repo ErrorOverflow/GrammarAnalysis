@@ -7,6 +7,9 @@
 
 extern char *excep;
 
+extern int error_num;
+extern int warn_num;
+
 void ExpInit();
 
 int JumpExp(char *str);
@@ -14,6 +17,10 @@ int JumpExp(char *str);
 int Exception(char *str);
 
 void ConstructionLoss(char colon);
+
+void RepeatDefine(char *name);
+
+void IllegalArraySpace(int space);
 
 void ValuePassExp(int line, int x, int y);
 
