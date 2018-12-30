@@ -7,6 +7,9 @@
 
 extern char *excep;
 
+extern int error_num;
+extern int warn_num;
+
 void ExpInit();
 
 int JumpExp(char *str);
@@ -15,14 +18,18 @@ int Exception(char *str);
 
 void ConstructionLoss(char colon);
 
-void ValuePassExp(int line, int x, int y);
+void RepeatDefine(char *name);
 
-void ArrayOverflowExp(int line, int x, int y);
+void IllegalArraySpace(int space);
 
-void ValueParaListError(int line, int x, int y);
+void ValuePassExp(int num, int x, int y);
 
-void ValueParaListWarn(int line, int x, int y);
+void ArrayOverflowExp(int num, int x, int y);
 
-void ValueCompareExp(int line, int x, int y);
+void ValueParaListError(int num, int x, int y);
+
+void ValueParaListWarn(int num, int x, int y);
+
+void ValueCompareExp(int num, int x, int y);
 
 #endif //COMPILER_EXCEPTION_H

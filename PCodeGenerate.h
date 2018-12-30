@@ -48,6 +48,7 @@ struct PCode {
     int y;
     int op;
     int z;
+    int address;
 };
 
 struct RuntimeCodeInfo {

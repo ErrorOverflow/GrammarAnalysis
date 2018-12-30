@@ -389,9 +389,11 @@ void TextDataOutput(ofstream &file) {
             }
             case END:
                 iter = RuntimeStack.find(func_code);
-                file << "addi $sp,$sp,"
-                     << (iter->second.space + 1) * 4 << "\n";
-                file << "jr $ra\nnop\n\n";
+                if (iter->second.name != "main") {
+                    file << "addi $sp,$sp,"
+                         << (iter->second.space + 1) * 4 << "\n";
+                    file << "jr $ra\nnop\n\n";
+                }
                 break;
             case SW: {
                 int loc = 0;

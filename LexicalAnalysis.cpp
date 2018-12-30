@@ -31,15 +31,13 @@ int ConstDefine(char *str) {
     if (*p == 'i' && *(p + 1) == 'n' && *(p + 2) == 't') {
         identifier_type = 0;
         p += 3;
-        if (*p != ' ') {
+        if (*p != ' ')
             return 0;
-        }
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
-            for (i = 0; i < process_len; i++) {
+            for (i = 0; i < process_len; i++)
                 iden[i] = *(p + i);
-            }
             iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
@@ -47,15 +45,14 @@ int ConstDefine(char *str) {
                 p++;
                 p += JumpSpace(p);
                 if ((process_len = Integer(p))) {
-                    for (int i = 0; i < process_len; i++) {
+                    for (int i = 0; i < process_len; i++)
                         word[i] = *(p + i);
-                    }
                     word[process_len] = '\0';
                     sscanf(word, "%d", &value);
                     p += process_len;
                     p += JumpSpace(p);
                     if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
-                        cout << "Exception: Repeat name:" << iden << endl;
+                        RepeatDefine(iden);
                     SymInsert(iden, identifier_type, 0, 0, value);
                     if (*p == ',') {
                         p++;
@@ -77,9 +74,8 @@ int ConstDefine(char *str) {
         p++;
         p += JumpSpace(p);
         while ((process_len = Identifier(p))) {
-            for (i = 0; i < process_len; i++) {
+            for (i = 0; i < process_len; i++)
                 iden[i] = *(p + i);
-            }
             iden[process_len] = '\0';
             p += process_len;
             p += JumpSpace(p);
@@ -91,7 +87,7 @@ int ConstDefine(char *str) {
                     p += process_len;
                     p += JumpSpace(p);
                     if (SymTable[TableNum].find(iden) != SymTable[TableNum].end())
-                        cout << "Exception: Repeat name:" << iden << endl;
+                        RepeatDefine(iden);
                     SymInsert(iden, identifier_type, 0, 0, value);
                     if (*p == ',') {
                         p++;
@@ -164,11 +160,10 @@ int DeclareHead(char *str) {
 }
 
 int TypeIdentifier(char *str) {
-    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ') {
+    if (*str == 'i' && *(str + 1) == 'n' && *(str + 2) == 't' && *(str + 3) == ' ')
         return 3;
-    } else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ') {
+    else if (*str == 'c' && *(str + 1) == 'h' && *(str + 2) == 'a' && *(str + 3) == 'r' && *(str + 4) == ' ')
         return 4;
-    }
     return 0;
 }
 
@@ -196,20 +191,20 @@ int VarDefine(char *str) {
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = NoSignNum(p))) {
-                        for (int i = 0; i < process_len; i++) {
+                        for (int i = 0; i < process_len; i++)
                             word[i] = *(p + i);
-                        }
                         word[process_len] = '\0';
                         sscanf(word, "%d", &identifier_dim[identifier_num]);
-                        if (identifier_dim[identifier_num] <= 0) {
-                            cout << "array illegal:" << identifier_dim[identifier_num];
-                        }
+                        if (identifier_dim[identifier_num] <= 0)
+                            IllegalArraySpace(identifier_dim[identifier_num]);
                         p += process_len;
                         p += JumpSpace(p);
-                        if (*p == ']') {
+                        if (*p == ']')
                             p++;
-                            isVarDefine = 1;
-                        }
+                        else
+                            ConstructionLoss(']');
+                        p += JumpSpace(p);
+                        isVarDefine = 1;
                     }
                 } else {
                     isVarDefine = 1;
@@ -233,15 +228,14 @@ int VarDefine(char *str) {
                             mid += JumpSpace(mid);
                             if (*mid == ';') {
                                 if (SymTable[TableNum].find(name) != SymTable[TableNum].end())
-                                    cout << "Exception: Repeat name:" << name << endl;
+                                    RepeatDefine(name);
                                 SymInsert(name, identifier_type, identifier_dim[i], 1, 0);
                             }
                         }
                         return (int) ((p - str) / sizeof(char));
                     }
-                } else {
+                } else
                     return 0;
-                }
             }
         }
     }
@@ -267,9 +261,8 @@ int VarDeclare(char *str) {
         p += JumpSpace(p);
         structure_file << "<VarDeclare>";
         return (int) ((p - str) / sizeof(char));
-    } else {
+    } else
         return 0;
-    }
 }
 
 int ReturnFuncDefine(char *str) {
@@ -287,22 +280,24 @@ int ReturnFuncDefine(char *str) {
             if ((process_len = ParameterList(p)) || *p == ')') {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
+                    p++;
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                if (*p == '{') {
                     p++;
                     p += JumpSpace(p);
-                    if (*p == '{') {
-                        p++;
+                    if ((process_len = CompoundSentence(p))) {
+                        p += process_len;
                         p += JumpSpace(p);
-                        if ((process_len = CompoundSentence(p))) {
-                            p += process_len;
-                            p += JumpSpace(p);
-                            if (*p == '}') {
-                                p++;
-                                p += JumpSpace(p);
-                                PCodeInsert(pcode_num++, 0, 0, END, 0);
-                                return (int) ((p - str) / sizeof(char));
-                            }
-                        }
+                        if (*p == '}')
+                            p++;
+                        else
+                            ConstructionLoss('}');
+                        p += JumpSpace(p);
+                        PCodeInsert(pcode_num++, 0, 0, END, 0);
+                        return (int) ((p - str) / sizeof(char));
                     }
                 }
             }
@@ -337,22 +332,24 @@ int NoReturnFuncDefine(char *str) {
                     if ((process_len = ParameterList(p)) || *p == ')') {
                         p += process_len;
                         p += JumpSpace(p);
-                        if (*p == ')') {
+                        if (*p == ')')
+                            p++;
+                        else
+                            ConstructionLoss(')');
+                        p += JumpSpace(p);
+                        if (*p == '{') {
                             p++;
                             p += JumpSpace(p);
-                            if (*p == '{') {
-                                p++;
+                            if ((process_len = CompoundSentence(p))) {
+                                p += process_len;
                                 p += JumpSpace(p);
-                                if ((process_len = CompoundSentence(p))) {
-                                    p += process_len;
-                                    p += JumpSpace(p);
-                                    if (*p == '}') {
-                                        p++;
-                                        p += JumpSpace(p);
-                                        PCodeInsert(pcode_num++, 0, 0, END, 0);
-                                        return (int) ((p - str) / sizeof(char));
-                                    }
-                                }
+                                if (*p == '}')
+                                    p++;
+                                else
+                                    ConstructionLoss('}');
+                                p += JumpSpace(p);
+                                PCodeInsert(pcode_num++, 0, 0, END, 0);
+                                return (int) ((p - str) / sizeof(char));
                             }
                         }
                     }
@@ -441,23 +438,25 @@ int MainFunc(char *str) {
                 if (*p == '(') {
                     p++;
                     p += JumpSpace(p);
-                    if (*p == ')') {
+                    if (*p == ')')
+                        p++;
+                    else
+                        ConstructionLoss(')');
+                    p += JumpSpace(p);
+                    if (*p == '{') {
                         p++;
                         p += JumpSpace(p);
-                        if (*p == '{') {
-                            p++;
+                        SymInsert("main", 2);
+                        PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
+                        if ((process_len = CompoundSentence(p))) {
+                            p += process_len;
                             p += JumpSpace(p);
-                            SymInsert("main", 2);
-                            PCodeInsert(pcode_num++, 0, 0, LABEL, LocalCode - 1);
-                            if ((process_len = CompoundSentence(p))) {
-                                p += process_len;
-                                p += JumpSpace(p);
-                                if (*p == '}') {
-                                    p++;
-                                    p += JumpSpace(p);
-                                    return (int) ((p - str) / sizeof(char));
-                                }
-                            }
+                            if (*p == '}')
+                                p++;
+                            else
+                                ConstructionLoss('}');
+                            p += JumpSpace(p);
+                            return (int) ((p - str) / sizeof(char));
                         }
                     }
                 }
@@ -556,16 +555,17 @@ int Factor(char *str, int code) {
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ']') {
+                if (*p == ']')
                     p++;
-                    p += JumpSpace(p);
-                    z = MidCode;
-                    op = LDA;
-                    PCodeInsert(pcode_num++, MidCode++, array_code, op, offset);
-                    op = PLUS;
-                    PCodeInsert(pcode_num++, x, 0, op, z);
-                    return (int) ((p - str) / sizeof(char));
-                }
+                else
+                    ConstructionLoss(']');
+                p += JumpSpace(p);
+                z = MidCode;
+                op = LDA;
+                PCodeInsert(pcode_num++, MidCode++, array_code, op, offset);
+                op = PLUS;
+                PCodeInsert(pcode_num++, x, 0, op, z);
+                return (int) ((p - str) / sizeof(char));
             }
         } else {
             if (iter->second.kind == 0)
@@ -599,13 +599,14 @@ int Factor(char *str, int code) {
         if ((process_len = Expression(p, MidCode++))) {
             p += process_len;
             p += JumpSpace(p);
-            if (*p == ')') {
+            if (*p == ')')
                 p++;
-                p += JumpSpace(p);
-                PCodeInsert(pcode_num++, MidCode++, 0, ADI, 0);
-                PCodeInsert(pcode_num++, code, MidCode - 1, PLUS, z);
-                return (int) ((p - str) / sizeof(char));
-            }
+            else
+                ConstructionLoss(')');
+            p += JumpSpace(p);
+            PCodeInsert(pcode_num++, MidCode++, 0, ADI, 0);
+            PCodeInsert(pcode_num++, code, MidCode - 1, PLUS, z);
+            return (int) ((p - str) / sizeof(char));
         }
     }
     MidCode = MidCode_buf;
@@ -616,33 +617,34 @@ int Sentence(char *str) {
     char *p = str;
     int process_len = 0;
     int isRight = 0;
-    if ((process_len = ConditionSentence(p))) {
+    if ((process_len = ConditionSentence(p)))
         isRight = 2;
-    } else if ((process_len = LoopSentence(p))) {
+    else if ((process_len = LoopSentence(p)))
         isRight = 2;
-    } else if ((process_len = ReadSentence(p))) {
+    else if ((process_len = ReadSentence(p)))
         isRight = 1;
-    } else if ((process_len = WriteSentence(p))) {
+    else if ((process_len = WriteSentence(p)))
         isRight = 1;
-    } else if ((process_len = AssignSentence(p))) {
+    else if ((process_len = AssignSentence(p)))
         isRight = 1;
-    } else if ((process_len = ReturnFuncCall(p))) {
+    else if ((process_len = ReturnFuncCall(p)))
         isRight = 1;
-    } else if ((process_len = NoReturnFuncCall(p))) {
+    else if ((process_len = NoReturnFuncCall(p)))
         isRight = 1;
-    } else if ((process_len = ReturnSentence(p))) {
+    else if ((process_len = ReturnSentence(p)))
         isRight = 1;
-    } else if (*p == '{') {
+    else if (*p == '{') {
         p++;
         p += JumpSpace(p);
         if ((process_len = SentenceColumn(p))) {
             p += process_len;
             p += JumpSpace(p);
-            if (*p == '}') {
+            if (*p == '}')
                 p++;
-                process_len = 0;
-                isRight = 2;
-            }
+            else
+                ConstructionLoss('}');
+            process_len = 0;
+            isRight = 2;
         }
     } else if (*p == ';') {
         p++;
@@ -653,18 +655,17 @@ int Sentence(char *str) {
     if (isRight == 1) {
         p += process_len;
         p += JumpSpace(p);
-        if (*p == ';') {
+        if (*p == ';')
             p++;
-            p += JumpSpace(p);
-            return (int) ((p - str) / sizeof(char));
-        }
+        else
+            ConstructionLoss(';');
+        p += JumpSpace(p);
+        return (int) ((p - str) / sizeof(char));
     } else if (isRight == 2) {
         p += process_len;
         p += JumpSpace(p);
         return (int) ((p - str) / sizeof(char));
     }
-    if (*p != '}')
-        Exception(p);
     return 0;
 }
 
@@ -698,22 +699,23 @@ int AssignSentence(char *str) {
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ']') {
+                if (*p == ']')
+                    p++;
+                else
+                    ConstructionLoss(']');
+                p += JumpSpace(p);
+                x = MidCode++;
+                if (*p == '=') {
                     p++;
                     p += JumpSpace(p);
-                    x = MidCode++;
-                    if (*p == '=') {
-                        p++;
+                    z = MidCode;
+                    if ((process_len = Expression(p, MidCode++))) {
+                        p += process_len;
                         p += JumpSpace(p);
-                        z = MidCode;
-                        if ((process_len = Expression(p, MidCode++))) {
-                            p += process_len;
-                            p += JumpSpace(p);
-                            structure_file << "<AssignSentence>";
-                            PCodeInsert(pcode_num++, x, 0, PLUS, z);
-                            PCodeInsert(pcode_num++, x, array_code, SW, offset);
-                            return (int) ((p - str) / sizeof(char));
-                        }
+                        structure_file << "<AssignSentence>";
+                        PCodeInsert(pcode_num++, x, 0, PLUS, z);
+                        PCodeInsert(pcode_num++, x, array_code, SW, offset);
+                        return (int) ((p - str) / sizeof(char));
                     }
                 }
             }
@@ -737,31 +739,32 @@ int ConditionSentence(char *str) {
             if ((process_len = Condition(p, label, BNE))) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                PCodeInsert(pcode_num++, 0, 0, GOTO, label_else);
+                PCodeInsert(pcode_num++, 0, 0, LABEL, label);
+                if ((process_len = Sentence(p))) {
+                    p += process_len;
                     p += JumpSpace(p);
-                    PCodeInsert(pcode_num++, 0, 0, GOTO, label_else);
-                    PCodeInsert(pcode_num++, 0, 0, LABEL, label);
-                    if ((process_len = Sentence(p))) {
-                        p += process_len;
+                    if (*p == 'e' && *(p + 1) == 'l' && *(p + 2) == 's' && *(p + 3) == 'e') {
+                        p += 4;
                         p += JumpSpace(p);
-                        if (*p == 'e' && *(p + 1) == 'l' && *(p + 2) == 's' && *(p + 3) == 'e') {
-                            p += 4;
+                        PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
+                        PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
+                        if ((process_len = Sentence(p))) {
+                            p += process_len;
                             p += JumpSpace(p);
-                            PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
-                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
-                            if ((process_len = Sentence(p))) {
-                                p += process_len;
-                                p += JumpSpace(p);
-                                PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
-                                structure_file << "<IF>" << endl;
-                                return (int) ((p - str) / sizeof(char));
-                            }
-                        } else {
-                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
+                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
                             structure_file << "<IF>" << endl;
                             return (int) ((p - str) / sizeof(char));
                         }
+                    } else {
+                        PCodeInsert(pcode_num++, 0, 0, LABEL, label_else);
+                        structure_file << "<IF>" << endl;
+                        return (int) ((p - str) / sizeof(char));
                     }
                 }
             }
@@ -822,12 +825,14 @@ int LoopSentence(char *str) {
                     if ((process_len = Condition(p, label, BEQ))) {
                         p += process_len;
                         p += JumpSpace(p);
-                        if (*p == ')') {
+                        if (*p == ')')
                             p++;
-                            p += JumpSpace(p);
-                            structure_file << "<DoWhile>" << endl;
-                            return (int) ((p - str) / sizeof(char));
-                        }
+                        else
+                            ConstructionLoss(')');
+                        p += JumpSpace(p);
+                        structure_file << "<DoWhile>" << endl;
+                        return (int) ((p - str) / sizeof(char));
+
                     }
                 }
             }
@@ -860,13 +865,29 @@ int LoopSentence(char *str) {
                         op = PLUS;
                         PCodeInsert(pcode_num++, x, y, op, z);
                         PCodeInsert(pcode_num++, 0, 0, LABEL, label);
-                        if (*p == ';') {
+                        if (*p == ';')
                             p++;
+                        else
+                            ConstructionLoss(';');
+                        p += JumpSpace(p);
+                        if ((process_len = Condition(p, label_for, BEQ))) {
+                            p += process_len;
                             p += JumpSpace(p);
-                            if ((process_len = Condition(p, label_for, BEQ))) {
+                            if (*p == ';')
+                                p++;
+                            else
+                                ConstructionLoss(';');
+                            p += JumpSpace(p);
+                            if ((process_len = Identifier(p))) {
+                                for (int i = 0; i < process_len; i++) {
+                                    par[i] = *(p + i);
+                                }
+                                par[process_len] = '\0';
+                                iter = SymFind(ini);
+                                x = iter->second.code;
                                 p += process_len;
                                 p += JumpSpace(p);
-                                if (*p == ';') {
+                                if (*p == '=') {
                                     p++;
                                     p += JumpSpace(p);
                                     if ((process_len = Identifier(p))) {
@@ -875,56 +896,43 @@ int LoopSentence(char *str) {
                                         }
                                         par[process_len] = '\0';
                                         iter = SymFind(ini);
-                                        x = iter->second.code;
+                                        y = iter->second.code;
                                         p += process_len;
                                         p += JumpSpace(p);
-                                        if (*p == '=') {
+                                        if (*p == '+' || *p == '-') {
+                                            if (*p == '+')
+                                                op = PLUS;
+                                            else
+                                                op = SUB;
                                             p++;
                                             p += JumpSpace(p);
-                                            if ((process_len = Identifier(p))) {
+                                            if ((process_len = Step(p))) {
                                                 for (int i = 0; i < process_len; i++) {
-                                                    par[i] = *(p + i);
+                                                    step[i] = *(p + i);
                                                 }
-                                                par[process_len] = '\0';
-                                                iter = SymFind(ini);
-                                                y = iter->second.code;
+                                                step[process_len] = '\0';
+                                                sscanf(step, "%d", &z);
+                                                if (op == SUB)
+                                                    z = -z;
                                                 p += process_len;
                                                 p += JumpSpace(p);
-                                                if (*p == '+' || *p == '-') {
-                                                    if (*p == '+')
-                                                        op = PLUS;
-                                                    else
-                                                        op = SUB;
+                                                if (*p == ')')
                                                     p++;
+                                                else
+                                                    ConstructionLoss(')');
+                                                p += JumpSpace(p);
+                                                PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
+                                                PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
+                                                if ((process_len = Sentence(p))) {
+                                                    p += process_len;
                                                     p += JumpSpace(p);
-                                                    if ((process_len = Step(p))) {
-                                                        for (int i = 0; i < process_len; i++) {
-                                                            step[i] = *(p + i);
-                                                        }
-                                                        step[process_len] = '\0';
-                                                        sscanf(step, "%d", &z);
-                                                        if (op == SUB)
-                                                            z = -z;
-                                                        p += process_len;
-                                                        p += JumpSpace(p);
-                                                        if (*p == ')') {
-                                                            p++;
-                                                            p += JumpSpace(p);
-                                                            PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
-                                                            PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
-                                                            if ((process_len = Sentence(p))) {
-                                                                p += process_len;
-                                                                p += JumpSpace(p);
-                                                                op = ADI;
-                                                                PCodeInsert(pcode_num++, x, y, op, z);
-                                                                PCodeInsert(pcode_num++, 0, 0, GOTO, label);
-                                                                LabelCode++;
-                                                                PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
-                                                                structure_file << "<For>" << endl;
-                                                                return (int) ((p - str) / sizeof(char));
-                                                            }
-                                                        }
-                                                    }
+                                                    op = ADI;
+                                                    PCodeInsert(pcode_num++, x, y, op, z);
+                                                    PCodeInsert(pcode_num++, 0, 0, GOTO, label);
+                                                    LabelCode++;
+                                                    PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
+                                                    structure_file << "<For>" << endl;
+                                                    return (int) ((p - str) / sizeof(char));
                                                 }
                                             }
                                         }
@@ -972,16 +980,17 @@ int ReturnFuncCall(char *str, int code) {
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
-                    p += JumpSpace(p);
-                    structure_file << "<ReturnFuncCall>";
-                    auto iter = SymFind(word);
-                    z = iter->second.code;
-                    PCodeInsert(pcode_num++, code, 0, CALL, z);
-                    PCodeInsert(pcode_num++, 0, 0, OVER, 0);
-                    return (int) ((p - str) / sizeof(char));
-                }
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                structure_file << "<ReturnFuncCall>";
+                auto iter = SymFind(word);
+                z = iter->second.code;
+                PCodeInsert(pcode_num++, code, 0, CALL, z);
+                PCodeInsert(pcode_num++, 0, 0, OVER, 0);
+                return (int) ((p - str) / sizeof(char));
             }
         }
     }
@@ -1007,15 +1016,17 @@ int ReturnFuncCall(char *str) {
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
-                    p += JumpSpace(p);
-                    structure_file << "<ReturnFuncCall>";
-                    auto iter = SymFind(word);
-                    PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
-                    PCodeInsert(pcode_num++, 0, 0, OVER, 0);
-                    return (int) ((p - str) / sizeof(char));
-                }
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                structure_file << "<ReturnFuncCall>";
+                auto iter = SymFind(word);
+                PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
+                PCodeInsert(pcode_num++, 0, 0, OVER, 0);
+                return (int) ((p - str) / sizeof(char));
+
             }
         }
     }
@@ -1039,15 +1050,16 @@ int NoReturnFuncCall(char *str) {
             if ((process_len = ValueParameterList(p)) || (*p == ')')) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
-                    p += JumpSpace(p);
-                    structure_file << "<NoReturnFuncCall>";
-                    auto iter = SymFind(word);
-                    PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
-                    PCodeInsert(pcode_num++, 0, 0, OVER, 0);
-                    return (int) ((p - str) / sizeof(char));
-                }
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                structure_file << "<NoReturnFuncCall>";
+                auto iter = SymFind(word);
+                PCodeInsert(pcode_num++, MidCode++, 0, CALL, iter->second.code);
+                PCodeInsert(pcode_num++, 0, 0, OVER, 0);
+                return (int) ((p - str) / sizeof(char));
             }
         }
     }
@@ -1121,14 +1133,13 @@ int ReadSentence(char *str) {
                 }
             }
             if (isRight) {
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
-                    p += JumpSpace(p);
-                    structure_file << "<ReadSentence>";
-                    return (int) ((p - str) / sizeof(char));
-                } else {
-                    return 0;
-                }
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                structure_file << "<ReadSentence>";
+                return (int) ((p - str) / sizeof(char));
             }
         }
     }
@@ -1148,9 +1159,8 @@ int WriteSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = String(p))) {
-                for (int i = 1; i < process_len - 1; i++) {
+                for (int i = 1; i < process_len - 1; i++)
                     word[i - 1] = *(p + i);
-                }
                 word[process_len - 2] = '\0';
                 auto iter = SymFind(word);
                 z = iter->second.code;
@@ -1164,30 +1174,34 @@ int WriteSentence(char *str) {
                     if ((process_len = Expression(p, MidCode++))) {
                         p += process_len;
                         p += JumpSpace(p);
-                        if (*p == ')') {
+                        if (*p == ')')
                             p++;
-                            p += JumpSpace(p);
-                            PCodeInsert(pcode_num++, 0, 0, op, z);
-                            structure_file << "<WriteSentence>";
-                            return (int) ((p - str) / sizeof(char));
-                        }
+                        else
+                            ConstructionLoss(')');
+                        p += JumpSpace(p);
+                        PCodeInsert(pcode_num++, 0, 0, op, z);
+                        structure_file << "<WriteSentence>";
+                        return (int) ((p - str) / sizeof(char));
                     }
-                } else if (*p == ')') {
-                    p++;
-                    p += JumpSpace(p);
-                    structure_file << "<WriteSentence>";
-                    return (int) ((p - str) / sizeof(char));
                 }
+                if (*p == ')')
+                    p++;
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                structure_file << "<WriteSentence>";
+                return (int) ((p - str) / sizeof(char));
             } else if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
-                    p += JumpSpace(p);
-                    PCodeInsert(pcode_num++, 0, 0, op, z);
-                    structure_file << "<WriteSentence>";
-                    return (int) ((p - str) / sizeof(char));
-                }
+                else
+                    ConstructionLoss(')');
+                p += JumpSpace(p);
+                PCodeInsert(pcode_num++, 0, 0, op, z);
+                structure_file << "<WriteSentence>";
+                return (int) ((p - str) / sizeof(char));
             }
         }
     }
@@ -1209,12 +1223,13 @@ int ReturnSentence(char *str) {
             if ((process_len = Expression(p, MidCode++))) {
                 p += process_len;
                 p += JumpSpace(p);
-                if (*p == ')') {
+                if (*p == ')')
                     p++;
-                    structure_file << "<ReturnSen>";
-                    PCodeInsert(pcode_num++, x, y, op, z);
-                    return (int) ((p - str) / sizeof(char));;
-                }
+                else
+                    ConstructionLoss(')');
+                structure_file << "<ReturnSen>";
+                PCodeInsert(pcode_num++, x, y, op, z);
+                return (int) ((p - str) / sizeof(char));;
             }
         } else {
             structure_file << "<ReturnSen>";
@@ -1231,6 +1246,8 @@ int Program(char *str) {
     char *p = str;
     int process_len = 0;
     p += JumpSpace(p);
+    Sym sym = {LocalCode++, "ErRor", 1, 0, 1, 0, ""};
+    SymTable[0].insert(pair<string, Sym>("ErRor", sym));
     const char STRUCTURE[64] = "Structure.txt\0";
     structure_file.open(STRUCTURE, ios::out);
     if ((process_len = ConstDeclare(p))) {
