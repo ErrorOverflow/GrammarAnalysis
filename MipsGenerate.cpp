@@ -215,7 +215,7 @@ void TextDataOutput(ofstream &file) {
                 break;
             }
             case LCH:
-            case ADI:{
+            case ADI: {
                 int reg_x = 8;
                 if (RegPool.find(pc.x) != RegPool.end())
                     reg_x = RegPool.find(pc.x)->second;
@@ -243,119 +243,145 @@ void TextDataOutput(ofstream &file) {
                 }
                 break;
             }
-            case BEQ:
+            case BEQ: {
+                int reg_y = 9, reg_z = 10;
                 Num2Char(pc.x, word);
-                if (pc.y == 0 && pc.z == 0) {
-                    file << "j " << word << "\n";
-                } else if (pc.y == 0) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "beq $0,$11," << word << "\n";
-                } else if (pc.z == 0) {
-                    Mem2Reg(10, pc.y, file);
-                    file << "beq $10,$0," << word << "\n";
+                if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
+                    if (code_info.find(pc.y)->second.value == code_info.find(pc.z)->second.value)
+                        file << "j " << word << "\n";
+                } else if (code_info.find(pc.y)->second.isValue) {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "addi $9,$0," << code_info.find(pc.y)->second.value << "\n";
+                    file << "beq $9,$" << reg_z << "," << word << "\n";
+                } else if (code_info.find(pc.z)->second.isValue) {
+                    reg_y = Mem2Reg(9, pc.z, file);
+                    file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
+                    file << "beq $10,$" << reg_y << "," << word << "\n";
                 } else {
-                    Mem2Reg(11, pc.z, file);
-                    Mem2Reg(10, pc.y, file);
-                    file << "beq $10,$11," << word << "\n";
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "beq $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
-            case BNE:
+            }
+            case BNE: {
+                int reg_y = 9, reg_z = 10;
                 Num2Char(pc.x, word);
-                if (pc.y == 0 && pc.z == 0) {
-                } else if (pc.y == 0) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "bne $0,$11," << word << "\n";
-                } else if (pc.z == 0) {
-                    Mem2Reg(10, pc.y, file);
-                    file << "bne $10,$0," << word << "\n";
+                if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
+                    if (code_info.find(pc.y)->second.value != code_info.find(pc.z)->second.value)
+                        file << "j " << word << "\n";
+                } else if (code_info.find(pc.y)->second.isValue) {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "addi $9,$0," << code_info.find(pc.y)->second.value << "\n";
+                    file << "bne $9,$" << reg_z << "," << word << "\n";
+                } else if (code_info.find(pc.z)->second.isValue) {
+                    reg_y = Mem2Reg(9, pc.z, file);
+                    file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
+                    file << "bne $10,$" << reg_y << "," << word << "\n";
                 } else {
-                    Mem2Reg(11, pc.z, file);
-                    Mem2Reg(10, pc.y, file);
-                    file << "bne $10,$11," << word << "\n";
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bne $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
-            case BLEZ:
+            }
+            case BLEZ: {
+                int reg_y = 9, reg_z = 10;
                 Num2Char(pc.x, word);
-                if (pc.y == 0 && pc.z == 0) {
-                    file << "j " << word << "\n";
-                } else if (pc.y == 0) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "bgez $11," << word << "\n";
-                } else if (pc.z == 0) {
-                    Mem2Reg(10, pc.y, file);
-                    file << "blez $10," << word << "\n";
+                if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
+                    if (code_info.find(pc.y)->second.value <= code_info.find(pc.z)->second.value)
+                        file << "j " << word << "\n";
+                } else if (code_info.find(pc.y)->second.isValue) {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "bgeu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                } else if (code_info.find(pc.z)->second.isValue) {
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bleu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
-                    Mem2Reg(11, pc.z, file);
-                    Mem2Reg(10, pc.y, file);
-                    file << "sub $9,$10,$11\n";
-                    file << "blez $9," << word << "\n";
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "ble $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
-            case BGTZ:
+            }
+            case BGTZ: {
+                int reg_y = 9, reg_z = 10;
                 Num2Char(pc.x, word);
-                if (pc.y == 0 && pc.z == 0) {
-                } else if (pc.y == 0) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "bltz $11," << word << "\n";
-                } else if (pc.z == 0) {
-                    Mem2Reg(10, pc.y, file);
-                    file << "bgtz $10," << word << "\n";
+                if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
+                    if (code_info.find(pc.y)->second.value > code_info.find(pc.z)->second.value)
+                        file << "j " << word << "\n";
+                } else if (code_info.find(pc.y)->second.isValue) {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "bltu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                } else if (code_info.find(pc.z)->second.isValue) {
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bgtu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
-                    Mem2Reg(11, pc.z, file);
-                    Mem2Reg(10, pc.y, file);
-                    file << "sub $9,$10,$11\n";
-                    file << "bgtz $9," << word << "\n";
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bgt $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
-            case BLTZ:
+            }
+            case BLTZ: {
+                int reg_y = 9, reg_z = 10;
                 Num2Char(pc.x, word);
-                if (pc.y == 0 && pc.z == 0) {
-                } else if (pc.y == 0) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "bgtz $11," << word << "\n";
-                } else if (pc.z == 0) {
-                    Mem2Reg(10, pc.y, file);
-                    file << "bltz $10," << word << "\n";
+                if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
+                    if (code_info.find(pc.y)->second.value < code_info.find(pc.z)->second.value)
+                        file << "j " << word << "\n";
+                } else if (code_info.find(pc.y)->second.isValue) {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "bgtu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                } else if (code_info.find(pc.z)->second.isValue) {
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bltu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
-                    Mem2Reg(11, pc.z, file);
-                    Mem2Reg(10, pc.y, file);
-                    file << "sub $9,$10,$11\n";
-                    file << "bltz $9," << word << "\n";
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "blt $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
-            case BGEZ:
+            }
+            case BGEZ: {
+                int reg_y = 9, reg_z = 10;
                 Num2Char(pc.x, word);
-                if (pc.y == 0 && pc.z == 0) {
-                    file << "j " << word << "\n";
-                } else if (pc.y == 0) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "blez $11," << word << "\n";
-                } else if (pc.z == 0) {
-                    Mem2Reg(10, pc.y, file);
-                    file << "bgez $10," << word << "\n";
+                if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
+                    if (code_info.find(pc.y)->second.value >= code_info.find(pc.z)->second.value)
+                        file << "j " << word << "\n";
+                } else if (code_info.find(pc.y)->second.isValue) {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "bleu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                } else if (code_info.find(pc.z)->second.isValue) {
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bgeu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
-                    Mem2Reg(11, pc.z, file);
-                    Mem2Reg(10, pc.y, file);
-                    file << "sub $9,$10,$11\n";
-                    file << "bgez $9," << word << "\n";
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "bge $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
                 file << "\n";
                 break;
-            case WRITE:
+            }
+            case WRITE: {
+                int reg_z = 10;
                 if (pc.z >= MID_CODE_BASE) {
-                    Mem2Reg(11, pc.z, file);
-                    file << "move $a0,$11\n";
+                    if (code_info.find(pc.z)->second.isValue)
+                        file << "addi $a0,$0," << code_info.find(pc.z)->second.value << "\n";
+                    else {
+                        reg_z = Mem2Reg(10, pc.z, file);
+                        file << "move $a0,$" << reg_z << "\n";
+                    }
                     if (code_info.find(pc.z)->second.type)
                         file << "li $v0,11\n";
                     else
@@ -366,19 +392,19 @@ void TextDataOutput(ofstream &file) {
                     if (it_code->second.type == 3) {
                         file << "la $a0," << it_code->second.label << "\n";
                         file << "li $v0,4\n";
-                    } else if (it_code->second.type == 0) {
-                        Mem2Reg(11, pc.z, file);
-                        file << "move $a0,$11\n";
-                        file << "li $v0,1\n";
-                    } else if (it_code->second.type == 1) {
-                        Mem2Reg(11, pc.z, file);
-                        file << "move $a0,$11\n";
-                        file << "li $v0,11\n";
+                    } else {
+                        reg_z = Mem2Reg(10, pc.z, file);
+                        file << "move $a0,$" << reg_z << "\n";
+                        if (it_code->second.type == 0)
+                            file << "li $v0,1\n";
+                        else
+                            file << "li $v0,11\n";
                     }
                     file << "syscall\n";
                 }
                 break;
-            case READ:
+            }
+            case READ:{
                 it_code = CodeFind(pc.z);
                 if (it_code->second.type == 0) {
                     file << "li $v0,5\n";
@@ -393,6 +419,7 @@ void TextDataOutput(ofstream &file) {
                     file << "syscall\n";
                 }
                 break;
+            }
             case LDA: {
                 int loc = 0;
                 if (pc.y >= LOCAL_CODE_BASE) {
