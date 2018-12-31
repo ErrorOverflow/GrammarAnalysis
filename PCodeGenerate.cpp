@@ -29,6 +29,8 @@ void AddressAssign(int code, int *space, int *mid_code_stack);
 
 void CodeInfoInit(int code);
 
+void GlobalOptimize();
+
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
     pcode[num].y = y;
@@ -42,6 +44,7 @@ void PCodePrint() {
     code_info.insert(pair<int, RuntimeCodeInfo>{0, info});
     PCodeOptimize();
     PCodePreProcess();
+    GlobalOptimize();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -114,19 +117,24 @@ void PCodeOptimize() {
             code_info.find(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
         }
-        if ((pcode[i].y == 0 || pcode[i].y >= GLOBAL_CODE_BASE) &&
-            (pcode[i].z == 0 || pcode[i].z >= GLOBAL_CODE_BASE) && code_info.find(pcode[i].y)->second.isValue &&
+        if (pcode[i].x >= MID_CODE_BASE && code_info.find(pcode[i].y)->second.isValue &&
             code_info.find(pcode[i].z)->second.isValue) {
+            int y_value = code_info.find(pcode[i].y)->second.value;
+            int z_value = code_info.find(pcode[i].z)->second.value;
             if (pcode[i].op == PLUS)
-                mid = code_info.find(pcode[i].y)->second.value + code_info.find(pcode[i].z)->second.value;
+                mid = y_value + z_value;
             else if (pcode[i].op == SUB)
-                mid = code_info.find(pcode[i].y)->second.value - code_info.find(pcode[i].z)->second.value;
+                mid = y_value - z_value;
             else if (pcode[i].op == MUL)
-                mid = code_info.find(pcode[i].y)->second.value * code_info.find(pcode[i].z)->second.value;
-            else if (pcode[i].op == DIV)
-                mid = code_info.find(pcode[i].y)->second.value / code_info.find(pcode[i].z)->second.value;
-            else if (pcode[i].op == ADI)
-                mid = code_info.find(pcode[i].y)->second.value + code_info.find(pcode[i].z)->second.value;
+                mid = y_value * z_value;
+            else if (pcode[i].op == DIV) {
+                if (z_value == 0) {
+                    NaN(i);
+                    return;
+                }
+                mid = y_value / z_value;
+            } else if (pcode[i].op == ADI)
+                mid = y_value + z_value;
             else
                 continue;
             code_info.find(pcode[i].x)->second.value = mid;
@@ -229,6 +237,17 @@ void PCodePreProcess() {
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};
     RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
+}
+
+void GlobalOptimize() {
+    for (int i = 0; i < pcode_num; i++) {
+        if ((pcode[i].op == PLUS || pcode[i].op == SUB || pcode[i].op == MUL || pcode[i].op == DIV ||
+             pcode[i].op == ADI || pcode[i].op == LCH) && pcode[i].x >= MID_CODE_BASE &&
+            code_info.find(pcode[i].y)->second.isValue &&
+            code_info.find(pcode[i].z)->second.isValue) {
+            pcode[i].op = NOP;
+        }
+    }
 }
 
 void OpExchange(int op, ofstream &file) {

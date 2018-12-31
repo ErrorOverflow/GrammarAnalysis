@@ -83,3 +83,8 @@ void ValueCompareExp(int num, int x, int y) {
     cout << "WARNING: illegal value type compare in line " << pcode[num].address << ": From " << y << " to " << x
          << endl;
 }
+
+void NaN(int num) {
+    warn_num++;
+    cout << "WARNING: 0 is Divisor in line " << pcode[num].address << endl;
+}

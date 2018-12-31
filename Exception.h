@@ -32,4 +32,6 @@ void ValueParaListWarn(int num, int x, int y);
 
 void ValueCompareExp(int num, int x, int y);
 
+void NaN(int num);
+
 #endif //COMPILER_EXCEPTION_H

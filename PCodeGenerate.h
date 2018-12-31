@@ -36,12 +36,13 @@ using namespace std;
 #define MUL 108
 #define DIV 109
 #define ADI 119
+#define LCH 126
 
 #define END 121
 #define NOP 123
 #define BEGIN 124
 #define OVER 125
-#define LCH 126
+
 
 struct PCode {
     int x;

@@ -22,14 +22,16 @@ struct FuncRuntime {
 
 extern unordered_map<int, FuncRuntime> RuntimeStack;
 
+extern unordered_map<int, int> RegPool;
+
 void WriteMipsFile();
 
 void StaticDataOutput(ofstream &file);
 
 void TextDataOutput(ofstream &file);
 
-void Mem2Reg(int reg, int code, ofstream &file);
+int Mem2Reg(int reg, int code, ofstream &file);
 
-void Reg2Mem(int reg, int code, ofstream &file);
+int Reg2Mem(int reg, int code, ofstream &file);
 
 #endif //COMPILER_MIPSGENERATE_H
