@@ -85,7 +85,6 @@ void PCodeOptimize() {
         CodeInfoInit(pcode[i].x);
         CodeInfoInit(pcode[i].y);
         CodeInfoInit(pcode[i].z);
-        //cout << pcode[i].x << " " << pcode[i].op << " " << pcode[i].y << " " << pcode[i].z << " " << endl;
         if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
@@ -120,10 +119,8 @@ void PCodeOptimize() {
                 }
             }
         } else if ((pcode[i].op == ADI || pcode[i].op == LCH) && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
-            //cout << "start" << endl;
             code_info.find(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
-            //cout << "end" << endl;
         }
         if (pcode[i].x >= MID_CODE_BASE &&
             (pcode[i].op == PLUS || pcode[i].op == SUB || pcode[i].op == MUL || pcode[i].op == DIV) &&
@@ -262,6 +259,18 @@ void GlobalOptimize() {
         }
         if ((pcode[i].op == ADI || pcode[i].op == LCH) && code_info.find(pcode[i].y)->second.isValue) {
             pcode[i].op = NOP;
+        }
+        if (pcode[i].x >= GLOBAL_CODE_BASE && pcode[i].x < MID_CODE_BASE && pcode[i].op == PLUS &&
+            pcode[i].z >= MID_CODE_BASE && !code_info.find(pcode[i].z)->second.isValue) {
+            pcode[i].op = NOP;
+            int find = i - 1;
+            while (find > 1) {
+                if (pcode[find].x == pcode[i].z) {
+                    pcode[find].x = pcode[i].x;
+                    break;
+                }
+                find--;
+            }
         }
     }
 }
