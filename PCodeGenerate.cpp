@@ -66,13 +66,19 @@ void PCodePrint() {
         if (pcode[i].y < MID_CODE_BASE && pcode[i].y >= GLOBAL_CODE_BASE)
             ZExchange(pcode[i].y, file);
         else {
-            file << pcode[i].y;
+            if (pcode[i].y >= MID_CODE_BASE && code_info.find(pcode[i].y)->second.isValue)
+                file << code_info.find(pcode[i].y)->second.value;
+            else
+                file << pcode[i].y;
         }
         OpExchange(pcode[i].op, file);
         if (pcode[i].z < MID_CODE_BASE && pcode[i].z >= GLOBAL_CODE_BASE) {
             ZExchange(pcode[i].z, file);
         } else {
-            file << pcode[i].z;
+            if (pcode[i].z >= MID_CODE_BASE && code_info.find(pcode[i].z)->second.isValue)
+                file << code_info.find(pcode[i].z)->second.value;
+            else
+                file << pcode[i].z;
         }
         file << "\n";
     }
