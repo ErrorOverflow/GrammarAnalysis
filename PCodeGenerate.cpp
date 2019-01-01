@@ -40,15 +40,16 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 }
 
 void PCodePrint() {
+    if (error_num > 0) {
+        cout << error_num << " errors have been found, do you want to continue to generate PCode & Mips?" << endl;
+        getchar();
+        getchar();
+    }
     RuntimeCodeInfo info = {0, 0, 1, 0, 0};
     code_info.insert(pair<int, RuntimeCodeInfo>{0, info});
-
     PCodeOptimize();
-
     PCodePreProcess();
-
     GlobalOptimize();
-
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);

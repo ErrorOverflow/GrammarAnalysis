@@ -104,7 +104,8 @@ unordered_map<int, Sym>::iterator CodeFind(int code) {
         if (iter != CodeIndex[i].end())
             return iter;
     }
-    cout << code << " is not LocalCode or GlobalCode" << endl;
+    error_num++;
+    cout << code << " is not LocalCode or GlobalCode in line "<< line << endl;
     auto iter = CodeIndex[0].find(SymTable[0].find("ErRor")->second.code);
     return iter;
 }
