@@ -318,9 +318,8 @@ int NoReturnFuncDefine(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
-                for (int i = 0; i < process_len; i++) {
+                for (int i = 0; i < process_len; i++)
                     func_name[i] = *(p + i);
-                }
                 func_name[process_len] = '\0';
                 p += process_len;
                 p += JumpSpace(p);
@@ -415,9 +414,9 @@ int ParameterList(char *str) {
             }
         }
     }
-    if (isRight) {
+    if (isRight)
         return (int) ((p - str) / sizeof(char));
-    } else {
+    else {
         MidCode = MidCode_buf;
         pcode_num = pcode_buf;
         return 0;
@@ -519,9 +518,8 @@ int Term(char *str, int code) {
                 op = DIV;
             p += process_len;
             p += JumpSpace(p);
-        } else {
+        } else
             return (int) ((p - str) / sizeof(char));
-        }
         y = x;
         z = MidCode;
     }
@@ -540,9 +538,8 @@ int Factor(char *str, int code) {
         PCodeInsert(pcode_num++, x, y, op, z);
         return (int) ((p - str) / sizeof(char));
     } else if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         auto iter = SymFind(word);
         array_code = iter->second.code;
@@ -673,9 +670,8 @@ int AssignSentence(char *str) {
     char *p = str, word[64];
     int process_len = 0, x = 0, z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num, array_code = 0, offset = 0;
     if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         auto iter = SymFind(word);
         array_code = iter->second.code;
@@ -846,9 +842,8 @@ int LoopSentence(char *str) {
             p++;
             p += JumpSpace(p);
             if ((process_len = Identifier(p))) {
-                for (int i = 0; i < process_len; i++) {
+                for (int i = 0; i < process_len; i++)
                     ini[i] = *(p + i);
-                }
                 ini[process_len] = '\0';
                 auto iter = SymFind(ini);
                 x = iter->second.code;
@@ -879,9 +874,8 @@ int LoopSentence(char *str) {
                                 ConstructionLoss(';');
                             p += JumpSpace(p);
                             if ((process_len = Identifier(p))) {
-                                for (int i = 0; i < process_len; i++) {
+                                for (int i = 0; i < process_len; i++)
                                     par[i] = *(p + i);
-                                }
                                 par[process_len] = '\0';
                                 iter = SymFind(ini);
                                 x = iter->second.code;
@@ -891,9 +885,8 @@ int LoopSentence(char *str) {
                                     p++;
                                     p += JumpSpace(p);
                                     if ((process_len = Identifier(p))) {
-                                        for (int i = 0; i < process_len; i++) {
+                                        for (int i = 0; i < process_len; i++)
                                             par[i] = *(p + i);
-                                        }
                                         par[process_len] = '\0';
                                         iter = SymFind(ini);
                                         y = iter->second.code;
@@ -907,9 +900,8 @@ int LoopSentence(char *str) {
                                             p++;
                                             p += JumpSpace(p);
                                             if ((process_len = Step(p))) {
-                                                for (int i = 0; i < process_len; i++) {
+                                                for (int i = 0; i < process_len; i++)
                                                     step[i] = *(p + i);
-                                                }
                                                 step[process_len] = '\0';
                                                 sscanf(step, "%d", &z);
                                                 if (op == SUB)
@@ -967,9 +959,8 @@ int ReturnFuncCall(char *str, int code) {
     int process_len = 0;
     int z = 0, MidCode_buf = MidCode, pcode_buf = pcode_num;
     if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
@@ -1003,9 +994,8 @@ int ReturnFuncCall(char *str) {
     char *p = str, word[256];
     int process_len = 0;
     if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
@@ -1037,9 +1027,8 @@ int NoReturnFuncCall(char *str) {
     char *p = str, word[256];
     int process_len = 0;
     if ((process_len = Identifier(p))) {
-        for (int i = 0; i < process_len; i++) {
+        for (int i = 0; i < process_len; i++)
             word[i] = *(p + i);
-        }
         word[process_len] = '\0';
         p += process_len;
         p += JumpSpace(p);
@@ -1115,9 +1104,8 @@ int ReadSentence(char *str) {
             p++;
             p += JumpSpace(p);
             while ((process_len = Identifier(p))) {
-                for (int i = 0; i < process_len; i++) {
+                for (int i = 0; i < process_len; i++)
                     word[i] = *(p + i);
-                }
                 word[process_len] = '\0';
                 auto iter = SymFind(word);
                 z = iter->second.code;
@@ -1128,9 +1116,8 @@ int ReadSentence(char *str) {
                 if (*p == ',') {
                     p++;
                     p += JumpSpace(p);
-                } else {
+                } else
                     break;
-                }
             }
             if (isRight) {
                 if (*p == ')')

@@ -78,6 +78,8 @@ void TextDataOutput(ofstream &file) {
     file << "j " << word << "\n";
     for (round = 0; round < pcode_num; round++) {
         PCode pc = pcode[round];
+        //cout << pcode[round].x << " " << pcode[round].op << " " << pcode[round].y << " " << pcode[round].z << " "
+        //<< endl;
         switch (pc.op) {
             case PARA:
                 Reg2Mem(PARA_REG_FIND, pc.z, file);
@@ -87,11 +89,17 @@ void TextDataOutput(ofstream &file) {
                 else
                     para_reg++;
                 break;
-            case PUSH:
-                Mem2Reg(11, pc.z, file);
-                file << "move $" << PARA_REG_FIND << ",$11\n\n";
+            case PUSH: {
+                int reg_z = 10;
+                if (code_info.find(pc.z)->second.isValue) {
+                    file << "addi $" << PARA_REG_FIND << ",$0," << code_info.find(pc.z)->second.value << "\n";
+                } else {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "move $" << PARA_REG_FIND << ",$" << reg_z << "\n";
+                }
                 para_reg++;
                 break;
+            }
             case CALL:
                 Num2Char(pc.z, word);
                 file << "addi $sp,$sp," << -4 << "\n";
@@ -99,18 +107,26 @@ void TextDataOutput(ofstream &file) {
                 file << "jal " << word << "\nnop\n";
                 file << "lw $ra,0($sp)\n";
                 file << "addi $sp,$sp," << 1 * 4 << "\n";
-                file << "move $9,$v0\n";
-                Reg2Mem(9, pc.x, file);
+                if (RegPool.find(pc.x) != RegPool.end())
+                    file << "move $" << RegPool.find(pc.x)->second << ",$v0\n";
+                else
+                    Reg2Mem(2, pc.x, file);
                 para_reg = 0;
                 break;
-            case RET:
+            case RET: {
+                int reg_z = 10;
                 iter = RuntimeStack.find(func_code);
-                Mem2Reg(11, pc.z, file);
-                file << "move $v0,$11" << "\n";
+                if (code_info.find(pc.z)->second.isValue)
+                    file << "addi $v0,$0," << code_info.find(pc.z)->second.value << "\n";
+                else {
+                    reg_z = Mem2Reg(10, pc.z, file);
+                    file << "move $v0,$" << reg_z << "\n";
+                }
                 file << "addi $sp,$sp,"
                      << (iter->second.space + 1) * 4 << "\n";
                 file << "jr $ra" << "\nnop\n\n";
                 break;
+            }
             case GOTO:
                 Num2Char(pc.z, word);
                 file << "j " << word << "\nnop\n\n";
@@ -134,7 +150,7 @@ void TextDataOutput(ofstream &file) {
                     file << "add $" << reg_x << ",$" << reg_y << ",$" << reg_z << "\n";
                 }
                 if (reg_x == 8)
-                    Reg2Mem(9, pc.x, file);
+                    Reg2Mem(8, pc.x, file);
                 file << "\n";
                 break;
             }
@@ -216,10 +232,15 @@ void TextDataOutput(ofstream &file) {
             }
             case LCH:
             case ADI: {
-                int reg_x = 8;
+                int reg_x = 8, reg_y = 9;
                 if (RegPool.find(pc.x) != RegPool.end())
                     reg_x = RegPool.find(pc.x)->second;
-                file << "addi $" << reg_x << ",$0," << pc.z << "\n";
+                if (pc.y == 0) {
+                    file << "addi $" << reg_x << ",$0," << pc.z << "\n";
+                } else {
+                    reg_y = Mem2Reg(9, pc.y, file);
+                    file << "addi $8,$" << reg_y << "," << pc.z << "\n";
+                }
                 if (reg_x == 8)
                     Reg2Mem(8, pc.x, file);
                 file << "\n";
@@ -254,7 +275,7 @@ void TextDataOutput(ofstream &file) {
                     file << "addi $9,$0," << code_info.find(pc.y)->second.value << "\n";
                     file << "beq $9,$" << reg_z << "," << word << "\n";
                 } else if (code_info.find(pc.z)->second.isValue) {
-                    reg_y = Mem2Reg(9, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
                     file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
                     file << "beq $10,$" << reg_y << "," << word << "\n";
                 } else {
@@ -277,7 +298,7 @@ void TextDataOutput(ofstream &file) {
                     file << "addi $9,$0," << code_info.find(pc.y)->second.value << "\n";
                     file << "bne $9,$" << reg_z << "," << word << "\n";
                 } else if (code_info.find(pc.z)->second.isValue) {
-                    reg_y = Mem2Reg(9, pc.z, file);
+                    reg_y = Mem2Reg(9, pc.y, file);
                     file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
                     file << "bne $10,$" << reg_y << "," << word << "\n";
                 } else {
@@ -297,10 +318,10 @@ void TextDataOutput(ofstream &file) {
                         file << "j " << word << "\n";
                 } else if (code_info.find(pc.y)->second.isValue) {
                     reg_z = Mem2Reg(10, pc.z, file);
-                    file << "bgeu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                    file << "bge $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
                 } else if (code_info.find(pc.z)->second.isValue) {
                     reg_y = Mem2Reg(9, pc.y, file);
-                    file << "bleu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
+                    file << "ble $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
                     reg_z = Mem2Reg(10, pc.z, file);
                     reg_y = Mem2Reg(9, pc.y, file);
@@ -318,10 +339,10 @@ void TextDataOutput(ofstream &file) {
                         file << "j " << word << "\n";
                 } else if (code_info.find(pc.y)->second.isValue) {
                     reg_z = Mem2Reg(10, pc.z, file);
-                    file << "bltu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                    file << "blt $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
                 } else if (code_info.find(pc.z)->second.isValue) {
                     reg_y = Mem2Reg(9, pc.y, file);
-                    file << "bgtu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
+                    file << "bgt $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
                     reg_z = Mem2Reg(10, pc.z, file);
                     reg_y = Mem2Reg(9, pc.y, file);
@@ -339,10 +360,10 @@ void TextDataOutput(ofstream &file) {
                         file << "j " << word << "\n";
                 } else if (code_info.find(pc.y)->second.isValue) {
                     reg_z = Mem2Reg(10, pc.z, file);
-                    file << "bgtu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                    file << "bgt $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
                 } else if (code_info.find(pc.z)->second.isValue) {
                     reg_y = Mem2Reg(9, pc.y, file);
-                    file << "bltu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
+                    file << "blt $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
                     reg_z = Mem2Reg(10, pc.z, file);
                     reg_y = Mem2Reg(9, pc.y, file);
@@ -360,10 +381,10 @@ void TextDataOutput(ofstream &file) {
                         file << "j " << word << "\n";
                 } else if (code_info.find(pc.y)->second.isValue) {
                     reg_z = Mem2Reg(10, pc.z, file);
-                    file << "bleu $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
+                    file << "ble $" << reg_z << "," << code_info.find(pc.y)->second.value << "," << word << "\n";
                 } else if (code_info.find(pc.z)->second.isValue) {
                     reg_y = Mem2Reg(9, pc.y, file);
-                    file << "bgeu $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
+                    file << "bge $" << reg_y << "," << code_info.find(pc.z)->second.value << "," << word << "\n";
                 } else {
                     reg_z = Mem2Reg(10, pc.z, file);
                     reg_y = Mem2Reg(9, pc.y, file);
@@ -404,27 +425,26 @@ void TextDataOutput(ofstream &file) {
                 }
                 break;
             }
-            case READ:{
+            case READ: {
                 it_code = CodeFind(pc.z);
                 if (it_code->second.type == 0) {
                     file << "li $v0,5\n";
                     file << "syscall\n";
-                    Reg2Mem(2, pc.z, file);
                 } else {
                     file << "li $v0,12\n";
                     file << "syscall\n";
-                    Reg2Mem(2, pc.z, file);
-                    file << "la $a0,newLine\n";
-                    file << "li $v0,4\n";
-                    file << "syscall\n";
                 }
+                if (RegPool.find(pc.z) != RegPool.end())
+                    file << "move $" << RegPool.find(pc.z)->second << ",$2\n";
+                else
+                    Reg2Mem(2, pc.z, file);
                 break;
             }
             case LDA: {
-                int loc = 0;
+                int loc = 0, reg_x = 8, reg_z = 10;
                 if (pc.y >= LOCAL_CODE_BASE) {
                     it_code = CodeFind(pc.y);
-                    file << "la $10," << it_code->second.name << "\n";
+                    file << "la $9," << it_code->second.name << "\n";
                 } else {
                     for (i = GLOBAL_CODE_BASE; i < pc.y; i++) {
                         it_code = CodeFind(i);
@@ -433,12 +453,42 @@ void TextDataOutput(ofstream &file) {
                         else
                             loc += it_code->second.dimension;
                     }
-                    file << "addi $10,$gp," << loc * 4 << "\n";
+                    file << "addi $9,$gp," << loc * 4 << "\n";
                 }
-                Mem2Reg(11, pc.z, file);
-                file << "sll $11,$11,2\nadd $10,$10,$11\n";
-                file << "lw $9,0($10)\n";
-                Reg2Mem(9, pc.x, file);
+                if (code_info.find(pc.z)->second.isValue)
+                    file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
+                else
+                    reg_z = Mem2Reg(10, pc.z, file);
+                file << "sll $10,$" << reg_z << ",2\nadd $9,$9,$10\n";
+                file << "lw $8,0($9)\n";
+                Reg2Mem(8, pc.x, file);
+                break;
+            }
+            case SW: {
+                int loc = 0, reg_x = 8, reg_z = 10;
+                if (pc.y >= LOCAL_CODE_BASE) {
+                    it_code = CodeFind(pc.y);
+                    file << "la $9," << it_code->second.name << "\n";
+                } else {
+                    for (i = GLOBAL_CODE_BASE; i < pc.y; i++) {
+                        it_code = CodeFind(i);
+                        if (it_code->second.dimension == 0)
+                            loc++;
+                        else
+                            loc += it_code->second.dimension;
+                    }
+                    file << "addi $9,$gp," << loc * 4 << "\n";
+                }
+                if (code_info.find(pc.x)->second.isValue)
+                    file << "addi $8,$0," << code_info.find(pc.x)->second.value << "\n";
+                else
+                    reg_x = Mem2Reg(8, pc.x, file);
+                if (code_info.find(pc.z)->second.isValue)
+                    file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
+                else
+                    reg_z = Mem2Reg(10, pc.z, file);
+                file << "sll $10,$" << reg_z << ",2\nadd $9,$9,$10\n";
+                file << "sw $" << reg_x << ",0($9)\n";
                 break;
             }
             case END:
@@ -449,27 +499,6 @@ void TextDataOutput(ofstream &file) {
                     file << "jr $ra\nnop\n\n";
                 }
                 break;
-            case SW: {
-                int loc = 0;
-                if (pc.y >= LOCAL_CODE_BASE) {
-                    it_code = CodeFind(pc.y);
-                    file << "la $10," << it_code->second.name << "\n";
-                } else {
-                    for (i = GLOBAL_CODE_BASE; i < pc.y; i++) {
-                        it_code = CodeFind(i);
-                        if (it_code->second.dimension == 0)
-                            loc++;
-                        else
-                            loc += it_code->second.dimension;
-                    }
-                    file << "addi $10,$gp," << loc * 4 << "\n";
-                }
-                Mem2Reg(9, pc.x, file);
-                Mem2Reg(11, pc.z, file);
-                file << "sll $11,$11,2\nadd $10,$10,$11\n";
-                file << "sw $9,0($10)\n";
-                break;
-            }
             case NOP:
                 break;
             case BEGIN:
@@ -499,7 +528,11 @@ void TextDataOutput(ofstream &file) {
 
 int Mem2Reg(int reg, int code, ofstream &file) {
     int loc = 0;
-    int res_reg = 0;
+    int res_reg = reg;
+    if (RegPool.find(code) != RegPool.end()) {
+        res_reg = RegPool.find(code)->second;
+        return res_reg;
+    }
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
         for (int i = GLOBAL_CODE_BASE; i < code; i++) {
             auto iter = CodeFind(i);
@@ -517,7 +550,7 @@ int Mem2Reg(int reg, int code, ofstream &file) {
 
 int Reg2Mem(int reg, int code, ofstream &file) {
     int loc = 0;
-    int res_reg = 0;
+    int res_reg = reg;
     if (code >= GLOBAL_CODE_BASE && code < LOCAL_CODE_BASE) {
         for (int i = GLOBAL_CODE_BASE; i < code; i++) {
             auto iter = CodeFind(i);

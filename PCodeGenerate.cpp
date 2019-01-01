@@ -42,9 +42,13 @@ void PCodeInsert(int num, int x, int y, int op, int z) {
 void PCodePrint() {
     RuntimeCodeInfo info = {0, 0, 1, 0, 0};
     code_info.insert(pair<int, RuntimeCodeInfo>{0, info});
+
     PCodeOptimize();
+
     PCodePreProcess();
+
     GlobalOptimize();
+
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -80,6 +84,7 @@ void PCodeOptimize() {
         CodeInfoInit(pcode[i].x);
         CodeInfoInit(pcode[i].y);
         CodeInfoInit(pcode[i].z);
+        //cout << pcode[i].x << " " << pcode[i].op << " " << pcode[i].y << " " << pcode[i].z << " " << endl;
         if (pcode[i].x >= MID_CODE_BASE && pcode[i].y == 0 && pcode[i].op == PLUS && pcode[i].z >= LOCAL_CODE_BASE) {
             pcode[i].op = NOP;
             for (int j = i + 1; j < pcode_num; j++) {
@@ -114,10 +119,14 @@ void PCodeOptimize() {
                 }
             }
         } else if ((pcode[i].op == ADI || pcode[i].op == LCH) && pcode[i].y == 0 && pcode[i].x >= MID_CODE_BASE) {
+            //cout << "start" << endl;
             code_info.find(pcode[i].x)->second.value = pcode[i].z;
             code_info.find(pcode[i].x)->second.isValue = 1;
+            //cout << "end" << endl;
         }
-        if (pcode[i].x >= MID_CODE_BASE && code_info.find(pcode[i].y)->second.isValue &&
+        if (pcode[i].x >= MID_CODE_BASE &&
+            (pcode[i].op == PLUS || pcode[i].op == SUB || pcode[i].op == MUL || pcode[i].op == DIV) &&
+            code_info.find(pcode[i].y)->second.isValue &&
             code_info.find(pcode[i].z)->second.isValue) {
             int y_value = code_info.find(pcode[i].y)->second.value;
             int z_value = code_info.find(pcode[i].z)->second.value;
@@ -133,10 +142,7 @@ void PCodeOptimize() {
                     return;
                 }
                 mid = y_value / z_value;
-            } else if (pcode[i].op == ADI)
-                mid = y_value + z_value;
-            else
-                continue;
+            }
             code_info.find(pcode[i].x)->second.value = mid;
             code_info.find(pcode[i].x)->second.isValue = 1;
         }
@@ -241,10 +247,13 @@ void PCodePreProcess() {
 
 void GlobalOptimize() {
     for (int i = 0; i < pcode_num; i++) {
-        if ((pcode[i].op == PLUS || pcode[i].op == SUB || pcode[i].op == MUL || pcode[i].op == DIV ||
-             pcode[i].op == ADI || pcode[i].op == LCH) && pcode[i].x >= MID_CODE_BASE &&
+        if ((pcode[i].op == PLUS || pcode[i].op == SUB || pcode[i].op == MUL || pcode[i].op == DIV) &&
+            pcode[i].x >= MID_CODE_BASE &&
             code_info.find(pcode[i].y)->second.isValue &&
             code_info.find(pcode[i].z)->second.isValue) {
+            pcode[i].op = NOP;
+        }
+        if ((pcode[i].op == ADI || pcode[i].op == LCH) && code_info.find(pcode[i].y)->second.isValue) {
             pcode[i].op = NOP;
         }
     }
