@@ -239,6 +239,12 @@ void PCodePreProcess() {
                     pcode[i].op == BNE || pcode[i].op == BEQ) &&
                    (code_info.find(pcode[i].y)->second.type == 1 || code_info.find(pcode[i].z)->second.type == 1))
             ValueCompareExp(i, pcode[i].y, pcode[i].z);
+        if (pcode[i].x >= GLOBAL_CODE_BASE && pcode[i].x < MID_CODE_BASE &&
+            CodeFind(pcode[i].x)->second.kind == 0 &&
+            (pcode[i].op == PLUS || pcode[i].op == SUB || pcode[i].op == MUL ||
+             pcode[i].op == DIV || pcode[i].op == ADI ||
+             pcode[i].op == LCH))
+            ConstChange(i);
     }
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};

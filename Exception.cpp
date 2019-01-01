@@ -84,6 +84,11 @@ void ValueCompareExp(int num, int x, int y) {
          << endl;
 }
 
+void ConstChange(int num) {
+    warn_num++;
+    cout << "WARNING: const can't be changed in line " << pcode[num].address << endl;
+}
+
 void NaN(int num) {
     warn_num++;
     cout << "WARNING: 0 is Divisor in line " << pcode[num].address << endl;
