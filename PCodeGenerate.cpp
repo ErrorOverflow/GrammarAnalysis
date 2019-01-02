@@ -13,6 +13,7 @@
 #include <fstream>
 #include <malloc.h>
 #include <cstring>
+#include <algorithm>
 
 using namespace std;
 
@@ -300,13 +301,9 @@ void RegAssign() {//11-25
     for (int i = 0; i < pcode_num; i++) {
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
             memset(used, 0, sizeof(int) * 20);
-            auto iter = Pool.begin();
-            while (iter != Pool.end()) {
-                for(int j=0;j<15;j++){
-
-                }
-                iter++;
-            }
+            unordered_map<int, int> tmp;
+            transform(Pool.begin(), Pool.end(), inserter(tmp, tmp.begin()),
+                      [](pair<int, int> a) { return pair<int, int>(a.second, a.first); });
             Pool.empty();
         } else if (pcode[i].op == ADI || pcode[i].op == LCH) {
             PoolInsert(pcode[i].x);
