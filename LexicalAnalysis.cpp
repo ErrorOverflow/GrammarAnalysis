@@ -571,8 +571,12 @@ int Factor(char *str, int code) {
                 return (int) ((p - str) / sizeof(char));
             }
         } else {
-            if (iter->second.kind == 0)
-                PCodeInsert(pcode_num++, x, 0, ADI, iter->second.value);
+            if (iter->second.kind == 0){
+                if(iter->second.type==1)
+                    PCodeInsert(pcode_num++, x, 0, LCH, iter->second.value);
+                else
+                    PCodeInsert(pcode_num++, x, 0, ADI, iter->second.value);
+            }
             else
                 PCodeInsert(pcode_num++, x, 0, op, array_code);
             return (int) ((p - str) / sizeof(char));

@@ -56,13 +56,13 @@ void PCodePrint() {
     PCodeOptimize();
     PCodePreProcess();
     GlobalOptimize();
-    RegAssign();
+    //RegAssign();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
     for (int i = 0; i < pcode_num; i++) {
-        if (pcode[i].op == NOP)
-            continue;
+        //if (pcode[i].op == NOP)
+        //    continue;
         file << "PCode#" << i << ": ";
         if (pcode[i].x < MID_CODE_BASE && pcode[i].x >= GLOBAL_CODE_BASE)
             ZExchange(pcode[i].x, file);
