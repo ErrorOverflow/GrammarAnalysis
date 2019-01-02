@@ -478,7 +478,7 @@ int Expression(char *str, int code) {
         p += JumpSpace(p);
         op = SUB;
     }
-    x = code;
+    x = MidCode++;
     z = MidCode;
     while ((process_len = Term(p, MidCode++))) {
         p += process_len;
@@ -493,9 +493,11 @@ int Expression(char *str, int code) {
             p += JumpSpace(p);
         } else {
             p += JumpSpace(p);
+            PCodeInsert(pcode_num++, code, 0, PLUS, x);
             return (int) ((p - str) / sizeof(char));
         }
         y = x;
+        x = MidCode++;
         z = MidCode;
     }
     MidCode = MidCode_buf;
@@ -506,7 +508,7 @@ int Expression(char *str, int code) {
 int Term(char *str, int code) {
     char *p = str;
     int process_len = 0;
-    int x = code, y = 0, z = MidCode, op = PLUS, MidCode_buf = MidCode, pcode_buf = pcode_num;
+    int MidCode_buf = MidCode, pcode_buf = pcode_num, x = MidCode++, y = 0, z = MidCode, op = PLUS;
     while ((process_len = Factor(p, MidCode++))) {
         p += process_len;
         p += JumpSpace(p);
@@ -518,9 +520,13 @@ int Term(char *str, int code) {
                 op = DIV;
             p += process_len;
             p += JumpSpace(p);
-        } else
+        } else {
+            p += JumpSpace(p);
+            PCodeInsert(pcode_num++, code, 0, PLUS, x);
             return (int) ((p - str) / sizeof(char));
+        }
         y = x;
+        x = MidCode++;
         z = MidCode;
     }
     MidCode = MidCode_buf;
@@ -820,7 +826,7 @@ int LoopSentence(char *str) {
                 if (*p == '(') {
                     p++;
                     p += JumpSpace(p);
-                    if ((process_len = Condition(p, label, BEQ))) {
+                    if ((process_len = Condition(p, label, BNE))) {
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')')
@@ -867,7 +873,7 @@ int LoopSentence(char *str) {
                         else
                             ConstructionLoss(';');
                         p += JumpSpace(p);
-                        if ((process_len = Condition(p, label_for, BEQ))) {
+                        if ((process_len = Condition(p, label_for, BNE))) {
                             p += process_len;
                             p += JumpSpace(p);
                             if (*p == ';')
