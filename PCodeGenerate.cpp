@@ -288,17 +288,17 @@ void GlobalOptimize() {
     }
 }
 
-void PoolInsert(int code) {
+void PoolInsert(int code, int weight) {
     if (code < GLOBAL_CODE_BASE)
         return;
     if (Pool.find(code) == Pool.end())
         Pool.insert(pair<int, int>{code, 0});
     else
-        Pool.find(code)->second++;
+        Pool.find(code)->second += weight;
 }
 
 void RegAssign() {//11-25
-    int used[1000][2], size = 0, j = 0;
+    int used[1000][2], size = 0, j = 0, weight = 1;
     map<int, int> tmp;
     map<int, int>::iterator iter;
     for (int i = 0; i < pcode_num; i++) {
@@ -320,12 +320,18 @@ void RegAssign() {//11-25
             Pool.clear();
             tmp.clear();
         } else if (pcode[i].op == ADI || pcode[i].op == LCH) {
-            PoolInsert(pcode[i].x);
-            PoolInsert(pcode[i].y);
+            PoolInsert(pcode[i].x, weight);
+            PoolInsert(pcode[i].y, weight);
         } else {
-            PoolInsert(pcode[i].x);
-            PoolInsert(pcode[i].y);
-            PoolInsert(pcode[i].z);
+            PoolInsert(pcode[i].x, weight);
+            PoolInsert(pcode[i].y, weight);
+            PoolInsert(pcode[i].z, weight);
+        }
+        if (LoopMark.find(i) != LoopMark.end()) {
+            if (LoopMark.find(i)->second)
+                weight *= 5;
+            else
+                weight /= 5;
         }
     }
     size = tmp.size();

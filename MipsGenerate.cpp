@@ -78,8 +78,6 @@ void TextDataOutput(ofstream &file) {
     file << "j " << word << "\n";
     for (round = 0; round < pcode_num; round++) {
         PCode pc = pcode[round];
-        //cout << pcode[round].x << " " << pcode[round].op << " " << pcode[round].y << " " << pcode[round].z << " "
-        //<< endl;
         switch (pc.op) {
             case PARA:
                 Reg2Mem(PARA_REG_FIND, pc.z, file);
