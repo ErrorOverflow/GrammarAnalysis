@@ -12,11 +12,13 @@
 #include <string>
 #include <fstream>
 #include <malloc.h>
+#include <cstring>
 
 using namespace std;
 
 PCode pcode[4096];
 unordered_map<int, RuntimeCodeInfo> code_info;
+unordered_map<int, int> Pool;
 int pcode_num;
 
 void OpExchange(int op, ofstream &file);
@@ -30,6 +32,8 @@ void AddressAssign(int code, int *space, int *mid_code_stack);
 void CodeInfoInit(int code);
 
 void GlobalOptimize();
+
+void RegAssign();
 
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
@@ -50,6 +54,7 @@ void PCodePrint() {
     PCodeOptimize();
     PCodePreProcess();
     GlobalOptimize();
+    RegAssign();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -278,6 +283,43 @@ void GlobalOptimize() {
                 find--;
             }
         }
+    }
+}
+
+void PoolInsert(int code) {
+    if (code < LOCAL_CODE_BASE)
+        return;
+    if (Pool.find(code) == Pool.end())
+        Pool.insert(pair<int, int>{code, 0});
+    else
+        Pool.find(code)->second++;
+}
+
+void RegAssign() {//11-25
+    int used[15][2];
+    for (int i = 0; i < pcode_num; i++) {
+        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
+            memset(used, 0, sizeof(int) * 20);
+            auto iter = Pool.begin();
+            while (iter != Pool.end()) {
+                for(int j=0;j<15;j++){
+
+                }
+                iter++;
+            }
+            Pool.empty();
+        } else if (pcode[i].op == ADI || pcode[i].op == LCH) {
+            PoolInsert(pcode[i].x);
+            PoolInsert(pcode[i].y);
+        } else {
+            PoolInsert(pcode[i].x);
+            PoolInsert(pcode[i].y);
+            PoolInsert(pcode[i].z);
+        }
+    }
+    auto iter = Pool.begin();
+    while (iter != Pool.end()) {
+        iter++;
     }
 }
 

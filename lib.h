@@ -33,6 +33,7 @@ extern int TableNum;
 extern int StringNum;
 extern unordered_map<string, Sym> SymTable[64];
 extern unordered_map<int, Sym> CodeIndex[64];
+extern unordered_map<int, int> LoopMark;
 
 int JumpSpace(char *str);
 

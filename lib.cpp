@@ -23,6 +23,7 @@ int TableNum = 0;
 int StringNum = 0;
 unordered_map<string, Sym> SymTable[64];
 unordered_map<int, Sym> CodeIndex[64];
+unordered_map<int, int> LoopMark;
 
 int JumpSpace(char *str) {
     char *p = str;

@@ -808,10 +808,12 @@ int LoopSentence(char *str) {
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
+        LoopMark.insert(pair<int, int>{pcode_num, 0});
         PCodeInsert(pcode_num++, 0, 0, LABEL, label);
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
+            LoopMark.insert(pair<int, int>{pcode_num, 1});
             if (*p == 'w' && *(p + 1) == 'h' && *(p + 2) == 'i' && *(p + 3) == 'l' && *(p + 4) == 'e') {
                 p += 5;
                 p += JumpSpace(p);
@@ -914,11 +916,13 @@ int LoopSentence(char *str) {
                                                     ConstructionLoss(')');
                                                 p += JumpSpace(p);
                                                 PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
+                                                LoopMark.insert(pair<int, int>{pcode_num, 0});
                                                 PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
                                                 if ((process_len = Sentence(p))) {
                                                     p += process_len;
                                                     p += JumpSpace(p);
                                                     op = ADI;
+                                                    LoopMark.insert(pair<int, int>{pcode_num, 1});
                                                     PCodeInsert(pcode_num++, x, y, op, z);
                                                     PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                                                     LabelCode++;
@@ -1261,6 +1265,7 @@ int Program(char *str) {
         return (int) ((p - str) / sizeof(char));
     }
     Exception(p);
+    error_num++;
     structure_file.close();
     return 0;
 }
