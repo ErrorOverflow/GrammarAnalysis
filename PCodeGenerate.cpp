@@ -9,6 +9,7 @@
 #include "Exception.h"
 #include <iostream>
 #include <unordered_map>
+#include <map>
 #include <string>
 #include <fstream>
 #include <malloc.h>
@@ -288,7 +289,7 @@ void GlobalOptimize() {
 }
 
 void PoolInsert(int code) {
-    if (code < LOCAL_CODE_BASE)
+    if (code < GLOBAL_CODE_BASE)
         return;
     if (Pool.find(code) == Pool.end())
         Pool.insert(pair<int, int>{code, 0});
@@ -297,14 +298,27 @@ void PoolInsert(int code) {
 }
 
 void RegAssign() {//11-25
-    int used[15][2];
+    int used[1000][2], size = 0, j = 0;
+    map<int, int> tmp;
+    map<int, int>::iterator iter;
     for (int i = 0; i < pcode_num; i++) {
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
-            memset(used, 0, sizeof(int) * 20);
-            unordered_map<int, int> tmp;
             transform(Pool.begin(), Pool.end(), inserter(tmp, tmp.begin()),
                       [](pair<int, int> a) { return pair<int, int>(a.second, a.first); });
-            Pool.empty();
+            size = tmp.size();
+            iter = tmp.begin();
+            while (iter != tmp.end()) {
+                used[j][0] = iter->second;
+                used[j++][1] = iter->first;
+                iter++;
+            }
+            for (j = 0; j < 15 && j < size; j++) {
+                RegPool.insert(pair<int, int>{used[size - j][0], j + 11});
+            }
+            memset(used, 0, sizeof(int) * 1000);
+            j = 0;
+            Pool.clear();
+            tmp.clear();
         } else if (pcode[i].op == ADI || pcode[i].op == LCH) {
             PoolInsert(pcode[i].x);
             PoolInsert(pcode[i].y);
@@ -314,9 +328,15 @@ void RegAssign() {//11-25
             PoolInsert(pcode[i].z);
         }
     }
-    auto iter = Pool.begin();
-    while (iter != Pool.end()) {
+    size = tmp.size();
+    iter = tmp.begin();
+    while (iter != tmp.end()) {
+        used[j][0] = iter->second;
+        used[j++][1] = iter->first;
         iter++;
+    }
+    for (j = 0; j < 15 && j < size; j++) {
+        RegPool.insert(pair<int, int>{used[size - j][0], j + 11});
     }
 }
 

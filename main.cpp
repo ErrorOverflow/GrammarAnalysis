@@ -19,7 +19,7 @@ int main() {//C:\\Users\\wml\\CLionProjects\\GrammarAnalysis\\helloworld.txt
     SymPrint();//C:\Users\WML\Desktop\233.txt
     PCodePrint();//C:\Users\WML\Desktop\common1.txt
     WriteMipsFile();//C:\Users\wml\Downloads\20181227143432337\Sample4Opt-1-dowhile.c
-    getchar();
+    getchar();//C:\Users\WML\Downloads\sample\Sample4Opt-1-dowhile.c
     getchar();
     return 0;
 }
