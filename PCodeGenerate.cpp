@@ -9,6 +9,7 @@
 #include "Exception.h"
 #include <iostream>
 #include <unordered_map>
+#include <iterator>
 #include <map>
 #include <string>
 #include <fstream>
