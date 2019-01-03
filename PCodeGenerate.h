@@ -68,7 +68,7 @@ struct Block {
 
 extern PCode pcode[4096];
 extern int pcode_num;
-extern int TOTAL_BLOCK;
+extern int store_num;
 extern unordered_map<int, RuntimeCodeInfo> code_info;
 extern Block block[128];
 

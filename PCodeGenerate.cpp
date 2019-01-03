@@ -23,7 +23,7 @@ PCode pcode[4096];
 unordered_map<int, RuntimeCodeInfo> code_info;
 map<int, int> Pool;
 Block block[128];
-int pcode_num, TOTAL_BLOCK;
+int pcode_num, store_num=0;
 
 void OpExchange(int op, ofstream &file);
 
@@ -310,8 +310,8 @@ void GlobalOptimize() {
 
 void PoolInsert(int code, int weight) {
     if (code < LOCAL_CODE_BASE || (code >= LOCAL_CODE_BASE && code < MID_CODE_BASE &&
-                                    (CodeFind(code)->second.kind == 2 || CodeFind(code)->second.type == 2 ||
-                                     CodeFind(code)->second.type == 3)) ||
+                                   (CodeFind(code)->second.kind == 2 || CodeFind(code)->second.type == 2 ||
+                                    CodeFind(code)->second.type == 3)) ||
         code_info.find(code)->second.isValue)
         return;
     if (Pool.find(code) == Pool.end())
@@ -397,34 +397,34 @@ void BasicBlock() {
         if (LoopMark.find(i) != LoopMark.end()) {
             if (LoopMark.find(i)->second) {
                 block_num++;
-                if (block_num > TOTAL_BLOCK)
-                    TOTAL_BLOCK = block_num;
-                block[block_num].addr = i;
-            } else {
                 if (block_num == 1) {
-                    block_num++;
-                    if (block_num > TOTAL_BLOCK)
-                        TOTAL_BLOCK = block_num;
-                    block[block_num].addr = i;
-                } else
-                    block_num--;
+                    store_num++;
+                    block[store_num].func = func;
+                    block[store_num].addr = i;
+                }
+            } else {
+                block_num--;
+                if (block_num == 0) {
+                    store_num++;
+                    block[store_num].func = func;
+                    block[store_num].addr = i;
+                }
             }
-            block[block_num].func = func;
         }
+        if (pcode[i].op == NOP)
+            continue;
+        //cout << i << " " << store_num<<endl;
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
-            block_num++;
-            if (block_num > TOTAL_BLOCK)
-                TOTAL_BLOCK = block_num;
+            store_num++;
             func = pcode[i].z;
-            block[block_num].func = pcode[i].z;
-            block[block_num].addr = i;
+            block[store_num].func = pcode[i].z;
+            block[store_num].addr = i;
         } else {
-            BlockInsert(pcode[i].x, block_num);
-            BlockInsert(pcode[i].y, block_num);
-            BlockInsert(pcode[i].z, block_num);
+            BlockInsert(pcode[i].x, store_num);
+            BlockInsert(pcode[i].y, store_num);
+            BlockInsert(pcode[i].z, store_num);
         }
     }
-
 }
 
 

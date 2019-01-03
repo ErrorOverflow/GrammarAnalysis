@@ -102,8 +102,9 @@ void TextDataOutput(ofstream &file) {
             case CALL: {
                 int counter = 0, used_reg = 0;
                 Num2Char(pc.z, word);
-                for (int j = 0; j < TOTAL_BLOCK; j++) {
-                    if (block[j].func == func_code && block[j].addr <= i) {
+                isUsed.clear();
+                for (int j = 0; j < store_num; j++) {
+                    if (block[j].func == func_code && block[j].addr <= round) {
                         auto iter_reg = block[j].used_reg.begin();
                         while (iter_reg != block[j].used_reg.end()) {
                             used_reg = iter_reg->second;
@@ -113,10 +114,10 @@ void TextDataOutput(ofstream &file) {
                         }
                     }
                 }
-                file << "addi $sp,$sp,-" << (isUsed.size()+1) * 4 << "\n";
+                file << "addi $sp,$sp,-" << (isUsed.size() + 1) * 4 << "\n";
                 auto iter_pool = isUsed.begin();
                 while (iter_pool != isUsed.end()) {
-                    file << "sw $" << iter_pool->second << "," << (counter+1) * 4 << "($sp)\n";
+                    file << "sw $" << iter_pool->second << "," << (counter + 1) * 4 << "($sp)\n";
                     iter_pool++;
                     counter++;
                 }
@@ -126,17 +127,16 @@ void TextDataOutput(ofstream &file) {
                 iter_pool = isUsed.begin();
                 counter = 0;
                 while (iter_pool != isUsed.end()) {
-                    file << "lw $" << iter_pool->second << "," << (counter+1) * 4 << "($sp)\n";
+                    file << "lw $" << iter_pool->second << "," << (counter + 1) * 4 << "($sp)\n";
                     iter_pool++;
                     counter++;
                 }
-                file << "addi $sp,$sp," << (isUsed.size()+1) * 4 << "\n";
+                file << "addi $sp,$sp," << (isUsed.size() + 1) * 4 << "\n";
                 if (RegPool.find(pc.x) != RegPool.end())
                     file << "move $" << RegPool.find(pc.x)->second << ",$v0\n";
                 else
                     Reg2Mem(2, pc.x, file);
                 para_reg = 0;
-                isUsed.clear();
                 break;
             }
             case RET: {
