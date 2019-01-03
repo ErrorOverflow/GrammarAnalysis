@@ -60,9 +60,17 @@ struct RuntimeCodeInfo {
     int address;
 };
 
+struct Block {
+    int func;
+    unordered_map<int, int> used_reg;
+    int addr;
+};
+
 extern PCode pcode[4096];
 extern int pcode_num;
+extern int TOTAL_BLOCK;
 extern unordered_map<int, RuntimeCodeInfo> code_info;
+extern Block block[128];
 
 void PCodeInsert(int num, int x, int y, int op, int z);
 

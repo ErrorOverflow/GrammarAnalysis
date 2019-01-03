@@ -22,7 +22,8 @@ using namespace std;
 PCode pcode[4096];
 unordered_map<int, RuntimeCodeInfo> code_info;
 map<int, int> Pool;
-int pcode_num;
+Block block[128];
+int pcode_num, TOTAL_BLOCK;
 
 void OpExchange(int op, ofstream &file);
 
@@ -37,6 +38,8 @@ void CodeInfoInit(int code);
 void GlobalOptimize();
 
 void RegAssign();
+
+void BasicBlock();
 
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
@@ -58,6 +61,7 @@ void PCodePrint() {
     PCodePreProcess();
     GlobalOptimize();
     RegAssign();
+    BasicBlock();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -261,6 +265,7 @@ void PCodePreProcess() {
     it_code = CodeFind(func_code);
     FuncRuntime funcRuntime = {it_code->second.name, func_code, space};
     RuntimeStack.insert(pair<int, FuncRuntime>(func_code, funcRuntime));
+
 }
 
 void GlobalOptimize() {
@@ -286,11 +291,25 @@ void GlobalOptimize() {
                 find--;
             }
         }
+        if (pcode[i].op == PLUS && (pcode[i].y == 0 || (code_info.find(pcode[i].y)->second.isValue &&
+                                                        code_info.find(pcode[i].y)->second.value == 0)) &&
+            pcode[i].z >= MID_CODE_BASE) {
+            for (int j = i - 1; j > 0; j--) {
+                if (pcode[j].op == LABEL)
+                    break;
+                if ((pcode[j].op == PLUS || pcode[j].op == SUB || pcode[j].op == DIV || pcode[j].op == MUL) &&
+                    pcode[j].x == pcode[i].z) {
+                    pcode[i].op = NOP;
+                    pcode[j].x = pcode[i].x;
+                }
+            }
+        }
     }
+
 }
 
 void PoolInsert(int code, int weight) {
-    if (code < GLOBAL_CODE_BASE || (code >= GLOBAL_CODE_BASE && code < MID_CODE_BASE &&
+    if (code < LOCAL_CODE_BASE || (code >= LOCAL_CODE_BASE && code < MID_CODE_BASE &&
                                     (CodeFind(code)->second.kind == 2 || CodeFind(code)->second.type == 2 ||
                                      CodeFind(code)->second.type == 3)) ||
         code_info.find(code)->second.isValue)
@@ -299,10 +318,11 @@ void PoolInsert(int code, int weight) {
         Pool.insert(pair<int, int>{code, weight});
     else
         Pool.find(code)->second += weight;
+
 }
 
-void RegAssign() {//11-25
-    int used[1000][2], size = 0, j = 0, weight = 1, mid;
+void RegAssign() {
+    int used[1000][2], size = 0, j = 0, weight = 1;
     map<int, int>::iterator iter;
     map<int, int> tmp;
     for (int i = 0; i < pcode_num; i++) {
@@ -327,15 +347,13 @@ void RegAssign() {//11-25
             while (iter != tmp.end()) {
                 used[j][0] = iter->second;
                 used[j++][1] = iter->first;
-                //cout << iter->second << " " << iter->first << endl;
                 iter++;
             }
             size = tmp.size();
             for (j = 0; j < 15 && j < size; j++) {
                 RegPool.insert(pair<int, int>{used[size - j - 1][0], j + 11});
-                cout << used[size - j - 1][0] << " " << j + 11 << endl;
+                //cout << used[size - j - 1][0] << " " << j + 11 << endl;
             }
-            cout << endl;
             memset(used, 0, sizeof(int) * 1000);
             j = 0;
             Pool.clear();
@@ -361,15 +379,56 @@ void RegAssign() {//11-25
     while (iter != tmp.end()) {
         used[j][0] = iter->second;
         used[j++][1] = iter->first;
-        //cout << iter->second << " " << iter->first << endl;
         iter++;
     }
     size = tmp.size();
-    cout << endl;
     for (j = 0; j < 15 && j < size; j++) {
         RegPool.insert(pair<int, int>{used[size - j - 1][0], j + 11});
-        cout << used[size - j - 1][0] << " " << j + 11 << endl;
+        //cout << used[size - j - 1][0] << " " << j + 11 << endl;
     }
+}
+
+void BlockInsert(int code, int block_num) {
+    if (RegPool.find(code) != RegPool.end() &&
+        block[block_num].used_reg.find(code) == block[block_num].used_reg.end()) {
+        block[block_num].used_reg.insert(pair<int, int>{RegPool.find(code)->second, RegPool.find(code)->second});
+    }
+}
+
+void BasicBlock() {
+    int block_num = 0, func = 0;
+    for (int i = 0; i < pcode_num; i++) {
+        if (LoopMark.find(i) != LoopMark.end()) {
+            if (LoopMark.find(i)->second) {
+                block_num++;
+                if (block_num > TOTAL_BLOCK)
+                    TOTAL_BLOCK = block_num;
+                block[block_num].addr = i;
+            } else {
+                if (block_num == 1) {
+                    block_num++;
+                    if (block_num > TOTAL_BLOCK)
+                        TOTAL_BLOCK = block_num;
+                    block[block_num].addr = i;
+                } else
+                    block_num--;
+            }
+            block[block_num].func = func;
+        }
+        if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
+            block_num++;
+            if (block_num > TOTAL_BLOCK)
+                TOTAL_BLOCK = block_num;
+            func = pcode[i].z;
+            block[block_num].func = pcode[i].z;
+            block[block_num].addr = i;
+        } else {
+            BlockInsert(pcode[i].x, block_num);
+            BlockInsert(pcode[i].y, block_num);
+            BlockInsert(pcode[i].z, block_num);
+        }
+    }
+
 }
 
 
