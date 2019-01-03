@@ -293,14 +293,15 @@ void GlobalOptimize() {
         }
         if (pcode[i].op == PLUS && (pcode[i].y == 0 || (code_info.find(pcode[i].y)->second.isValue &&
                                                         code_info.find(pcode[i].y)->second.value == 0)) &&
-            pcode[i].z >= MID_CODE_BASE) {
+            pcode[i].z >= MID_CODE_BASE && !code_info.find(pcode[i].z)->second.isValue) {
             for (int j = i - 1; j > 0; j--) {
                 if (pcode[j].op == LABEL)
                     break;
-                if ((pcode[j].op == PLUS || pcode[j].op == SUB || pcode[j].op == DIV || pcode[j].op == MUL) &&
+                if ((pcode[j].op == PLUS || pcode[j].op == SUB || pcode[j].op == DIV || pcode[j].op == MUL || pcode[j].op == ADI || pcode[j].op == LCH) &&
                     pcode[j].x == pcode[i].z) {
                     pcode[i].op = NOP;
                     pcode[j].x = pcode[i].x;
+                    break;
                 }
             }
         }
@@ -413,7 +414,6 @@ void BasicBlock() {
         }
         if (pcode[i].op == NOP)
             continue;
-        //cout << i << " " << store_num<<endl;
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
             store_num++;
             func = pcode[i].z;
