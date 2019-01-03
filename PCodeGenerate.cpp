@@ -306,13 +306,21 @@ void RegAssign() {//11-25
     map<int, int>::iterator iter;
     map<int, int> tmp;
     for (int i = 0; i < pcode_num; i++) {
+        if (LoopMark.find(i) != LoopMark.end()) {
+            if (LoopMark.find(i)->second)
+                weight *= 5;
+            else
+                weight /= 5;
+        }
         if (pcode[i].op == NOP)
             continue;
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
             iter = Pool.begin();
             while (iter != Pool.end()) {
-                tmp.insert(pair<int,int>{iter->second,iter->first});
-                cout << iter->second << " " << iter->first << endl;
+                tmp.insert(pair<int, int>{iter->second * 10000 +
+                                          (iter->first >= MID_CODE_BASE ? (iter->first - MID_CODE_BASE) : (iter->first -
+                                                                                                           LOCAL_CODE_BASE)),
+                                          iter->first});
                 iter++;
             }
             iter = tmp.begin();
@@ -324,8 +332,8 @@ void RegAssign() {//11-25
             }
             size = tmp.size();
             for (j = 0; j < 15 && j < size; j++) {
-                RegPool.insert(pair<int, int>{used[size - j][0], j + 11});
-                //cout << used[size - j][0] << " " << j + 11 << endl;
+                RegPool.insert(pair<int, int>{used[size - j - 1][0], j + 11});
+                cout << used[size - j - 1][0] << " " << j + 11 << endl;
             }
             cout << endl;
             memset(used, 0, sizeof(int) * 1000);
@@ -340,17 +348,13 @@ void RegAssign() {//11-25
             PoolInsert(pcode[i].y, weight);
             PoolInsert(pcode[i].z, weight);
         }
-        if (LoopMark.find(i) != LoopMark.end()) {
-            if (LoopMark.find(i)->second)
-                weight *= 5;
-            else
-                weight /= 5;
-        }
     }
     iter = Pool.begin();
     while (iter != Pool.end()) {
-        tmp.insert(pair<int,int>{iter->second,iter->first});
-        cout << iter->second << " " << iter->first << endl;
+        tmp.insert(pair<int, int>{iter->second * 10000 +
+                                  (iter->first >= MID_CODE_BASE ? (iter->first - MID_CODE_BASE) : (iter->first -
+                                                                                                   LOCAL_CODE_BASE)),
+                                  iter->first});
         iter++;
     }
     iter = tmp.begin();
@@ -363,8 +367,8 @@ void RegAssign() {//11-25
     size = tmp.size();
     cout << endl;
     for (j = 0; j < 15 && j < size; j++) {
-        RegPool.insert(pair<int, int>{used[size - j][0], j + 11});
-        //cout << used[size - j][0] << " " << j + 11 << endl;
+        RegPool.insert(pair<int, int>{used[size - j - 1][0], j + 11});
+        cout << used[size - j - 1][0] << " " << j + 11 << endl;
     }
 }
 

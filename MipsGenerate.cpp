@@ -122,8 +122,11 @@ void TextDataOutput(ofstream &file) {
                     counter++;
                 }
                 file << "addi $sp,$sp," << isUsed.size() * 4 << "\n";
-                if (RegPool.find(pc.x) != RegPool.end())
+                if (RegPool.find(pc.x) != RegPool.end()){
                     file << "move $" << RegPool.find(pc.x)->second << ",$v0\n";
+                    if (isUsed.find(RegPool.find(pc.x)->second) == isUsed.end())
+                        isUsed.insert(pair<int, int>{RegPool.find(pc.x)->second, RegPool.find(pc.x)->second});
+                }
                 else
                     Reg2Mem(2, pc.x, file);
                 para_reg = 0;
@@ -140,17 +143,20 @@ void TextDataOutput(ofstream &file) {
                 }
                 file << "addi $sp,$sp,"
                      << (iter->second.space + 1) * 4 << "\n";
-                file << "jr $ra" << "\nnop\n\n";
+                file << "jr $ra" << "\nnop\n";
                 break;
             }
             case GOTO:
                 Num2Char(pc.z, word);
-                file << "j " << word << "\nnop\n\n";
+                file << "j " << word << "\nnop\n";
                 break;
             case PLUS: {
                 int reg_x = 8, reg_y = 9, reg_z = 10;
-                if (RegPool.find(pc.x) != RegPool.end())
+                if (RegPool.find(pc.x) != RegPool.end()){
                     reg_x = RegPool.find(pc.x)->second;
+                    if (isUsed.find(reg_x) == isUsed.end())
+                        isUsed.insert(pair<int, int>{reg_x, reg_x});
+                }
                 if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
                     file << "addiu $" << reg_x << ",$0,"
                          << code_info.find(pc.y)->second.value + code_info.find(pc.z)->second.value << "\n";
@@ -167,13 +173,15 @@ void TextDataOutput(ofstream &file) {
                 }
                 if (reg_x == 8)
                     Reg2Mem(8, pc.x, file);
-                file << "\n";
                 break;
             }
             case SUB: {
                 int reg_x = 8, reg_y = 9, reg_z = 10;
-                if (RegPool.find(pc.x) != RegPool.end())
+                if (RegPool.find(pc.x) != RegPool.end()){
                     reg_x = RegPool.find(pc.x)->second;
+                    if (isUsed.find(reg_x) == isUsed.end())
+                        isUsed.insert(pair<int, int>{reg_x, reg_x});
+                }
                 if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
                     file << "addiu $" << reg_x << ",$0,"
                          << code_info.find(pc.y)->second.value - code_info.find(pc.z)->second.value << "\n";
@@ -191,13 +199,15 @@ void TextDataOutput(ofstream &file) {
                 }
                 if (reg_x == 8)
                     Reg2Mem(8, pc.x, file);
-                file << "\n";
                 break;
             }
             case MUL: {
                 int reg_x = 8, reg_y = 9, reg_z = 10;
-                if (RegPool.find(pc.x) != RegPool.end())
+                if (RegPool.find(pc.x) != RegPool.end()){
                     reg_x = RegPool.find(pc.x)->second;
+                    if (isUsed.find(reg_x) == isUsed.end())
+                        isUsed.insert(pair<int, int>{reg_x, reg_x});
+                }
                 if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
                     file << "addi $" << reg_x << ",$0,"
                          << code_info.find(pc.y)->second.value * code_info.find(pc.z)->second.value << "\n";
@@ -217,13 +227,15 @@ void TextDataOutput(ofstream &file) {
                 file << "mflo $" << reg_x << "\n";
                 if (reg_x == 8)
                     Reg2Mem(8, pc.x, file);
-                file << "\n";
                 break;
             }
             case DIV: {
                 int reg_x = 8, reg_y = 9, reg_z = 10;
-                if (RegPool.find(pc.x) != RegPool.end())
+                if (RegPool.find(pc.x) != RegPool.end()){
                     reg_x = RegPool.find(pc.x)->second;
+                    if (isUsed.find(reg_x) == isUsed.end())
+                        isUsed.insert(pair<int, int>{reg_x, reg_x});
+                }
                 if (code_info.find(pc.y)->second.isValue && code_info.find(pc.z)->second.isValue) {
                     file << "addi $" << reg_x << ",$0,"
                          << code_info.find(pc.y)->second.value * code_info.find(pc.z)->second.value << "\n";
@@ -243,14 +255,16 @@ void TextDataOutput(ofstream &file) {
                 file << "mflo $" << reg_x << "\n";
                 if (reg_x == 8)
                     Reg2Mem(8, pc.x, file);
-                file << "\n";
                 break;
             }
             case LCH:
             case ADI: {
                 int reg_x = 8, reg_y = 9;
-                if (RegPool.find(pc.x) != RegPool.end())
+                if (RegPool.find(pc.x) != RegPool.end()){
                     reg_x = RegPool.find(pc.x)->second;
+                    if (isUsed.find(reg_x) == isUsed.end())
+                        isUsed.insert(pair<int, int>{reg_x, reg_x});
+                }
                 if (pc.y == 0) {
                     file << "addi $" << reg_x << ",$0," << pc.z << "\n";
                 } else {
@@ -259,7 +273,6 @@ void TextDataOutput(ofstream &file) {
                 }
                 if (reg_x == 8)
                     Reg2Mem(8, pc.x, file);
-                file << "\n";
                 break;
             }
             case LABEL: {
@@ -275,7 +288,7 @@ void TextDataOutput(ofstream &file) {
                     iter = RuntimeStack.find(pc.z);
                     file << "#------------------------------\n";
                     file << "addi $sp,$sp," <<
-                         (iter->second.space + 1) * -4 << "\n\n";
+                         (iter->second.space + 1) * -4 << "\n";
                     func_code = pc.z;
                     isUsed.clear();
                 }
@@ -301,7 +314,6 @@ void TextDataOutput(ofstream &file) {
                     file << "beq $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
-                file << "\n";
                 break;
             }
             case BNE: {
@@ -324,7 +336,6 @@ void TextDataOutput(ofstream &file) {
                     file << "bne $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
-                file << "\n";
                 break;
             }
             case BLEZ: {
@@ -345,7 +356,6 @@ void TextDataOutput(ofstream &file) {
                     file << "ble $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
-                file << "\n";
                 break;
             }
             case BGTZ: {
@@ -366,7 +376,6 @@ void TextDataOutput(ofstream &file) {
                     file << "bgt $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
-                file << "\n";
                 break;
             }
             case BLTZ: {
@@ -387,7 +396,6 @@ void TextDataOutput(ofstream &file) {
                     file << "blt $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
-                file << "\n";
                 break;
             }
             case BGEZ: {
@@ -408,7 +416,6 @@ void TextDataOutput(ofstream &file) {
                     file << "bge $" << reg_y << ",$" << reg_z << "," << word << "\n";
                 }
                 file << "nop\n";
-                file << "\n";
                 break;
             }
             case WRITE: {
@@ -451,8 +458,12 @@ void TextDataOutput(ofstream &file) {
                     file << "li $v0,12\n";
                     file << "syscall\n";
                 }
-                if (RegPool.find(pc.z) != RegPool.end())
+                if (RegPool.find(pc.z) != RegPool.end()){
                     file << "move $" << RegPool.find(pc.z)->second << ",$2\n";
+                    if (isUsed.find(RegPool.find(pc.z)->second) == isUsed.end())
+                        isUsed.insert(pair<int, int>{RegPool.find(pc.z)->second, RegPool.find(pc.z)->second});
+                }
+
                 else
                     Reg2Mem(2, pc.z, file);
                 break;

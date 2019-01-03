@@ -818,12 +818,11 @@ int LoopSentence(char *str) {
     if (*p == 'd' && *(p + 1) == 'o') {
         p += 2;
         p += JumpSpace(p);
-        LoopMark.insert(pair<int, int>{pcode_num, 0});
+        LoopMark.insert(pair<int, int>{pcode_num, 1});
         PCodeInsert(pcode_num++, 0, 0, LABEL, label);
         if ((process_len = Sentence(p))) {
             p += process_len;
             p += JumpSpace(p);
-            LoopMark.insert(pair<int, int>{pcode_num, 1});
             if (*p == 'w' && *(p + 1) == 'h' && *(p + 2) == 'i' && *(p + 3) == 'l' && *(p + 4) == 'e') {
                 p += 5;
                 p += JumpSpace(p);
@@ -831,6 +830,7 @@ int LoopSentence(char *str) {
                     p++;
                     p += JumpSpace(p);
                     if ((process_len = Condition(p, label, BNE))) {
+                        LoopMark.insert(pair<int, int>{pcode_num, 0});
                         p += process_len;
                         p += JumpSpace(p);
                         if (*p == ')')
@@ -877,6 +877,7 @@ int LoopSentence(char *str) {
                         else
                             ConstructionLoss(';');
                         p += JumpSpace(p);
+                        LoopMark.insert(pair<int, int>{pcode_num, 1});
                         if ((process_len = Condition(p, label_for, BNE))) {
                             p += process_len;
                             p += JumpSpace(p);
@@ -926,14 +927,13 @@ int LoopSentence(char *str) {
                                                     ConstructionLoss(')');
                                                 p += JumpSpace(p);
                                                 PCodeInsert(pcode_num++, 0, 0, GOTO, label_end);
-                                                LoopMark.insert(pair<int, int>{pcode_num, 0});
                                                 PCodeInsert(pcode_num++, 0, 0, LABEL, label_for);
                                                 if ((process_len = Sentence(p))) {
                                                     p += process_len;
                                                     p += JumpSpace(p);
                                                     op = ADI;
-                                                    LoopMark.insert(pair<int, int>{pcode_num, 1});
                                                     PCodeInsert(pcode_num++, x, y, op, z);
+                                                    LoopMark.insert(pair<int, int>{pcode_num, 0});
                                                     PCodeInsert(pcode_num++, 0, 0, GOTO, label);
                                                     LabelCode++;
                                                     PCodeInsert(pcode_num++, 0, 0, LABEL, label_end);
