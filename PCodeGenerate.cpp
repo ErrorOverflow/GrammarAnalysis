@@ -21,7 +21,7 @@ using namespace std;
 
 PCode pcode[4096];
 unordered_map<int, RuntimeCodeInfo> code_info;
-unordered_map<int, int> Pool;
+map<int, int> Pool;
 int pcode_num;
 
 void OpExchange(int op, ofstream &file);
@@ -57,13 +57,13 @@ void PCodePrint() {
     PCodeOptimize();
     PCodePreProcess();
     GlobalOptimize();
-    //RegAssign();
+    RegAssign();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
     for (int i = 0; i < pcode_num; i++) {
-        //if (pcode[i].op == NOP)
-        //    continue;
+        if (pcode[i].op == NOP)
+            continue;
         file << "PCode#" << i << ": ";
         if (pcode[i].x < MID_CODE_BASE && pcode[i].x >= GLOBAL_CODE_BASE)
             ZExchange(pcode[i].x, file);
@@ -290,32 +290,44 @@ void GlobalOptimize() {
 }
 
 void PoolInsert(int code, int weight) {
-    if (code < GLOBAL_CODE_BASE)
+    if (code < GLOBAL_CODE_BASE || (code >= GLOBAL_CODE_BASE && code < MID_CODE_BASE &&
+                                    (CodeFind(code)->second.kind == 2 || CodeFind(code)->second.type == 2 ||
+                                     CodeFind(code)->second.type == 3)) ||
+        code_info.find(code)->second.isValue)
         return;
     if (Pool.find(code) == Pool.end())
-        Pool.insert(pair<int, int>{code, 0});
+        Pool.insert(pair<int, int>{code, weight});
     else
         Pool.find(code)->second += weight;
 }
 
 void RegAssign() {//11-25
-    int used[1000][2], size = 0, j = 0, weight = 1;
-    map<int, int> tmp;
+    int used[1000][2], size = 0, j = 0, weight = 1, mid;
     map<int, int>::iterator iter;
+    map<int, int> tmp;
     for (int i = 0; i < pcode_num; i++) {
+        if (pcode[i].op == NOP)
+            continue;
         if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE) {
-            transform(Pool.begin(), Pool.end(), inserter(tmp, tmp.begin()),
-                      [](pair<int, int> a) { return pair<int, int>(a.second, a.first); });
-            size = tmp.size();
+            iter = Pool.begin();
+            while (iter != Pool.end()) {
+                tmp.insert(pair<int,int>{iter->second,iter->first});
+                cout << iter->second << " " << iter->first << endl;
+                iter++;
+            }
             iter = tmp.begin();
             while (iter != tmp.end()) {
                 used[j][0] = iter->second;
                 used[j++][1] = iter->first;
+                //cout << iter->second << " " << iter->first << endl;
                 iter++;
             }
+            size = tmp.size();
             for (j = 0; j < 15 && j < size; j++) {
                 RegPool.insert(pair<int, int>{used[size - j][0], j + 11});
+                //cout << used[size - j][0] << " " << j + 11 << endl;
             }
+            cout << endl;
             memset(used, 0, sizeof(int) * 1000);
             j = 0;
             Pool.clear();
@@ -335,15 +347,24 @@ void RegAssign() {//11-25
                 weight /= 5;
         }
     }
-    size = tmp.size();
+    iter = Pool.begin();
+    while (iter != Pool.end()) {
+        tmp.insert(pair<int,int>{iter->second,iter->first});
+        cout << iter->second << " " << iter->first << endl;
+        iter++;
+    }
     iter = tmp.begin();
     while (iter != tmp.end()) {
         used[j][0] = iter->second;
         used[j++][1] = iter->first;
+        //cout << iter->second << " " << iter->first << endl;
         iter++;
     }
+    size = tmp.size();
+    cout << endl;
     for (j = 0; j < 15 && j < size; j++) {
         RegPool.insert(pair<int, int>{used[size - j][0], j + 11});
+        //cout << used[size - j][0] << " " << j + 11 << endl;
     }
 }
 
