@@ -350,10 +350,8 @@ void RegAssign() {
                 iter++;
             }
             size = tmp.size();
-            for (j = 0; j < 15 && j < size; j++) {
+            for (j = 0; j < 15 && j < size; j++)
                 RegPool.insert(pair<int, int>{used[size - j - 1][0], j + 11});
-                //cout << used[size - j - 1][0] << " " << j + 11 << endl;
-            }
             memset(used, 0, sizeof(int) * 1000);
             j = 0;
             Pool.clear();
@@ -382,10 +380,8 @@ void RegAssign() {
         iter++;
     }
     size = tmp.size();
-    for (j = 0; j < 15 && j < size; j++) {
+    for (j = 0; j < 15 && j < size; j++)
         RegPool.insert(pair<int, int>{used[size - j - 1][0], j + 11});
-        //cout << used[size - j - 1][0] << " " << j + 11 << endl;
-    }
 }
 
 void BlockInsert(int code, int block_num) {

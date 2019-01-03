@@ -113,26 +113,24 @@ void TextDataOutput(ofstream &file) {
                         }
                     }
                 }
-                file << "addi $sp,$sp,-" << isUsed.size() * 4 << "\n";
+                file << "addi $sp,$sp,-" << (isUsed.size()+1) * 4 << "\n";
                 auto iter_pool = isUsed.begin();
                 while (iter_pool != isUsed.end()) {
-                    file << "sw $" << iter_pool->second << "," << counter * 4 << "($sp)\n";
+                    file << "sw $" << iter_pool->second << "," << (counter+1) * 4 << "($sp)\n";
                     iter_pool++;
                     counter++;
                 }
-                file << "addi $sp,$sp,-4\n";
                 file << "sw $ra,0($sp)\n";
                 file << "jal " << word << "\n";
                 file << "lw $ra,0($sp)\n";
-                file << "addi $sp,$sp,4\n";
                 iter_pool = isUsed.begin();
                 counter = 0;
                 while (iter_pool != isUsed.end()) {
-                    file << "lw $" << iter_pool->second << "," << counter * 4 << "($sp)\n";
+                    file << "lw $" << iter_pool->second << "," << (counter+1) * 4 << "($sp)\n";
                     iter_pool++;
                     counter++;
                 }
-                file << "addi $sp,$sp," << isUsed.size() * 4 << "\n";
+                file << "addi $sp,$sp," << (isUsed.size()+1) * 4 << "\n";
                 if (RegPool.find(pc.x) != RegPool.end())
                     file << "move $" << RegPool.find(pc.x)->second << ",$v0\n";
                 else
