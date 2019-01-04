@@ -453,7 +453,6 @@ void BlockFill() {
                         }
                     }
                 }
-                cout<< near<<endl;
                 auto iter = isCalled.begin();
                 while (iter != isCalled.end()) {
                     if (block[near].used_reg.find(iter->second) == block[near].used_reg.end()) {
@@ -464,7 +463,6 @@ void BlockFill() {
                 }
             }
         }
-        cout << "Static " << isStatic << endl;
         if (isStatic)
             break;
     }
