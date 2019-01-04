@@ -22,7 +22,7 @@ using namespace std;
 PCode pcode[4096];
 unordered_map<int, RuntimeCodeInfo> code_info;
 map<int, int> Pool;
-Block block[128];
+Block block[4096];
 int pcode_num, store_num = 0;
 
 void OpExchange(int op, ofstream &file);
@@ -65,6 +65,15 @@ void PCodePrint() {
     RegAssign();
     BasicBlock();
     BlockFill();
+    /*for (int i = 0; i < store_num; i++) {
+        auto iter = block[i].used_reg.begin();
+        cout << block[i].func << " " << block[i].addr<<endl;
+        while (iter != block[i].used_reg.end()) {
+            cout << iter->second << endl;
+            iter++;
+        }
+        cout << endl;
+    }*/
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -441,7 +450,7 @@ void BlockFill() {
                 func = pcode[i].z;
             if (pcode[i].op == CALL) {
                 isCalled.clear();
-                for (int j = 0; j < store_num; j++) {
+                for (int j = 0; j <= store_num; j++) {
                     if (block[j].addr <= i)
                         near = j;
                     if (block[j].func == pcode[i].z) {

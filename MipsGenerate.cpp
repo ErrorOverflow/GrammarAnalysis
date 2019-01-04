@@ -105,7 +105,7 @@ void TextDataOutput(ofstream &file) {
                 Num2Char(pc.z, word);
                 isUsed.clear();
                 isConflict.clear();
-                for (int j = 0; j < store_num; j++) {
+                for (int j = 0; j <=store_num; j++) {
                     if (block[j].func == pc.z) {
                         auto iter_reg = block[j].used_reg.begin();
                         while (iter_reg != block[j].used_reg.end()) {
@@ -116,7 +116,7 @@ void TextDataOutput(ofstream &file) {
                         }
                     }
                 }
-                for (int j = 0; j < store_num; j++) {
+                for (int j = 0; j <=store_num; j++) {
                     if (block[j].func == func_code && block[j].addr <= round) {
                         auto iter_reg = block[j].used_reg.begin();
                         while (iter_reg != block[j].used_reg.end()) {
@@ -127,6 +127,14 @@ void TextDataOutput(ofstream &file) {
                         }
                     }
                 }
+                /*cout << "now func: "<< func_code << endl;
+                cout << pc.z;
+                auto iter_reg = isUsed.begin();
+                while (iter_reg != isUsed.end()) {
+                    cout << " " << iter_reg->second;
+                    iter_reg++;
+                }
+                cout << endl;*/
                 file << "addi $sp,$sp,-" << (isUsed.size() + 1) * 4 << "\n";
                 auto iter_pool = isUsed.begin();
                 while (iter_pool != isUsed.end()) {
@@ -482,13 +490,25 @@ void TextDataOutput(ofstream &file) {
                     }
                     file << "addiu $9,$gp," << loc * 4 << "\n";
                 }
-                if (code_info.find(pc.z)->second.isValue)
-                    file << "addiu $10,$0," << code_info.find(pc.z)->second.value << "\n";
-                else
+                if (code_info.find(pc.z)->second.isValue) {
+                    if (RegPool.find(pc.x) != RegPool.end()) {
+                        file << "lw $" << RegPool.find(pc.x)->second << "," << code_info.find(pc.z)->second.value * 4
+                             << "($9)\n";
+                    } else {
+                        file << "lw $8," << code_info.find(pc.z)->second.value * 4
+                             << "($9)\n";
+                        Reg2Mem(8, pc.x, file);
+                    }
+                } else {
                     reg_z = Mem2Reg(10, pc.z, file);
-                file << "sll $10,$" << reg_z << ",2\naddu $9,$9,$10\n";
-                file << "lw $8,0($9)\n";
-                Reg2Mem(8, pc.x, file);
+                    file << "sll $10,$" << reg_z << ",2\naddu $9,$9,$10\n";
+                    if (RegPool.find(pc.x) != RegPool.end()) {
+                        file << "lw $" << RegPool.find(pc.x)->second << ",0($9)\n";
+                    } else {
+                        file << "lw $8,0($9)\n";
+                        Reg2Mem(8, pc.x, file);
+                    }
+                }
                 break;
             }
             case SW: {
@@ -510,12 +530,13 @@ void TextDataOutput(ofstream &file) {
                     file << "addiu $8,$0," << code_info.find(pc.x)->second.value << "\n";
                 else
                     reg_x = Mem2Reg(8, pc.x, file);
-                if (code_info.find(pc.z)->second.isValue)
-                    file << "addi $10,$0," << code_info.find(pc.z)->second.value << "\n";
-                else
+                if (code_info.find(pc.z)->second.isValue) {
+                    file << "sw $" << reg_x << "," << code_info.find(pc.z)->second.value * 4 << "($9)\n";
+                } else {
                     reg_z = Mem2Reg(10, pc.z, file);
-                file << "sll $10,$" << reg_z << ",2\naddu $9,$9,$10\n";
-                file << "sw $" << reg_x << ",0($9)\n";
+                    file << "sll $10,$" << reg_z << ",2\naddu $9,$9,$10\n";
+                    file << "sw $" << reg_x << ",0($9)\n";
+                }
                 break;
             }
             case END:
