@@ -16,8 +16,8 @@ int ReadFromFile() {
     char str[100000];
     char mid[512];
     char path[64];
-    int i = 0;//home/wml/CLionProjects/GrammarAnalysis/helloworld.txt
-    cout << "Input file path: ";//C:\Users\WML\CLionProjects\GrammarAnalysis\helloworld.txt
+    int i = 0;
+    cout << "Input file path: ";
     cin >> path;
     fp = fopen(path, "r");
     while (fgets(mid, 511, fp)) {
