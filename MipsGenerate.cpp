@@ -17,7 +17,6 @@ using namespace std;
 
 unordered_map<int, FuncRuntime> RuntimeStack;
 unordered_map<int, int> RegPool;
-unordered_map<int, int> isUsed;
 
 int para_stack[64];
 int para_stack_num = 0;
@@ -101,14 +100,28 @@ void TextDataOutput(ofstream &file) {
             }
             case CALL: {
                 int counter = 0, used_reg = 0;
+                unordered_map<int, int> isConflict;
+                unordered_map<int, int> isUsed;
                 Num2Char(pc.z, word);
                 isUsed.clear();
+                isConflict.clear();
+                for (int j = 0; j < store_num; j++) {
+                    if (block[j].func == pc.z) {
+                        auto iter_reg = block[j].used_reg.begin();
+                        while (iter_reg != block[j].used_reg.end()) {
+                            used_reg = iter_reg->second;
+                            if (isConflict.find(used_reg) == isConflict.end())
+                                isConflict.insert(pair<int, int>{used_reg, used_reg});
+                            iter_reg++;
+                        }
+                    }
+                }
                 for (int j = 0; j < store_num; j++) {
                     if (block[j].func == func_code && block[j].addr <= round) {
                         auto iter_reg = block[j].used_reg.begin();
                         while (iter_reg != block[j].used_reg.end()) {
                             used_reg = iter_reg->second;
-                            if (isUsed.find(used_reg) == isUsed.end())
+                            if (isUsed.find(used_reg) == isUsed.end() && isConflict.find(used_reg) != isConflict.end())
                                 isUsed.insert(pair<int, int>{used_reg, used_reg});
                             iter_reg++;
                         }
@@ -567,8 +580,6 @@ int Reg2Mem(int reg, int code, ofstream &file) {
     int res_reg = reg;
     if (RegPool.find(code) != RegPool.end()) {
         res_reg = RegPool.find(code)->second;
-        if (isUsed.find(res_reg) == isUsed.end())
-            isUsed.insert(pair<int, int>{res_reg, res_reg});
         file << "move $" << res_reg << ",$" << reg << "\n";
         return res_reg;
     }

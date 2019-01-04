@@ -23,7 +23,7 @@ PCode pcode[4096];
 unordered_map<int, RuntimeCodeInfo> code_info;
 map<int, int> Pool;
 Block block[128];
-int pcode_num, store_num=0;
+int pcode_num, store_num = 0;
 
 void OpExchange(int op, ofstream &file);
 
@@ -40,6 +40,8 @@ void GlobalOptimize();
 void RegAssign();
 
 void BasicBlock();
+
+void BlockFill();
 
 void PCodeInsert(int num, int x, int y, int op, int z) {
     pcode[num].x = x;
@@ -62,6 +64,7 @@ void PCodePrint() {
     GlobalOptimize();
     RegAssign();
     BasicBlock();
+    BlockFill();
     const char MIPSFILE[64] = "PCode.txt\0";
     ofstream file;
     file.open(MIPSFILE, ios::out);
@@ -297,7 +300,8 @@ void GlobalOptimize() {
             for (int j = i - 1; j > 0; j--) {
                 if (pcode[j].op == LABEL)
                     break;
-                if ((pcode[j].op == PLUS || pcode[j].op == SUB || pcode[j].op == DIV || pcode[j].op == MUL || pcode[j].op == ADI || pcode[j].op == LCH) &&
+                if ((pcode[j].op == PLUS || pcode[j].op == SUB || pcode[j].op == DIV || pcode[j].op == MUL ||
+                     pcode[j].op == ADI || pcode[j].op == LCH) &&
                     pcode[j].x == pcode[i].z) {
                     pcode[i].op = NOP;
                     pcode[j].x = pcode[i].x;
@@ -424,6 +428,45 @@ void BasicBlock() {
             BlockInsert(pcode[i].y, store_num);
             BlockInsert(pcode[i].z, store_num);
         }
+    }
+}
+
+void BlockFill() {
+    int isStatic = 1, func = 0, near = 0;
+    unordered_map<int, int> isCalled;
+    while (true) {
+        isStatic = 1;
+        for (int i = 0; i < pcode_num; i++) {
+            if (pcode[i].op == LABEL && pcode[i].z >= LOCAL_CODE_BASE)
+                func = pcode[i].z;
+            if (pcode[i].op == CALL) {
+                isCalled.clear();
+                for (int j = 0; j < store_num; j++) {
+                    if (block[j].addr <= i)
+                        near = j;
+                    if (block[j].func == pcode[i].z) {
+                        auto iter = block[j].used_reg.begin();
+                        while (iter != block[j].used_reg.end()) {
+                            if (isCalled.find(iter->second) == isCalled.end())
+                                isCalled.insert(pair<int, int>{iter->second, iter->second});
+                            iter++;
+                        }
+                    }
+                }
+                cout<< near<<endl;
+                auto iter = isCalled.begin();
+                while (iter != isCalled.end()) {
+                    if (block[near].used_reg.find(iter->second) == block[near].used_reg.end()) {
+                        block[near].used_reg.insert(pair<int, int>{iter->second, iter->second});
+                        isStatic = 0;
+                    }
+                    iter++;
+                }
+            }
+        }
+        cout << "Static " << isStatic << endl;
+        if (isStatic)
+            break;
     }
 }
 
